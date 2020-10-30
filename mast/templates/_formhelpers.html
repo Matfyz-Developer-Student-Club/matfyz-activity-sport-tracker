@@ -1,0 +1,19 @@
+
+<!-- Render a form input fields -->
+{% macro render_field(field) %}
+    <div class="form-label-group">
+        {{ field(class="form-control", placeholder=field.label.text, **kwargs)|safe }}
+        {{ field.label }}
+    </div>
+{% endmacro %}
+
+<!-- Render form checkbox -->
+{% macro render_checkbox(field) %}
+  {{ field(**kwargs)|safe }}
+  {{ field.label }}
+{% endmacro %}
+
+<!-- Render a form submit field as a button -->
+{% macro render_submit_button(field) %}
+  {{ field(class="btn btn-lg btn-primary btn-block", **kwargs)|safe }}
+{% endmacro %}
