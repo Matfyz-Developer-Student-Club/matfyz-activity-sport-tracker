@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 # TODO: change to some valid secret key (this is required by wtf_forms csrf protection)
 app.secret_key = b'TODO_CHANGE'
+csrf = CSRFProtect(app)
 
 
 @app.route('/', methods=['GET', 'POST'])

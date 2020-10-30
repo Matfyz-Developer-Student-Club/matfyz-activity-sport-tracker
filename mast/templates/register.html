@@ -2,6 +2,9 @@
 {% extends "auth_template.html" %}
 {% block form %}
 <form class="form-signin" method="post">
+
+    {{ form.csrf_token }}
+
     <div class="text-center mb-4">
         <h1 class="h2 mb-3">
             Matfyz<br>
