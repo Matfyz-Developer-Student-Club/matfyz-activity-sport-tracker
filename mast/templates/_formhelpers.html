@@ -23,7 +23,7 @@
 <!-- Render errors of form field if present -->
 {% macro render_field_errors(field) %}
     {% if field.errors %}
-        <div class="invalid-feedback">
+        <div class="invalid-feedback d-block">
             {% for error in field.errors %}
                 <span>{{ error }}</span>
             {% endfor %}
