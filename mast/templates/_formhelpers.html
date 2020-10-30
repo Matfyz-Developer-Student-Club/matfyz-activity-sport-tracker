@@ -4,16 +4,30 @@
     <div class="form-label-group">
         {{ field(class="form-control", placeholder=field.label.text, **kwargs)|safe }}
         {{ field.label }}
+        {{ render_field_errors(field) }}
     </div>
 {% endmacro %}
 
 <!-- Render form checkbox -->
 {% macro render_checkbox(field) %}
-  {{ field(**kwargs)|safe }}
-  {{ field.label }}
+    {{ field(**kwargs)|safe }}
+    {{ field.label }}
+    {{ render_field_errors(field) }}
 {% endmacro %}
 
 <!-- Render a form submit field as a button -->
 {% macro render_submit_button(field) %}
-  {{ field(class="btn btn-lg btn-primary btn-block", **kwargs)|safe }}
+    {{ field(class="btn btn-lg btn-primary btn-block", **kwargs)|safe }}
+{% endmacro %}
+
+<!-- Render errors of form field if present -->
+{% macro render_field_errors(field) %}
+    {% if field.errors %}
+        <!-- TODO select proper class -->
+        <ul class=errors>
+        {% for error in field.errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
 {% endmacro %}

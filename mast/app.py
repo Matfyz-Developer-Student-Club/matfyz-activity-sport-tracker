@@ -1,5 +1,6 @@
 from flask import Flask, redirect, request, render_template, url_for
-from mast.forms import LoginForm, RegisterForm
+from flask_wtf.csrf import CSRFProtect
+from mast.forms import LoginForm, RegisterForm, log_form_submit
 
 app = Flask(__name__)
 
@@ -15,8 +16,13 @@ def login():
         form = LoginForm()
         return render_template('login.html', form=form)
     else:
-        # TODO: redirect to main page if successful
-        return request.form
+        form = LoginForm(request.form)
+        valid = form.validate()
+        if valid:
+            # TODO: redirect the user to main page
+            return 'MAST homepage'
+        else:
+            return render_template('login.html', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -25,8 +31,13 @@ def register():
         form = RegisterForm()
         return render_template('register.html', form=form)
     else:
-        # TODO: redirect to login if valid
-        return request.form
+        form = RegisterForm(request.form)
+        valid = form.validate()
+        if valid:
+            # TODO: add user to database
+            return redirect(url_for('login'))
+        else:
+            return render_template('register.html', form=form)
 
 
 if __name__ == '__main__':
