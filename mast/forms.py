@@ -18,7 +18,13 @@ def log_form_submit(form):
     else:
         form_logger.error('From contained Errors!')
 
-class RegisterForm(FlaskForm):
+class LoggingFlaskForm(FlaskForm):
+    def validate(self):
+        res = super().validate()
+        log_form_submit(self)
+        return res
+
+class RegisterForm(LoggingFlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
@@ -26,7 +32,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Create and account')
 
 
-class LoginForm(FlaskForm):
+class LoginForm(LoggingFlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
