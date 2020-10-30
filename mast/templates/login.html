@@ -3,12 +3,15 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4 ml-4">
-            <img src="{{url_for('static', filename='pics/running.svg')}}" alt="athlete" style="max-width: 100%; max-height: 100%;" >
+            <img src="{{url_for('static', filename='pics/running.svg')}}" alt="athlete" id="athlete" >
         </div>
         <div class="col-md-2">
         </div>
         <div class="col-md-3">
-            <form class="form-group">
+            <form class="form-group" method="post">
+
+                {{ form.csrf_token }}
+
                 <div class="text-center mb-4">
                     <h1 class="h2 mb-3">
                         Matfyz<br>
@@ -18,24 +21,18 @@
                     <p>Compete, track and enjoy</p>
                 </div>
 
-                <div class="form-label-group">
-                    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required
-                        autofocus>
-                    <label for="inputEmail">Email address</label>
-                </div>
+                {{ render_field(form.email, autofocus=true) }}
 
-                <div class="form-label-group">
-                    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-                    <label for="inputPassword">Password</label>
-                </div>
+                {{ render_field(form.password) }}
 
                 <div class="checkbox mb-3">
-                    <label>
-                        <input type="checkbox" value="remember-me"> Remember me
-                    </label><br>
+                    {{ render_checkbox(form.remember) }}
+                    <br>
                     <a href="{{ url_for( 'register' ) }}">Create a new account.</a>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+
+                {{ render_submit_button(form.submit) }}
+
             </form>
         </div>
     </div>
