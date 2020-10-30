@@ -23,11 +23,10 @@
 <!-- Render errors of form field if present -->
 {% macro render_field_errors(field) %}
     {% if field.errors %}
-        <!-- TODO select proper class -->
-        <ul class=errors>
-        {% for error in field.errors %}
-            <li>{{ error }}</li>
-        {% endfor %}
-        </ul>
+        <div class="invalid-feedback">
+            {% for error in field.errors %}
+                <span>{{ error }}</span>
+            {% endfor %}
+        </div>
     {% endif %}
 {% endmacro %}
