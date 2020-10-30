@@ -1,14 +1,6 @@
 from flask import redirect, request, render_template, url_for
-from flask_wtf.csrf import CSRFProtect
 from mast.forms import LoginForm, RegisterForm
 from mast import app
-import logging
-
-# TODO: change to some valid secret key (this is required by wtf_forms csrf protection)
-app.secret_key = b'TODO_CHANGE'
-csrf = CSRFProtect(app)
-
-logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -18,9 +10,7 @@ def login():
         return render_template('login.html', form=form)
     else:
         form = LoginForm(request.form)
-        valid = form.validate()
-        print(form.password.errors)
-        if valid:
+        if form.validate():
             # TODO: redirect the user to main page
             return 'MAST homepage'
         else:
@@ -34,8 +24,7 @@ def register():
         return render_template('register.html', form=form)
     else:
         form = RegisterForm(request.form)
-        valid = form.validate()
-        if valid:
+        if form.validate():
             # TODO: add user to database
             return redirect(url_for('login'))
         else:

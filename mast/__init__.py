@@ -2,9 +2,16 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
+import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8e32c05c0914f857f3cadce4aff1cdd0'
+csrf = CSRFProtect(app)
+
+# Logging setup
+logging.basicConfig(level=logging.DEBUG)
+
 # TODO: Uncomment when database will be prepared
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 # db = SQLAlchemy(app)
