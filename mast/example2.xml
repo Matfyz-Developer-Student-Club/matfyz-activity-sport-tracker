@@ -1,0 +1,25 @@
+<ns0:gpx xmlns:ns0="http://www.topografix.com/GPX/1/1">
+  <ns0:metadata>
+    <ns0:link href="http://www.garmin.com">
+      <ns0:text>Garmin International</ns0:text>
+    </ns0:link>
+    <ns0:time>2009-10-17T22:58:43Z</ns0:time>
+  </ns0:metadata>
+  <ns0:trk>
+    <ns0:name>Example GPX Document</ns0:name>
+    <ns0:trkseg>
+      <ns0:trkpt lat="47.644548" lon="-122.326897">
+        <ns0:ele>4.46</ns0:ele>
+        <ns0:time>2009-10-17T18:37:26Z</ns0:time>
+      </ns0:trkpt>
+      <ns0:trkpt lat="47.644548" lon="-122.326897">
+        <ns0:ele>4.94</ns0:ele>
+        <ns0:time>2009-10-17T18:37:31Z</ns0:time>
+      </ns0:trkpt>
+      <ns0:trkpt lat="47.644548" lon="-122.326897">
+        <ns0:ele>6.87</ns0:ele>
+        <ns0:time>2009-10-17T18:37:34Z</ns0:time>
+      </ns0:trkpt>
+    </ns0:trkseg>
+  </ns0:trk>
+</ns0:gpx>
