@@ -43,19 +43,13 @@ def register():
         return render_template('register.html', form=form)
     else:
         form = RegisterForm(request.form)
-<<<<<<< HEAD
-        valid = form.validate()
-        if valid:
-=======
         if form.validate():
->>>>>>> 6fae7b0a1f13de702f3a40e3eecc45c5a93fd182
             # TODO: add user to database
             return redirect(url_for('login'))
         else:
             return render_template('register.html', form=form)
 
 
-<<<<<<< HEAD
 @app.route('/personal_dashboard')
 @app.route('/home')
 def home():
@@ -74,5 +68,3 @@ def user_settings():
 def integrations():
     return render_template("integrations.html", title='Integrations')
   
-=======
->>>>>>> 6fae7b0a1f13de702f3a40e3eecc45c5a93fd182
