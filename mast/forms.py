@@ -29,7 +29,7 @@ class RegisterForm(LoggingFlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Create and account')
+    submit = SubmitField('Create an account')
 
 
 class LoginForm(LoggingFlaskForm):
