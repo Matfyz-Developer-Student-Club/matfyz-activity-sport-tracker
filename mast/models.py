@@ -41,7 +41,7 @@ class User(db.Model, UserMixin):
     nick_name = db.Column(db.String(50))
     anonymous = db.Column(db.Boolean)
     uk_id = db.Column(db.String(10))
-    validated = db.Column(db.Boolean, nullable=False)
+    validated = db.Column(db.Boolean, nullable=False, default=False)
     activities = db.relationship('Activity', backref='user', lazy=True)
 
     def __repr__(self):
@@ -53,6 +53,7 @@ class Activity(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     distance = db.Column(db.Float, nullable=False)
     duration = db.Column(db.Time, nullable=False)
+    average_duration_for_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     competition = db.Column(db.Enum(Competition))
