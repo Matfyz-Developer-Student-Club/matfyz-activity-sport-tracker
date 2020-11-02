@@ -4,19 +4,21 @@ from pathlib import Path
 import os
 from re import findall
 import logging
+from dateutil import parser
 
 
 class GPXProcessor(object):
     EARTH_RADIUS = 6378
     LANDING_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'landing')
-    XML_SUFFIX = '.xml'
+    __ALLOWED_EXTENSIONS = ['.gpx', '.xml']
     __TRKSEG_ELM = 'trkseg'
     __TRKPT_ELM = 'trkpt'
+    __TIME_ELM = 'time'
 
     def __init__(self):
         super().__init__()
 
-    def process_input_data(self) -> str:
+    def process_input_data(self) -> zip:
         """
         Purpose of this method is to iterate over each .xml file
         within landing layer, load its content and fetch all
@@ -24,23 +26,40 @@ class GPXProcessor(object):
         """
 
         output_buffer = []
+        total_time = []
         try:
             for input_file in os.listdir(self.LANDING_DIR):
-                tree = ET.parse(Path(os.path.join(self.LANDING_DIR, input_file)).with_suffix(self.XML_SUFFIX))
-                root = tree.getroot()
+                if Path(input_file).suffix in self.__ALLOWED_EXTENSIONS:
+                    tree = ET.parse(os.path.join(self.LANDING_DIR, input_file))
+                    root = tree.getroot()
 
-                # Find the child element of tracking point including namespace
-                trk = findall('\{.*\}.*', root[1].tag if len(root) > 1 else root[0].tag)
-                # Cut of namespace prefix
-                namespace = trk[0][:-3]
+                    # Find the child element of tracking point including namespace
+                    trk = findall('\{.*\}.*', root[1].tag if len(root) > 1 else root[0].tag)
+                    # Cut of namespace prefix
+                    namespace = trk[0][:-3]
 
-                activity = (root.find(trk[0])).find(namespace + self.__TRKSEG_ELM).findall(namespace + self.__TRKPT_ELM)
-                output_buffer.append(self.__calculate_orthodromic_distance(activity))
+                    activities = (root.find(trk[0])).find(namespace + self.__TRKSEG_ELM).findall(
+                        namespace + self.__TRKPT_ELM)
+
+                    if activities[0].find(namespace + self.__TIME_ELM) is not None:
+                        total_time.append(self.__calculate_total_time(
+                            [activity.find(namespace + self.__TIME_ELM) for activity in activities]))
+                    output_buffer.append(self.__calculate_orthodromic_distance(activities))
+                else:
+                    raise AssertionError("Forbidden file extension encountered!")
         except Exception as ex:
-            logging.ERROR("Processing of the landing directory was unsuccessful!\n", ex)
-        return output_buffer
+            logging.error("Processing of the landing directory was unsuccessful!\n", ex)
+        return zip(output_buffer, total_time)
 
-    def __calculate_orthodromic_distance(self, coords: list) -> str:
+    def __calculate_total_time(self, time_segments: list):
+        """
+        Purpose of this method is to calculate the time of the give activity.
+        : param time_segments: List of timestamps.
+        :return: Total time spent on activity.
+        """
+        return parser.parse(time_segments[-1].text) - parser.parse(time_segments[0].text)
+
+    def __calculate_orthodromic_distance(self, coords: list) -> float:
         """
         Purpose of this method is to calculate distance between provided
         coordinates in order to obtain total distance.
@@ -60,7 +79,7 @@ class GPXProcessor(object):
             pom = sin(dist_lat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dist_lon / 2) ** 2
 
             buffer += self.EARTH_RADIUS * (2 * asin(sqrt(pom)))
-        return '{:.3f} Km'.format(buffer)
+        return buffer
 
     def landing_cleanup(self):
         """
@@ -69,10 +88,10 @@ class GPXProcessor(object):
         try:
             for input_file in os.listdir(self.LANDING_DIR):
                 os.remove(input_file)
-                logging.INFO(f"File {input_file} has been removed successfully.")
+                logging.info(f"File {input_file} has been removed successfully.")
         except Exception as ex:
-            logging.WARNING("Deletion was unsuccessful!", ex)
+            logging.warning("Deletion was unsuccessful!", ex)
 
 
 if __name__ == '__main__':
-    print(GPXProcessor().process_input_data())
+    print(list(GPXProcessor().process_input_data()))
