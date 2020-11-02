@@ -42,3 +42,21 @@ def register():
             return render_template('register.html', form=form)
 
 
+@app.route('/personal_dashboard')
+@app.route('/home')
+def home():
+    return render_template("personal_dashboard.html", title='Home')
+
+
+@app.route('/global_dashboard')
+def global_dashboard():
+    return render_template("global_dashboard.html", title='Global Dashboard')
+
+@app.route('/user_settings')
+def user_settings():
+    return render_template("user_settings.html", title='User Settings')
+
+@app.route('/integrations')
+def integrations():
+    return render_template("integrations.html", title='Integrations')
+  

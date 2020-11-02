@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4 ml-4">
-            <img src="{{url_for('static', filename='pics/running.svg')}}" alt="athlete" id="athlete" >
+            <img src="{{ url_for('static', filename='pics/running.svg') }}" alt="athlete" id="athlete" >
         </div>
         <div class="col-md-2">
         </div>
@@ -21,7 +21,7 @@
                     <p>Compete, track and enjoy</p>
                 </div>
 
-                {{ render_field(form.email, autofocus=true) }}
+                {{ render_field(form.username, autofocus=true) }}
 
                 {{ render_field(form.password) }}
 
