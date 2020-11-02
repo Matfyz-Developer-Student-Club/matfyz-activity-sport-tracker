@@ -34,7 +34,7 @@ class GPXProcessor(object):
                 # Cut of namespace prefix
                 namespace = trk[0][:-3]
 
-                activity = (root.find(trk[0])).find(namespace + self.__TRKSEG_ELM).findall(namespace +  self.__TRKPT_ELM)
+                activity = (root.find(trk[0])).find(namespace + self.__TRKSEG_ELM).findall(namespace + self.__TRKPT_ELM)
                 output_buffer.append(self.__calculate_orthodromic_distance(activity))
         except Exception as ex:
             logging.ERROR("Processing of the landing directory was unsuccessful!\n", ex)
