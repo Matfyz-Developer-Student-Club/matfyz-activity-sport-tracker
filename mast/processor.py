@@ -62,3 +62,13 @@ class GPXProcessor(object):
             buffer += self.EARTH_RADIUS * (2 * asin(sqrt(pom)))
         return '{:.3f} Km'.format(buffer)
 
+    def landing_cleanup(self):
+        """
+        Purpose of this method is clean up landing zone.
+        """
+        try:
+            for input_file in os.listdir(self.LANDING_DIR):
+                os.remove(input_file)
+                logging.INFO(f"File {input_file} has been removed successfully.")
+        except Exception as ex:
+            logging.WARNING("Deletion was unsuccessful!", ex)
