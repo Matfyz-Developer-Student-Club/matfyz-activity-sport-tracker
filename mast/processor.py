@@ -30,7 +30,7 @@ class GPXProcessor(object):
                 root = tree.getroot()
 
                 # Find the child element of tracking point including namespace
-                trk = findall('\{.*\}.*', root[1].tag)
+                trk = findall('\{.*\}.*', root[1].tag if len(root) > 1 else root[0].tag)
                 # Cut of namespace prefix
                 namespace = trk[0][:-3]
 
@@ -72,3 +72,7 @@ class GPXProcessor(object):
                 logging.INFO(f"File {input_file} has been removed successfully.")
         except Exception as ex:
             logging.WARNING("Deletion was unsuccessful!", ex)
+
+
+if __name__ == '__main__':
+    print(GPXProcessor().process_input_data())
