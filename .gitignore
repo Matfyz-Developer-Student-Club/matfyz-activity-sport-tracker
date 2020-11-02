@@ -130,3 +130,6 @@ dmypy.json
 
 # JetBrains mess
 .idea
+
+# Server landing zone
+landing
