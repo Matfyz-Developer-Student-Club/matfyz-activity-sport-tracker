@@ -5,7 +5,14 @@ import enum
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.query(User).get(int(user_id))
+
+
+def get_best_run_activity_by_user(user_id, competition):
+    return db.session.query(Activity).\
+        filter_by(user_id=user_id, type=ActivityType.Run, competition=competition).\
+        order_by(Activity.average_duration_per_km.asc()).\
+        first()
 
 
 class Sex(enum.Enum):
@@ -53,7 +60,7 @@ class Activity(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     distance = db.Column(db.Float, nullable=False)
     duration = db.Column(db.Time, nullable=False)
-    average_duration_for_km = db.Column(db.Time, nullable=False)
+    average_duration_per_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     competition = db.Column(db.Enum(Competition))
