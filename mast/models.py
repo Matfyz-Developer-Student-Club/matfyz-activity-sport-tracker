@@ -1,11 +1,11 @@
 from mast import db, login_manager
 from flask_login import UserMixin
-import enum
+from enum import Enum
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.query(User).get(int(user_id))
+    return db.session.query(User).get(user_id)
 
 
 def get_best_run_activity_by_user(user_id, competition):
@@ -15,23 +15,23 @@ def get_best_run_activity_by_user(user_id, competition):
         first()
 
 
-class Sex(enum.Enum):
+class Sex(Enum):
     Male = 1
     Female = 2
 
 
-class Age(enum.Enum):
+class Age(Enum):
     Under35 = 1
     Over35 = 2
 
 
-class ActivityType(enum.Enum):
+class ActivityType(Enum):
     Walk = 1
     Run = 2
     Ride = 3
 
 
-class Competition(enum.Enum):
+class Competition(Enum):
     Run5km = 1
     Run10km = 2
 
@@ -45,7 +45,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     sex = db.Column(db.Enum(Sex))
     age = db.Column(db.Enum(Age))
-    nick_name = db.Column(db.String(50))
+    display_name = db.Column(db.String(50))
     anonymous = db.Column(db.Boolean)
     uk_id = db.Column(db.String(10))
     validated = db.Column(db.Boolean, nullable=False, default=False)
