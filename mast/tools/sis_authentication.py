@@ -121,22 +121,3 @@ def __build_url(is_employee, name=None, surname=None, login=None, ukco=None):
         url += 'sdruh=&svyjazyk=&r_zacatek=Z&pocet=50&vyhledej=Vyhledej'
 
     return url
-
-if __name__ == '__main__':
-    name = 'Jan'
-    surname = 'Kleprlik'
-    print("FALSE = " + str(authenticate_via_sis(name=name, surname=surname, is_employee=True)))    # False
-    print()
-    print("FALSE = " + str(authenticate_via_sis(name=name, surname=surname, is_employee=False)))  # ERROR
-    print()
-    print("FALSE = " + str(authenticate_via_sis(name=name, surname=surname, login='kleprlij', is_employee=True)))  # False
-    print()
-    print("TRUE = " + str(authenticate_via_sis(name=name, surname=surname, login='kleprlij', is_employee=False)))  # True
-    print()
-
-
-    name = 'Pavel'
-    surname = 'Ježek'
-    print("TRUE = " + str(authenticate_via_sis(name=name, surname=surname, is_employee=True)))    # True
-    print()
-    print("FALSE = " + str(authenticate_via_sis(name=name, surname=surname, is_employee=False)))   # ERROR
