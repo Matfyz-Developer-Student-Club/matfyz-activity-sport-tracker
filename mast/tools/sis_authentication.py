@@ -4,6 +4,17 @@ import re
 
 
 def authenticate_via_sis(name, surname, login=None, ukco=None, is_employee=False):
+    """
+    Simple authentication via sis.
+    Employee must submit: name, surname
+    Student must submit: name, surname, (login or ukco)
+    :param name: name of the person - obligatory:
+    :param surname: surname of the person - obligatory:
+    :param login: login for students
+    :param ukco: UKCO for students
+    :param is_employee: bool if the person is employee
+    :return: True if such person exists, False otherwise
+    """
     if is_employee:
         if name == None or surname == None:
             # expecting both name and surname
