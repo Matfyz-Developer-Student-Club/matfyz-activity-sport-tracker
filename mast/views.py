@@ -1,6 +1,13 @@
 from flask import redirect, request, render_template, url_for
-from mast.forms import LoginForm, RegisterForm
 from mast import app
+from mast.forms import LoginForm, RegisterForm, UpdateProfile, ChangePassword
+from mast.models import UserMockup, Profile
+
+verified_profile = Profile("jon.doe@example.com")
+verified_profile.verify_profile(first_name='Jon', last_name='Doe', age=18, sex='male', employee=False, nickname='JD')
+unverified_profile = Profile("alice@example.com")
+#user = UserMockup(verified_profile)
+user = UserMockup(unverified_profile)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -12,7 +19,7 @@ def login():
         form = LoginForm(request.form)
         if form.validate():
             # TODO: redirect the user to main page
-            return 'MAST homepage'
+            return redirect(url_for('home'))
         else:
             return render_template('login.html', form=form)
 
@@ -36,14 +43,19 @@ def register():
 def home():
     return render_template("personal_dashboard.html", title='Home')
 
-
 @app.route('/global_dashboard')
 def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
 
 @app.route('/user_settings')
 def user_settings():
-    return render_template("user_settings.html", title='User Settings')
+    update_profile_form = UpdateProfile()
+    change_password_form = ChangePassword()
+    return render_template("user_settings.html", title='User Settings',
+                           profile=user.profile,
+                           update_profile_form=update_profile_form,
+                           change_password_form=change_password_form,
+                           )
 
 @app.route('/integrations')
 def integrations():

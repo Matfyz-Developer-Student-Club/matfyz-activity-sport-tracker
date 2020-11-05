@@ -1,3 +1,53 @@
 {% extends "main_layout_template.html" %}
+{% from "_formhelpers.html" import render_text_field, render_inline_radio_field, render_checkbox_field, render_submit_button  %}
+
 {% block content_page %}
+<div class="row">
+    <div id="user_card" class="col-md">
+        <div class="card">
+            <img class="card-img-top" src="static/pics/default_avatar.svg" alt="Avatar image">
+            <div class="card-body">
+                {% if profile.verified %}
+                    <h4 class="card-title">{{ profile.first_name }} {{'"' + profile.nickname + '"'}} {{ profile.last_name }}</h4>
+                    <p class="card-text">{{ profile.email }}</p>
+                    <p class="card-text">{{ 'Verified' }}</p>
+                    <button type="button" onclick="display_update_profile()" class="btn btn-secondary">Update profile</button>
+                {% else %}
+                    <p class="card-text">{{ profile.email }}</p>
+                    <p class="card-text">{{ 'Not verified' }}</p>
+                    <button type="button" onclick="display_update_profile()" class="btn btn-primary">Complete profile</button>
+                {% endif %}
+                <button type="button" onclick="display_change_password()" class="btn btn-secondary">Change password</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="update_profile_div" style="display:none" class="col-md">
+        <form>
+            {{ render_text_field(update_profile_form.first_name) }}
+
+            {{ render_text_field(update_profile_form.last_name) }}
+
+            {{ render_text_field(update_profile_form.nickname) }}
+
+            {{ render_text_field(update_profile_form.age) }}
+
+            {{ render_inline_radio_field(update_profile_form.sex) }}
+
+            {{ render_checkbox_field(update_profile_form.employee) }}
+
+            {{ render_submit_button(update_profile_form.submit) }}
+        </form>
+    </div>
+
+    <div id="change_password_div" style="display:none" class="col-md">
+        <form>
+            {{ render_text_field(change_password_form.new_password) }}
+
+            {{ render_text_field(change_password_form.confirm_password) }}
+
+            {{ render_submit_button(change_password_form.submit) }}
+        </form>
+    </div>
+</div>
 {% endblock content_page %}
