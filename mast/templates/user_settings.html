@@ -22,8 +22,10 @@
         </div>
     </div>
 
-    <div id="update_profile_div" style="display:none" class="col-md">
-        <form>
+    <div id="update_profile_div" style="display:{{ display_update_profile_form }}" class="col-md">
+        <form class="form-group" method="post">
+            {{ update_profile_form.csrf_token }}
+
             {{ render_text_field(update_profile_form.first_name) }}
 
             {{ render_text_field(update_profile_form.last_name) }}
@@ -40,8 +42,10 @@
         </form>
     </div>
 
-    <div id="change_password_div" style="display:none" class="col-md">
-        <form>
+    <div id="change_password_div" style="display:{{ display_change_password_form }}" class="col-md">
+        <form class="form-group" method="post">
+            {{ change_password_form.csrf_token }}
+
             {{ render_text_field(change_password_form.new_password) }}
 
             {{ render_text_field(change_password_form.confirm_password) }}
