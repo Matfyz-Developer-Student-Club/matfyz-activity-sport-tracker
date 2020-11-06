@@ -8,13 +8,6 @@ def load_user(user_id):
     return db.session.query(User).get(user_id)
 
 
-def get_best_run_activity_by_user(user_id, competition):
-    return db.session.query(Activity).\
-        filter_by(user_id=user_id, type=ActivityType.Run, competition=competition).\
-        order_by(Activity.average_duration_per_km.asc()).\
-        first()
-
-
 class Sex(Enum):
     Male = 1
     Female = 2
@@ -25,6 +18,12 @@ class Age(Enum):
     Over35 = 2
 
 
+class UserType(Enum):
+    Student = 1
+    Employee = 2
+    Alumni = 3
+
+
 class ActivityType(Enum):
     Walk = 1
     Run = 2
@@ -32,38 +31,39 @@ class ActivityType(Enum):
 
 
 class Competition(Enum):
-    Run5km = 1
-    Run10km = 2
+    Run5km = 5
+    Run10km = 10
 
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    name = db.Column(db.String(20), nullable=False)
-    surname = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    name = db.Column(db.String(20), nullable=False)
+    surname = db.Column(db.String(50), nullable=False)
+    display_name = db.Column(db.String(50))
     sex = db.Column(db.Enum(Sex))
     age = db.Column(db.Enum(Age))
-    display_name = db.Column(db.String(50))
-    anonymous = db.Column(db.Boolean)
+    anonymous = db.Column(db.Boolean, nullable=False, default=False)
+    type = db.Column(db.Enum(UserType))
     uk_id = db.Column(db.String(10))
     validated = db.Column(db.Boolean, nullable=False, default=False)
+    t_shirt = db.Column(db.String(100))
+    competing = db.Column(db.Boolean, nullable=False, default=True)
     activities = db.relationship('Activity', backref='user', lazy=True)
 
     def __repr__(self):
-        return f"User('{self.username}', {self.name} {self.surname}, {self.sex.name} {self.age.name})"
+        return f"User('{self.display_name}', {self.name} {self.surname}, {self.sex.name} {self.age.name})"
 
 
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False)
+    datetime = db.Column(db.DateTime, nullable=False)
     distance = db.Column(db.Float, nullable=False)
     duration = db.Column(db.Time, nullable=False)
     average_duration_per_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    competition = db.Column(db.Enum(Competition))
 
     def __repr__(self):
-        return f"Activity({self.date}: {self.type.name} {self.distance} km, time: {self.duration})"
+        return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"
