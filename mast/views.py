@@ -1,7 +1,11 @@
-from flask import redirect, request, render_template, url_for
+from flask import redirect, request, render_template, url_for, jsonify
 from mast import app
 from mast.forms import LoginForm, RegisterForm, UpdateProfile, ChangePassword
 from mast.models import UserMockup, Profile
+import json
+import datetime
+
+_DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')
 
 # Mockups for User settings
 verified_profile = Profile("jon.doe@example.com")
@@ -42,12 +46,22 @@ def register():
 @app.route('/personal_dashboard')
 @app.route('/home')
 def home():
-    return render_template("personal_dashboard.html", title='Home')
+    return render_template("personal_dashboard.html", title='Home', value_t=20)
 
 
 @app.route('/global_dashboard')
 def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
+
+
+@app.route('/get_personal_stats')
+def get_personal_stats():
+    today = datetime.datetime.now()
+    labels = [_DAY_IN_WEEKS[(day - 1) % 7] + ' ' + today.date().strftime("%x") for day in
+              range(today.day, today.day + 7)]
+    # TODO: get current_user db snapshot for last period
+    data = [12, 19, 3, 5, 2, 3, 7]
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 
 @app.route('/user_settings', methods=['GET', 'POST'])
@@ -89,4 +103,3 @@ def user_settings():
 @app.route('/integrations')
 def integrations():
     return render_template("integrations.html", title='Integrations')
-  
