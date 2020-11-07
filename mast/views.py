@@ -5,7 +5,8 @@ from mast.models import UserMockup, Profile
 
 # Mockups for User settings
 verified_profile = Profile("jon.doe@example.com")
-verified_profile.verify_profile(first_name='Jon', last_name='Doe', age=18, sex='male', employee=False, nickname='JD')
+verified_profile.complete_profile(first_name='Jon', last_name='Doe', age='<=35', sex='male', shirt_size='M', competing=True,
+                                  employee=True, display_name='JD')
 unverified_profile = Profile("alice@example.com")
 user = UserMockup(unverified_profile)
 

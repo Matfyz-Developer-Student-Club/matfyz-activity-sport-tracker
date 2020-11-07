@@ -44,10 +44,15 @@ class LoginForm(LoggingFlaskForm):
 class UpdateProfile(LoggingFlaskForm):
     first_name = StringField('First name', validators=[DataRequired(), Length(min=2, max=50)])
     last_name = StringField('Last name', validators=[DataRequired(), Length(min=2, max=50)])
-    nickname = StringField('Nickname', validators=[Length(2,50)])
-    age = IntegerField('Age', validators=[DataRequired()])
+    display_name = StringField('Display name', validators=[Length(2, 50)],
+                               description='Optional name to show on the scoreboards.')
+    age = RadioField('Age', validators=[DataRequired()], choices=['<=35', '>35'] )
     sex = RadioField('Sex', validators=[DataRequired()], choices=['male', 'female'])
-    employee = BooleanField('Faculty employee', description='Does not apply to employed students.')
+    shirt_size = RadioField('Shirt size', validators=[DataRequired()], choices=['S', 'M', 'L'])
+    employee = BooleanField('Faculty employee', validators=[DataRequired()],
+                            description='Does not apply to employed students.')
+    competing = BooleanField('I want to compete', validators=[DataRequired()],
+                             description='Display my results on the public scoreboards.')
     submit = SubmitField('Update profile')
 
 
