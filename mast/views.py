@@ -2,13 +2,7 @@ from flask import redirect, request, render_template, url_for
 from mast import app
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
 from mast.models import User
-
-# Mockups for User settings
-# verified_profile = User("jon.doe@example.com", "")
-# verified_profile.complete_profile(name='Jon', surname='Doe', age='<=35', sex='male', t_shirt='M',
-#                                   user_type='employee', display_name='JD')
-# unverified_profile = User("alice@example.com", "")
-# user = unverified_profile
+from mast import db
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -52,6 +46,9 @@ def global_dashboard():
 
 @app.route('/user_settings', methods=['GET', 'POST'])
 def user_settings():
+    # TODO: Mockups for User settings - user #1
+    user = db.session.query(User).get(1)
+
     update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
     change_password_form = ChangePasswordForm(name='chp')
