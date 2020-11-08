@@ -13,7 +13,7 @@
     {{ field.label(class="mr-2") }}
     {% for subfield in field %}
         <div class="form-check form-check-inline">
-            {{ subfield(class="form-check-input", **kwargs)|safe }}
+            {{ subfield(class="form-check-input", required=true, **kwargs)|safe }}
             {{ subfield.label(class="form-check-label") }}
         </div>
     {% endfor %}

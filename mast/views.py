@@ -1,6 +1,6 @@
 from flask import redirect, request, render_template, url_for
 from mast import app
-from mast.forms import LoginForm, RegisterForm, UpdateProfile, ChangePassword
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
 from mast.models import UserMockup, Profile
 
 # Mockups for User settings
@@ -53,13 +53,13 @@ def global_dashboard():
 
 @app.route('/user_settings', methods=['GET', 'POST'])
 def user_settings():
-    update_profile_form = UpdateProfile(name='up')
+    update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
-    change_password_form = ChangePassword(name='chp')
+    change_password_form = ChangePasswordForm(name='chp')
     display_change_password_form = 'none'
     if request.method == 'POST':
         if request.form['submit'] == 'Update profile':
-            update_profile_form = UpdateProfile(request.form)
+            update_profile_form = UpdateProfileForm(request.form)
             if update_profile_form.validate():
                 # TODO: validate the form based on db
                 # TODO: update the data in the db
@@ -69,7 +69,7 @@ def user_settings():
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
         elif request.form['submit'] == 'Change password':
-            change_password_form = ChangePassword(request.form)
+            change_password_form = ChangePasswordForm(request.form)
             if change_password_form.validate():
                 # TODO: update db
                 pass
