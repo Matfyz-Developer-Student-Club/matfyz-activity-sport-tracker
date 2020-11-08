@@ -10,22 +10,29 @@
                          height="256">
                     <div class="card-body">
                         {% if profile.verified %}
-                            <h4 class="card-title">{{ profile.first_name }} {{ '"' + profile.nickname + '"' }} {{ profile.last_name }}</h4>
+                            <h4 class="card-title">{{ profile.first_name }} {{ '"' + profile.display_name + '"' }} {{ profile.last_name }} </h4>
+                            <h5>
+                                <span class="badge badge-success">Verified</span>
+                                {% if profile.competing %}
+                                    <span class="badge badge-info">Competing</span>
+                                {% else %}
+                                    <span class="badge badge-warning">Not competing</span>
+                                {% endif %}
+                                {% if profile.employee %}
+                                    <span class="badge badge-light">Employee</span>
+                                {% endif %}
+                            </h5>
                             <p class="card-text">{{ profile.email }}</p>
-                            <p class="card-text">{{ 'Verified' }}</p>
-                            <button type="button" onclick="display_update_profile()" class="btn btn-secondary">Update
-                                profile
-                            </button>
+                            <p class="card-text">Age: {{ profile.age }}</p>
+                            <p class="card-text">Sex: {{ profile.sex }}</p>
+                            <p class="card-text">Shirt size: {{ profile.shirt_size }}</p>
+                            <button type="button" onclick="display_update_profile()" class="btn btn-secondary">Update profile </button>
                         {% else %}
-                            <p class="card-text">{{ profile.email }}</p>
-                            <p class="card-text">{{ 'Not verified' }}</p>
-                            <button type="button" onclick="display_update_profile()" class="btn btn-primary">Complete
-                                profile
-                            </button>
+                            <h5><span class="badge badge-danger">Profile incomplete</span></h5>
+                            <h5 class="card-text">{{ profile.email }}</h5>
+                            <button type="button" onclick="display_update_profile()" class="btn btn-primary">Complete profile </button>
                         {% endif %}
-                        <button type="button" onclick="display_change_password()" class="btn btn-secondary">Change
-                            password
-                        </button>
+                        <button type="button" onclick="display_change_password()" class="btn btn-secondary">Change password </button>
                     </div>
                 </div>
             </div>
@@ -37,6 +44,7 @@
 
                     {{ render_text_field(update_profile_form.last_name) }}
 
+<<<<<<< HEAD
                     {{ render_text_field(update_profile_form.nickname) }}
 
                     {{ render_text_field(update_profile_form.age) }}
@@ -44,6 +52,19 @@
                     {{ render_inline_radio_field(update_profile_form.sex) }}
 
                     {{ render_checkbox_field(update_profile_form.employee) }}
+=======
+                    {{ render_text_field(update_profile_form.display_name) }}
+
+                    {{ render_inline_radio_field(update_profile_form.age) }}
+
+                    {{ render_inline_radio_field(update_profile_form.sex) }}
+
+                    {{ render_inline_radio_field(update_profile_form.shirt_size) }}
+
+                    {{ render_checkbox_field(update_profile_form.competing) }}
+
+                    {{ render_checkbox_field(update_profile_form.user_type) }}
+>>>>>>> 098059d597b40345ddf7fd7d9c66a9f7922e81f7
 
                     {{ render_submit_button(update_profile_form.submit) }}
                 </form>

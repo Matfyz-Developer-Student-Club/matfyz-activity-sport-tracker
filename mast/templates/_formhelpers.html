@@ -10,12 +10,14 @@
 
 <!-- Render inline radio field -->
 {% macro render_inline_radio_field(field) %}
+    {{ field.label(class="mr-2") }}
     {% for subfield in field %}
         <div class="form-check form-check-inline">
-            {{ subfield(class="form-check-input", **kwargs)|safe }}
+            {{ subfield(class="form-check-input", required=true, **kwargs)|safe }}
             {{ subfield.label(class="form-check-label") }}
         </div>
     {% endfor %}
+    <br>
     {{ render_help(field) }}
     {{ render_field_errors(field) }}
 {% endmacro %}
@@ -53,7 +55,7 @@
 <!-- Render help of form field if present -->
 {% macro render_help(field) %}
     {% if field.description %}
-        <small class="form-text text-muted">
+        <small class="form-text text-muted mb-3">
             {{ field.description }}
         </small>
     {% endif %}

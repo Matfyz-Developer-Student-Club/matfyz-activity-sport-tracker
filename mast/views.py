@@ -1,20 +1,18 @@
 from flask import redirect, request, render_template, url_for, jsonify
 from mast import app
-from mast.forms import LoginForm, RegisterForm, UpdateProfile, ChangePassword
-from mast.models import UserMockup, Profile
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
+from mast.models import User
 import json
 import datetime
 
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
                  'Thursday', 'Friday', 'Saturday')
-
-# Mockups for User settings
-verified_profile = Profile("jon.doe@example.com")
-verified_profile.verify_profile(
-    first_name='Jon', last_name='Doe', age=18, sex='male', employee=False, nickname='JD')
-unverified_profile = Profile("alice@example.com")
-user = UserMockup(unverified_profile)
-
+# # Mockups for User settings
+# verified_profile = User("jon.doe@example.com", "")
+# verified_profile.complete_profile(name='Jon', surname='Doe', age='<=35', sex='male', t_shirt='M',
+#                                   user_type='employee', display_name='JD')
+# unverified_profile = User("alice@example.com", "")
+# user = unverified_profile
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -139,23 +137,24 @@ def get_global_contest_bike():
 
 @app.route('/user_settings', methods=['GET', 'POST'])
 def user_settings():
-    update_profile_form = UpdateProfile(name='up')
+    update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
-    change_password_form = ChangePassword(name='chp')
+    change_password_form = ChangePasswordForm(name='chp')
     display_change_password_form = 'none'
     if request.method == 'POST':
         if request.form['submit'] == 'Update profile':
-            update_profile_form = UpdateProfile(request.form)
+            update_profile_form = UpdateProfileForm(request.form)
             if update_profile_form.validate():
                 # TODO: validate the form based on db
                 # TODO: update the data in the db
                 # TODO delete next later
-                user.profile = verified_profile
+
+                user.verify()
             else:
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
         elif request.form['submit'] == 'Change password':
-            change_password_form = ChangePassword(request.form)
+            change_password_form = ChangePasswordForm(request.form)
             if change_password_form.validate():
                 # TODO: update db
                 pass
@@ -165,12 +164,16 @@ def user_settings():
 
     # For GET and after POST method
     return render_template("user_settings.html", title='User Settings',
-                           profile=user.profile,
+                           profile=user,
                            update_profile_form=update_profile_form,
                            display_update_profile_form=display_update_profile_form,
                            change_password_form=change_password_form,
                            display_change_password_form=display_change_password_form,
                            )
+
+@app.route('/cycling')
+def cycling():
+    return render_template("cycling.html")
 
 
 @app.route('/integrations')
