@@ -24,7 +24,7 @@ def login():
         return render_template('login.html', form=form)
     else:
         form = LoginForm(request.form)
-        if form.validate():
+        if form.validate_on_submit():
             # TODO: redirect the user to main page
             return redirect(url_for('home'))
         else:
@@ -61,7 +61,7 @@ def running_5_km():
     # TODO: replace with data from query
     items = []
     for i in range(6):
-        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i * 6)
         items.append(item)
     return render_template("running_5_km.html", items=items)
 
@@ -69,96 +69,15 @@ def running_5_km():
 @app.route('/get_running_5_km')
 def get_running_5_km():
     # TODO: replace with data from query - data of all users
-    global_data = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        2,
-        2,
-        4,
-        3,
-        4,
-        5,
-        2,
-        3,
-        5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0, ]
-    # TODO: replace with data from query - personal data of a concrete user
-    personal_data = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        2,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0, ]
-    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
-    labels = [
-        '20',
-        '21',
-        '22',
-        '23',
-        '24',
-        '25',
-        '26',
-        '27',
-        '28',
-        '29',
-        '30',
-        '31',
-        '32',
-        '33',
-        '34',
-        '35',
-        '36',
-        '37',
-        '38',
-        '39',
-        '41',
-        '42',
-        '43',
-        '44',
-        '45',
-    ]
-
-    return jsonify({'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+    return jsonify(
+        {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
 
 
 @app.route('/running_10_km')
 def running_10_km():
     items = []
     for i in range(6):
-        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i * 6)
         items.append(item)
     return render_template("running_10_km.html", items=items)
 
@@ -166,88 +85,6 @@ def running_10_km():
 @app.route('/get_running_10_km')
 def get_running_10_km():
     # TODO: replace with data from query - data of all users
-    global_data = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0, ]
-    # TODO: replace with data from query - personal data of a concrete user
-    personal_data = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        2,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0, ]
-    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
-    labels = [
-        '20',
-        '21',
-        '22',
-        '23',
-        '24',
-        '25',
-        '26',
-        '27',
-        '28',
-        '29',
-        '30',
-        '31',
-        '32',
-        '33',
-        '34',
-        '35',
-        '36',
-        '37',
-        '38',
-        '39',
-        '41',
-        '42',
-        '43',
-        '44',
-        '45',
-    ]
-
     return jsonify(
         {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
 
@@ -259,7 +96,6 @@ def running_jogging():
 
 @app.route('/get_running_jogging')
 def get_running_jogging():
-
     # TODO: replace with data from query - personal data of a concrete user
     personal_data = [
         0,
