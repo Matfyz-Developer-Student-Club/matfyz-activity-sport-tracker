@@ -7,7 +7,7 @@ jQuery(document).ready(function () {
     let _labels;
 
     $.ajax({
-        url: "/running_10_km",
+        url: "/get_running_10_km",
         type: "GET",
         data: {vals: ''},
         success: function (response) {

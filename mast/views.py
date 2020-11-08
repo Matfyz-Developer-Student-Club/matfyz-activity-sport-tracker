@@ -54,30 +54,97 @@ def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
 
 
-@app.route('/ten_km_contest')
-def ten_km_contest():
+@app.route('/running_10_km')
+def running_10_km():
     return render_template("running_10_km.html")
 
 
-@app.route('/running_10_km')
-def running_ten_km():
+@app.route('/get_running_10_km')
+def get_running_10_km():
+    # TODO: replace with data from query - data of all users
     global_data = [
-        0,
-        0,
-        0,
-    ]
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            2,
+            2,
+            4,
+            3,
+            4,
+            5,
+            2,
+            3,
+            5,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,]
     # TODO: replace with data from query - personal data of a concrete user
     personal_data = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
         1,
         1,
         2,
-    ]
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,]
     # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
     labels = [
-        '43',
-        '44',
-        '45',
-    ]
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '41',
+          '42',
+          '43',
+          '44',
+          '45',
+        ]
+
+    return jsonify({'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
 
     return jsonify(
         {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
