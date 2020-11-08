@@ -18,5 +18,31 @@
     <script src="{{ url_for('static', filename='main_layout_template.js') }}"></script>
     <h2>Achievements</h2>
     <div class="table-responsive"></div>
-    <!-- TODO: Place the activities from the database here. <table class="table table-striped table-sm"></table> -->
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <td>Date</td>
+            <td>Distance</td>
+            <td>Duration</td>
+            <td>Type of activity</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for activity in last_activities %}
+        <tr>
+            <td>
+                activity['datetime']
+            </td>
+            <td>
+                activity['distance']
+            </td>
+            <td>
+                activity['duration']
+            </td>
+            <td>
+                activity['type']
+            </td>
+        </tr>
+        </tbody>
+    </table>
 {% endblock content_page %}

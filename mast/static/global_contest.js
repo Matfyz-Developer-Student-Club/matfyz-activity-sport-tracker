@@ -1,18 +1,25 @@
 /* globals Chart:false, feather:false */
 jQuery(document).ready(function () {
+
+    function getCheckPoint(value) {
+        
+    }
+
     let _data;
     let _labels;
+    let _checkpoints;
 
     $.ajax({
-        url: "/get_global_contest_foot",
+        url: "/get_global_contest",
         type: "GET",
         data: {vals: ''},
         success: function (response) {
             full_data = JSON.parse(response.payload);
             _data = full_data['data'];
             _labels = full_data['labels'];
+            _checkpoints = full_data['checkpoints'];
 
-            var myChart_foot = new Chart(document.getElementById('myChart_foot').getContext('2d'), {
+            var myChart_foot = new Chart(document.getElementById('myChart').getContext('2d'), {
                 type: 'horizontalBar',
                 data: {
                     labels: _labels,
@@ -34,12 +41,14 @@ jQuery(document).ready(function () {
                     scales: {
                         xAxes: [{
                             ticks: {
-                                beginAtZero: true
+                                beginAtZero: true,
+                                 callback: function (value, index, values) {
+                                    return '$' + value;
+                                }
                             }
                         }],
-                        yAxes: [{
-
-                        }]
+                        yAxes: [
+                        ]
                     }
                 }
             });

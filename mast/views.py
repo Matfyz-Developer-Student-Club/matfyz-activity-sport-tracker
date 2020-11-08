@@ -5,16 +5,10 @@ from mast.models import User
 import mast.queries
 import json
 import datetime
+from mast import db
 
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
                  'Thursday', 'Friday', 'Saturday')
-
-# Mockups for User settings
-# verified_profile = User("jon.doe@example.com", "")
-# verified_profile.complete_profile(first_name='Jon', last_name='Doe', age='<=35', sex='male', shirt_size='M',
-#                                   user_type='employee', display_name='JD')
-# unverified_profile = User("alice@example.com", "")
-# user = unverified_profile
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -49,7 +43,9 @@ def register():
 @app.route('/personal_dashboard')
 @app.route('/home')
 def home():
-    return render_template("personal_dashboard.html", title='Home', value_t=20)
+    session = mast.queries.Queries()
+
+    return render_template("personal_dashboard.html", title='Home', last_activities=last_activities)
 
 
 @app.route('/global_dashboard')
@@ -124,17 +120,10 @@ def get_personal_stats():
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 
-@app.route('/get_global_contest_foot')
-def get_global_contest_foot():
-    labels = ["Where we gonna make it on foot."]
-    data = [425]
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
-
-
-@app.route('/get_global_contest_bike')
-def get_global_contest_bike():
+@app.route('/get_global_contest')
+def get_global_contest():
     session = mast.queries.Queries()
-    labels = ["Where we gonna make it by bike."]
+    labels = ["Where we gonna make it by bike.", "Where we gonna make it on foot."]
     data = session.get_global_total_distance_on_bike()
     checkpoints = session.get_challenge_parts()
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
@@ -142,6 +131,9 @@ def get_global_contest_bike():
 
 @app.route('/user_settings', methods=['GET', 'POST'])
 def user_settings():
+    # TODO: Mockups for User settings - user #1
+    user = db.session.query(User).get(1)
+
     update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
     change_password_form = ChangePasswordForm(name='chp')
