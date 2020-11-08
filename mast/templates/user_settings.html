@@ -1,3 +1,76 @@
 {% extends "main_layout_template.html" %}
+{% from "_formhelpers.html" import render_text_field, render_inline_radio_field, render_checkbox_field, render_submit_button %}
+
 {% block content_page %}
+    <div class="container">
+        <div class="row justify-content-center  mt-5">
+            <div id="user_card" class="col-4 align-self-center">
+                <div class="card">
+                    <img class="card-img-top" src="static/pics/default_avatar.svg" alt="Avatar image" width="256"
+                         height="256">
+                    <div class="card-body">
+                        {% if profile.verified %}
+                            <h4 class="card-title">{{ profile.first_name }} {{ '"' + profile.display_name + '"' }} {{ profile.last_name }} </h4>
+                            <h5>
+                                <span class="badge badge-success">Verified</span>
+                                {% if profile.competing %}
+                                    <span class="badge badge-info">Competing</span>
+                                {% else %}
+                                    <span class="badge badge-warning">Not competing</span>
+                                {% endif %}
+                                {% if profile.employee %}
+                                    <span class="badge badge-light">Employee</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text">{{ profile.email }}</p>
+                            <p class="card-text">Age: {{ profile.age }}</p>
+                            <p class="card-text">Sex: {{ profile.sex }}</p>
+                            <p class="card-text">Shirt size: {{ profile.shirt_size }}</p>
+                            <button type="button" onclick="display_update_profile()" class="btn btn-secondary">Update profile </button>
+                        {% else %}
+                            <h5><span class="badge badge-danger">Profile incomplete</span></h5>
+                            <h5 class="card-text">{{ profile.email }}</h5>
+                            <button type="button" onclick="display_update_profile()" class="btn btn-primary">Complete profile </button>
+                        {% endif %}
+                        <button type="button" onclick="display_change_password()" class="btn btn-secondary">Change password </button>
+                    </div>
+                </div>
+            </div>
+            <div id="update_profile_div" style="display:{{ display_update_profile_form }}" class="col-4 offset-2">
+                <form class="form-group" method="post">
+                    {{ update_profile_form.csrf_token }}
+
+                    {{ render_text_field(update_profile_form.first_name) }}
+
+                    {{ render_text_field(update_profile_form.last_name) }}
+
+                    {{ render_text_field(update_profile_form.display_name) }}
+
+                    {{ render_inline_radio_field(update_profile_form.age) }}
+
+                    {{ render_inline_radio_field(update_profile_form.sex) }}
+
+                    {{ render_inline_radio_field(update_profile_form.shirt_size) }}
+
+                    {{ render_checkbox_field(update_profile_form.competing) }}
+
+                    {{ render_checkbox_field(update_profile_form.user_type) }}
+
+                    {{ render_submit_button(update_profile_form.submit) }}
+                </form>
+            </div>
+
+            <div id="change_password_div" style="display:{{ display_change_password_form }}" class="col-4 offset-2">
+                <form class="form-group" method="post">
+                    {{ change_password_form.csrf_token }}
+
+                    {{ render_text_field(change_password_form.password) }}
+
+                    {{ render_text_field(change_password_form.confirm_password) }}
+
+                    {{ render_submit_button(change_password_form.submit) }}
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock content_page %}

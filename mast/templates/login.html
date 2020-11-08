@@ -48,7 +48,7 @@
 
                         {{ form.csrf_token }}
 
-                        {{ render_field(form.username) }}
+                        {{ render_field(form.email, autofocus=true, type='email') }}
 
                         {{ render_field(form.password) }}
 
