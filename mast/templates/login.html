@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4 ml-4">
-            <img src="{{url_for('static', filename='pics/running.svg')}}" alt="athlete" id="athlete" >
+            <img src="{{ url_for('static', filename='pics/running.svg') }}" alt="athlete" id="athlete" >
         </div>
         <div class="col-md-2">
         </div>
@@ -21,12 +21,12 @@
                     <p>Compete, track and enjoy</p>
                 </div>
 
-                {{ render_field(form.email, autofocus=true) }}
+                {{ render_text_field(form.email, autofocus=true, type='email') }}
 
-                {{ render_field(form.password) }}
+                {{ render_text_field(form.password) }}
 
                 <div class="checkbox mb-3">
-                    {{ render_checkbox(form.remember) }}
+                    {{ render_checkbox_field(form.remember) }}
                     <br>
                     <a href="{{ url_for( 'register' ) }}">Create a new account.</a>
                 </div>

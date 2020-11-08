@@ -1,3 +1,4 @@
+{% from "_formhelpers.html" import render_field, render_checkbox, render_submit_button %}
 {% extends "auth_template.html" %}
 {% block form %}
 <form class="form-signin" method="post">
@@ -13,13 +14,11 @@
         <p>Compete, track and enjoy</p>
     </div>
 
-    {{ render_field(form.username, autofocus=true) }}
+    {{ render_text_field(form.email, autofocus=true, type='email') }}
 
-    {{ render_field(form.email) }}
+    {{ render_text_field(form.password) }}
 
-    {{ render_field(form.password) }}
-
-    {{ render_field(form.confirm_password) }}
+    {{ render_text_field(form.confirm_password) }}
 
     <div class="checkbox mb-3">
         <!-- TODO: Add support for 3-rd party applications. -->
