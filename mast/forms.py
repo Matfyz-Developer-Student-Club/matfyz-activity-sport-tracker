@@ -1,6 +1,7 @@
 from typing import Dict, Any, Callable
 
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileRequired
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
 import logging
@@ -77,6 +78,5 @@ class ChangePasswordForm(LoggingFlaskForm):
 
 class AddActivityForm(LoggingFlaskForm):
     activity = RadioField('Activity', validators=[DataRequired()], choices=['walk', 'run', 'bike'])
-    file = FileField('GPX file', validators=[DataRequired(), Regexp('^[^/\\\\]+\.gpx$')],
-                     description='Upload gpx file.')
+    file = FileField('GPX file', validators=[FileRequired()])
     submit = SubmitField('Add activity')

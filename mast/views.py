@@ -1,8 +1,14 @@
+import os
+
 from flask import redirect, request, render_template, url_for
+from werkzeug.utils import secure_filename
+
 from mast import app
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
 from mast.models import User
 from mast import db
+
+UPLOAD_FILE_DIR = 'landing'
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -37,13 +43,13 @@ def register():
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     add_activity_form = AddActivityForm()
-    if request.method == 'POST':
-        add_activity_form = AddActivityForm(request.form)
-        if add_activity_form.validate():
-            # TODO: validate uploaded file
-            # TODO: add the record to the databse
-            pass
-        # Else render form with errors
+    print(request.form)
+    if add_activity_form.validate_on_submit():
+        # TODO: validate uploaded file
+        # TODO: add the record to the database
+        print('Validated')
+        filename = secure_filename(add_activity_form.file.data.filename)
+        add_activity_form.file.data.save(os.path.join(UPLOAD_FILE_DIR, filename))
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form)
 
 
