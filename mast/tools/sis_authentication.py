@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 
 
-def authenticate_via_sis(name, surname, login=None, ukco=None, is_employee=False):
+def authenticate_via_sis(name, surname, login=None, ukco=None, is_employee='Student'):
     """
     Simple authentication via sis.
     Employee must submit: name, surname
@@ -15,7 +15,7 @@ def authenticate_via_sis(name, surname, login=None, ukco=None, is_employee=False
     :param is_employee: bool if the person is employee
     :return: True if such person exists, False otherwise
     """
-    if is_employee:
+    if is_employee == 'Employee':
         if not name or not surname:
             # expecting both name and surname
             print('Expected both name and surname\nName={}\nSurname={}'.format(name, surname))
@@ -74,7 +74,10 @@ def __get_number_of_employees(page):
     :return: number of employees in the results
     """
     soup = BeautifulSoup(page.content, 'html.parser')
-
+    content = soup.select('#page_div > b:nth-child(3)')
+    for text in content:
+        for part in text:
+            return __get_number(part)
     return 0
 
 
