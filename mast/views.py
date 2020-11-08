@@ -172,22 +172,22 @@ def get_running_10_km():
         0,
         0,
         1,
-        2,
-        2,
-        4,
-        3,
-        4,
-        5,
-        2,
-        3,
-        5,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
         0,
         0,
         0,
         0,
         0,
         0,
-        0]
+        0, ]
     # TODO: replace with data from query - personal data of a concrete user
     personal_data = [
         0,
@@ -214,7 +214,7 @@ def get_running_10_km():
         0,
         0,
         0,
-        0]
+        0, ]
     # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
     labels = [
         '20',
@@ -241,10 +241,36 @@ def get_running_10_km():
         '42',
         '43',
         '44',
-        '45']
+        '45',
+    ]
 
     return jsonify(
         {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+
+
+@app.route('/running_jogging')
+def running_jogging():
+    return render_template("running_jogging.html")
+
+
+@app.route('/get_running_jogging')
+def get_running_jogging():
+
+    # TODO: replace with data from query - personal data of a concrete user
+    personal_data = [
+        0,
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+    ]
+    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
+    labels = ['Monday', 'Tuesday', 'Wednesday',
+              'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
 
 
 @app.route('/get_personal_stats')
