@@ -1,5 +1,5 @@
 from flask import redirect, request, render_template, url_for, jsonify
-from mast.forms import LoginForm, RegisterForm, UpdateProfile, ChangePassword, UpdateProfileForm, ChangePasswordForm
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
 from mast import app
 from mast.models import User
 from mast import db
