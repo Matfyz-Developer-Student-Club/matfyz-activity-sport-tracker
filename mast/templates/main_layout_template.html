@@ -125,7 +125,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link activity-wrap" href="#">
+                        <a class="nav-link activity-wrap" href="{{ url_for('running_jogging') }}">
                             <img class="activity" src="{{ url_for('static', filename='pics/jogging.svg') }}"
                                  alt="Jogging" width="16" height="16">
                             Running / Jogging
@@ -145,7 +145,6 @@
         </nav>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-
             {% block content_page %}
             {% endblock content_page %}
 
