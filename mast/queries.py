@@ -26,7 +26,7 @@ class Queries(object):
                    func.date(Activity.datetime) <= self.SEASON.end_date).\
             order_by(Activity.datetime.desc()).\
             limit(number).\
-            first()
+            all()
 
     def save_new_user_activities(self, user_id: int, activity: Activity):
         """
