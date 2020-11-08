@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
     activities = db.relationship('Activity', backref='user', lazy=True)
 
     def __repr__(self):
-        return f"User('{self.display_name}', {self.first_name} {self.last_name}, {self.sex.name} {self.age.name})"
+        return f"User('{self.email}')"
 
     def __init__(self, email, password):
         assert(email is not None and

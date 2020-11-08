@@ -2,7 +2,12 @@
 jQuery(document).ready(function () {
 
     function getCheckPoint(value) {
-        
+        for (const key in _checkpoints) {
+            // check if the property/key is defined in the object itself, not in parent
+            if (_checkpoints.hasOwnProperty(key)) {
+                console.log(key, _checkpoints[key]);
+            }
+        }
     }
 
     let _data;
@@ -42,13 +47,12 @@ jQuery(document).ready(function () {
                         xAxes: [{
                             ticks: {
                                 beginAtZero: true,
-                                 callback: function (value, index, values) {
+                                callback: function (value, index, values) {
                                     return '$' + value;
                                 }
                             }
                         }],
-                        yAxes: [
-                        ]
+                        yAxes: []
                     }
                 }
             });

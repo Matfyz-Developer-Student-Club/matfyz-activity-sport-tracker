@@ -1,11 +1,11 @@
 from flask import redirect, request, render_template, url_for, jsonify
-from mast import app
+from flask_login import login_user, current_user, logout_user, login_required
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
 from mast.models import User
 import mast.queries
 import json
 import datetime
-from mast import db
+from mast import db, app, bcr
 
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
                  'Thursday', 'Friday', 'Saturday')
@@ -19,11 +19,18 @@ def login():
         return render_template('login.html', form=form)
     else:
         form = LoginForm(request.form)
-        if form.validate_on_submit():
-            # TODO: redirect the user to main page
-            return redirect(url_for('home'))
-        else:
-            return render_template('login.html', form=form)
+        if form.validate():
+            user = User.query.filter_by(email=form.email.data).first()
+            if user and bcr.check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember.data)
+                next_page = request.args.get('next')
+
+                if next_page:
+                    redirect(next_page)
+                else:
+                    return redirect(url_for('home'))
+        # TODO: Inform user about incorrect passwd
+        return render_template('login.html', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -33,27 +40,52 @@ def register():
         return render_template('register.html', form=form)
     else:
         form = RegisterForm(request.form)
-        if form.validate():
-            # TODO: add user to database
+        if form.validate_on_submit():
+            hashed_password = bcr.generate_password_hash(form.password.data).decode('UTF-8')
+            user = User(email=form.email.data, password=hashed_password)
+            db.session.add(user)
+            db.session.commit()
             return redirect(url_for('login'))
         else:
             return render_template('register.html', form=form)
 
 
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
 @app.route('/personal_dashboard')
 @app.route('/home')
+@login_required
 def home():
     session = mast.queries.Queries()
-
+    last_activities = session.get_user_last_activities(current_user.id, 10)
+    last_activities = [] if not last_activities else last_activities
     return render_template("personal_dashboard.html", title='Home', last_activities=last_activities)
 
 
 @app.route('/global_dashboard')
+@login_required
 def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
 
 
+@app.route('/get_global_contest')
+@login_required
+def get_global_contest():
+    session = mast.queries.Queries()
+    labels = ["Where we gonna make it by bike.", "Where we gonna make it on foot."]
+    data = session.get_global_total_distance_on_bike()
+    # checkpoints = session.get_challenge_parts()
+    checkpoints = {'a': 2, 'b': 3}
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
+
+
+
 @app.route('/running_5_km')
+@login_required
 def running_5_km():
     # TODO: replace with data from query
     items = []
@@ -64,6 +96,7 @@ def running_5_km():
 
 
 @app.route('/get_running_5_km')
+@login_required
 def get_running_5_km():
     # TODO: replace with data from query - data of all users
     return jsonify(
@@ -71,6 +104,7 @@ def get_running_5_km():
 
 
 @app.route('/running_10_km')
+@login_required
 def running_10_km():
     items = []
     for i in range(6):
@@ -80,6 +114,7 @@ def running_10_km():
 
 
 @app.route('/get_running_10_km')
+@login_required
 def get_running_10_km():
     # TODO: replace with data from query - data of all users
     return jsonify(
@@ -87,11 +122,13 @@ def get_running_10_km():
 
 
 @app.route('/running_jogging')
+@login_required
 def running_jogging():
     return render_template("running_jogging.html")
 
 
 @app.route('/get_running_jogging')
+@login_required
 def get_running_jogging():
     # TODO: replace with data from query - personal data of a concrete user
     personal_data = [
@@ -111,6 +148,7 @@ def get_running_jogging():
 
 
 @app.route('/get_personal_stats')
+@login_required
 def get_personal_stats():
     today = datetime.datetime.now()
     labels = [_DAY_IN_WEEKS[(day - 1) % 7] + ' ' + today.date().strftime("%x") for day in
@@ -120,16 +158,8 @@ def get_personal_stats():
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 
-@app.route('/get_global_contest')
-def get_global_contest():
-    session = mast.queries.Queries()
-    labels = ["Where we gonna make it by bike.", "Where we gonna make it on foot."]
-    data = session.get_global_total_distance_on_bike()
-    checkpoints = session.get_challenge_parts()
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
-
-
 @app.route('/user_settings', methods=['GET', 'POST'])
+@login_required
 def user_settings():
     # TODO: Mockups for User settings - user #1
     user = db.session.query(User).get(1)
@@ -170,10 +200,12 @@ def user_settings():
 
 
 @app.route('/cycling')
+@login_required
 def cycling():
     return render_template("cycling.html")
 
 
 @app.route('/integrations')
+@login_required
 def integrations():
     return render_template("integrations.html", title='Integrations')
