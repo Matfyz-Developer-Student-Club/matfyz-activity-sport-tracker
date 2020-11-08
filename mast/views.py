@@ -2,17 +2,20 @@ from flask import redirect, request, render_template, url_for, jsonify
 from mast import app
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
 from mast.models import User
+import mast.queries
 import json
 import datetime
 
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
                  'Thursday', 'Friday', 'Saturday')
-# # Mockups for User settings
+
+# Mockups for User settings
 # verified_profile = User("jon.doe@example.com", "")
-# verified_profile.complete_profile(name='Jon', surname='Doe', age='<=35', sex='male', t_shirt='M',
+# verified_profile.complete_profile(first_name='Jon', last_name='Doe', age='<=35', sex='male', shirt_size='M',
 #                                   user_type='employee', display_name='JD')
 # unverified_profile = User("alice@example.com", "")
 # user = unverified_profile
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -130,9 +133,11 @@ def get_global_contest_foot():
 
 @app.route('/get_global_contest_bike')
 def get_global_contest_bike():
+    session = mast.queries.Queries()
     labels = ["Where we gonna make it by bike."]
-    data = [211]
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+    data = session.get_global_total_distance_on_bike()
+    checkpoints = session.get_challenge_parts()
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
 
 
 @app.route('/user_settings', methods=['GET', 'POST'])
@@ -170,6 +175,7 @@ def user_settings():
                            change_password_form=change_password_form,
                            display_change_password_form=display_change_password_form,
                            )
+
 
 @app.route('/cycling')
 def cycling():
