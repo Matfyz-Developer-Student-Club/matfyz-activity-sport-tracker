@@ -277,6 +277,31 @@ def get_running_jogging():
     return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
 
 
+@app.route('/cycling')
+def cycling():
+    return render_template("cycling.html")
+
+
+@app.route('/get_cycling')
+def get_cycling():
+
+    # TODO: replace with data from query - personal data of a concrete user
+    personal_data = [
+        0,
+        1,
+        3,
+        2,
+        2,
+        3,
+        1,
+    ]
+    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
+    labels = ['Monday', 'Tuesday', 'Wednesday',
+              'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
+
+
 @app.route('/get_personal_stats')
 def get_personal_stats():
     today = datetime.datetime.now()
