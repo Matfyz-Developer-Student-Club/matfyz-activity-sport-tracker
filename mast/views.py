@@ -64,7 +64,7 @@ def home():
     session = mast.queries.Queries()
     last_activities = session.get_user_last_activities(current_user.id, 10)
     # last_activities = [] if not last_activities else last_activities
-    last_activities = []    
+    last_activities = []
     return render_template("personal_dashboard.html", title='Home', last_activities=last_activities)
 
 
@@ -76,7 +76,6 @@ def get_personal_stats():
     labels = [key for key, val in data.items()]
     data = [val for key, val in data.items()]
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
-
 
 
 @app.route('/global_dashboard')
@@ -157,7 +156,6 @@ def get_running_jogging():
               'Thursday', 'Friday', 'Saturday', 'Sunday']
 
     return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
-
 
 
 @app.route('/user_settings', methods=['GET', 'POST'])

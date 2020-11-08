@@ -12,10 +12,22 @@ class Sex(Enum):
     Male = 1
     Female = 2
 
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
 
 class Age(Enum):
     Under35 = 1
     Over35 = 2
+
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
 
 
 class UserType(Enum):
@@ -56,21 +68,22 @@ class User(db.Model, UserMixin):
         return f"User('{self.email}')"
 
     def __init__(self, email, password):
-        assert(email is not None and
-               password is not None)
+        assert (email is not None and
+                password is not None)
         self.email = email
         self.password = password
         db.session.add(self)
         db.session.commit()
 
-    def complete_profile(self, first_name, last_name, age, sex, shirt_size, user_type, ukco, anonymous, display_name=None):
-        assert(first_name is not None and
-               last_name is not None and
-               age is not None and
-               sex is not None and
-               shirt_size is not None and
-               user_type is not None and
-               ukco is not None)
+    def complete_profile(self, first_name, last_name, age, sex, shirt_size, user_type, ukco, anonymous,
+                         display_name=None):
+        assert (first_name is not None and
+                last_name is not None and
+                age is not None and
+                sex is not None and
+                shirt_size is not None and
+                user_type is not None and
+                ukco is not None)
         self.first_name = first_name
         self.last_name = last_name
         if age == '<=35':
@@ -100,7 +113,7 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
     def change_password(self, password):
-        assert(password is not None)
+        assert (password is not None)
         self.password = password
         db.session.add(self)
         db.session.commit()
