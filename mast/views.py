@@ -1,4 +1,8 @@
+import os
+
 from flask import redirect, request, render_template, url_for
+from werkzeug.utils import secure_filename
+
 from mast import app
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
 from mast.models import User
@@ -11,6 +15,8 @@ from mast.tools.sis_authentication import authenticate_via_sis
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
                  'Thursday', 'Friday', 'Saturday')
 
+
+UPLOAD_FILE_DIR = 'landing'
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -62,15 +68,12 @@ def home():
     last_activities = session.get_user_last_activities(current_user.id, 10)
     last_activities = [] if not last_activities else last_activities
     add_activity_form = AddActivityForm()
-    if request.method == 'POST':
-        add_activity_form = AddActivityForm(request.form)
-        if add_activity_form.validate():
-            # TODO: validate uploaded file
-            # TODO: add the record to the databse
-            pass
-        # Else render form with errors
-    return render_template("personal_dashboard.html", title='Home', last_activities=last_activities, form=add_activity_form)
-
+    if add_activity_form.validate_on_submit():
+        # TODO: validate uploaded file
+        # TODO: add the record to the database
+        filename = secure_filename(add_activity_form.file.data.filename)
+        add_activity_form.file.data.save(os.path.join(UPLOAD_FILE_DIR, filename))
+    return render_template("personal_dashboard.html", title='Home', form=add_activity_form)
 
 @app.route('/get_personal_stats')
 @login_required
