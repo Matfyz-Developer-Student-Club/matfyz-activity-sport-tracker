@@ -36,7 +36,7 @@ class Competition(Enum):
 
 
 class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     name = db.Column(db.String(20), nullable=False)
@@ -57,7 +57,7 @@ class User(db.Model, UserMixin):
 
 
 class Activity(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     datetime = db.Column(db.DateTime, nullable=False)
     distance = db.Column(db.Float, nullable=False)
     duration = db.Column(db.Time, nullable=False)
@@ -67,3 +67,25 @@ class Activity(db.Model):
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"
+
+
+class Season(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(100), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    challenge_parts = db.relationship('ChallengePart', order_by='ChallengePart.order', backref='season', lazy=True)
+
+    def __repr__(self):
+        return f"Activity({self.title}: {self.start_date} - {self.end_date})"
+
+
+class ChallengePart(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
+    order = db.Column(db.Integer, nullable=False)
+    target = db.Column(db.String(100), nullable=False)
+    distance = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"ChallengePart(#{self.order}: to {self.target} {self.distance} km)"
