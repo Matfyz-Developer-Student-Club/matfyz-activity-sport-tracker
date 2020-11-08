@@ -1,8 +1,8 @@
 from typing import Dict, Any, Callable
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, RadioField, HiddenField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField, FileField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
 import logging
 
 ## Logging setup
@@ -70,6 +70,13 @@ class UpdateProfileForm(LoggingFlaskForm):
 
 class ChangePasswordForm(LoggingFlaskForm):
     password = PasswordField('New password', validators=[DataRequired(), Length(min=8, max=50)],
-                                 render_kw={**min_length_attribute(8), **max_length_attribute(50)})
+                             render_kw={**min_length_attribute(8), **max_length_attribute(50)})
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Update password')
+
+
+class AddActivityForm(LoggingFlaskForm):
+    activity = RadioField('Activity', validators=[DataRequired()], choices=['walk', 'run', 'bike'])
+    file = FileField('GPX file', validators=[DataRequired(), Regexp('^[^/\\\\]+\.gpx$')],
+                     description='Upload gpx file.')
+    submit = SubmitField('Add activity')

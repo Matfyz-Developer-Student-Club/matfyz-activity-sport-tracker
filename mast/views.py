@@ -1,6 +1,6 @@
 from flask import redirect, request, render_template, url_for
 from mast import app
-from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
 from mast.models import User
 from mast import db
 
@@ -33,10 +33,18 @@ def register():
             return render_template('register.html', form=form)
 
 
-@app.route('/personal_dashboard')
-@app.route('/home')
+@app.route('/personal_dashboard', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def home():
-    return render_template("personal_dashboard.html", title='Home')
+    add_activity_form = AddActivityForm()
+    if request.method == 'POST':
+        add_activity_form = AddActivityForm(request.form)
+        if add_activity_form.validate():
+            # TODO: validate uploaded file
+            # TODO: add the record to the databse
+            pass
+        # Else render form with errors
+    return render_template("personal_dashboard.html", title='Home', form=add_activity_form)
 
 
 @app.route('/global_dashboard')

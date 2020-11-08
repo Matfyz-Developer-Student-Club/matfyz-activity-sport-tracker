@@ -39,6 +39,15 @@
     {{ render_field_errors(field) }}
 {% endmacro %}
 
+<!-- Render a file upload form -->
+{% macro render_file_upload_field(field) %}
+    <div class="form-group">
+        {{ field(class="form-control form-control-file", **kwargs)|safe }}
+        {{ render_help(field) }}
+        {{ render_field_errors(field) }}
+    </div>
+{% endmacro %}
+
 <!-- PRIVATE ------------------------------------------------------------------>
 
 <!-- Render errors of form field if present -->
