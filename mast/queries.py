@@ -201,7 +201,9 @@ class Queries(object):
             all()
 
         result = {}
+        dist = 0
         for item in query_result:
-            result[item.target] = item.distance
+            dist += item.distance
+            result[dist] = item.target
 
         return result
