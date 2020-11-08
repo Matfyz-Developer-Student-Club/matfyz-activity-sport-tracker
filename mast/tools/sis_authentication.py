@@ -74,10 +74,7 @@ def __get_number_of_employees(page):
     :return: number of employees in the results
     """
     soup = BeautifulSoup(page.content, 'html.parser')
-    content = soup.select('#page_div > b:nth-child(3)')
-    for text in content:
-        for part in text:
-            return __get_number(part)
+
     return 0
 
 
@@ -88,6 +85,12 @@ def __get_number_of_students(page):
     :return: number of students in the results
     """
     soup = BeautifulSoup(page.content, 'html.parser')
+
+    content = soup.select('#page_div > b:nth-child(3)')
+    for text in content:
+        for part in text:
+            return __get_number(part)
+
     content = soup.select('#content > table >  tr > td.info_text > ul > li')
     for text in content:
         for part in text:
