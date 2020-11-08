@@ -5,11 +5,13 @@ from mast.models import UserMockup, Profile
 import json
 import datetime
 
-_DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')
+_DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
+                 'Thursday', 'Friday', 'Saturday')
 
 # Mockups for User settings
 verified_profile = Profile("jon.doe@example.com")
-verified_profile.verify_profile(first_name='Jon', last_name='Doe', age=18, sex='male', employee=False, nickname='JD')
+verified_profile.verify_profile(
+    first_name='Jon', last_name='Doe', age=18, sex='male', employee=False, nickname='JD')
 unverified_profile = Profile("alice@example.com")
 user = UserMockup(unverified_profile)
 
@@ -54,40 +56,45 @@ def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
 
 
-@app.route('/running_10_km')
-def running_10_km():
-    return render_template("running_10_km.html")
+@app.route('/running_5_km')
+def running_5_km():
+    # TODO: replace with data from query
+    items = []
+    for i in range(6):
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        items.append(item)
+    return render_template("running_5_km.html", items=items)
 
 
-@app.route('/get_running_10_km')
-def get_running_10_km():
+@app.route('/get_running_5_km')
+def get_running_5_km():
     # TODO: replace with data from query - data of all users
     global_data = [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            2,
-            2,
-            4,
-            3,
-            4,
-            5,
-            2,
-            3,
-            5,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,]
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        4,
+        3,
+        4,
+        5,
+        2,
+        3,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0, ]
     # TODO: replace with data from query - personal data of a concrete user
     personal_data = [
         0,
@@ -114,37 +121,127 @@ def get_running_10_km():
         0,
         0,
         0,
-        0,]
+        0, ]
     # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
     labels = [
-          '20',
-          '21',
-          '22',
-          '23',
-          '24',
-          '25',
-          '26',
-          '27',
-          '28',
-          '29',
-          '30',
-          '31',
-          '32',
-          '33',
-          '34',
-          '35',
-          '36',
-          '37',
-          '38',
-          '39',
-          '41',
-          '42',
-          '43',
-          '44',
-          '45',
-        ]
+        '20',
+        '21',
+        '22',
+        '23',
+        '24',
+        '25',
+        '26',
+        '27',
+        '28',
+        '29',
+        '30',
+        '31',
+        '32',
+        '33',
+        '34',
+        '35',
+        '36',
+        '37',
+        '38',
+        '39',
+        '41',
+        '42',
+        '43',
+        '44',
+        '45',
+    ]
 
     return jsonify({'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+
+
+@app.route('/running_10_km')
+def running_10_km():
+    return render_template("running_10_km.html")
+
+
+@app.route('/get_running_10_km')
+def get_running_10_km():
+    # TODO: replace with data from query - data of all users
+    global_data = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        4,
+        3,
+        4,
+        5,
+        2,
+        3,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0]
+    # TODO: replace with data from query - personal data of a concrete user
+    personal_data = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0]
+    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
+    labels = [
+        '20',
+        '21',
+        '22',
+        '23',
+        '24',
+        '25',
+        '26',
+        '27',
+        '28',
+        '29',
+        '30',
+        '31',
+        '32',
+        '33',
+        '34',
+        '35',
+        '36',
+        '37',
+        '38',
+        '39',
+        '41',
+        '42',
+        '43',
+        '44',
+        '45']
 
     return jsonify(
         {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
