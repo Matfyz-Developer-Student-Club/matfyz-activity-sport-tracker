@@ -117,7 +117,7 @@ def init():
 def test_data():
     user = User(email='a@b.cz', password='')
     user.complete_profile(first_name='Donald', last_name='Trump', age='>35', sex='male',
-                          shirt_size='L', user_type='Student')
+                          shirt_size='L', user_type='Student', ukco='')
 
     activity = Activity(datetime=datetime(2020, 11, 5, 15, 32, 15), distance=12.5, duration=time(0, 18, 45),
                         average_duration_per_km=time(0, 1, 30), type=ActivityType.Run, user_id=user.id)
@@ -137,7 +137,7 @@ def test_data():
 
     user = User(email='a@b.com', password='')
     user.complete_profile(first_name='Joe', last_name='Biden', age='>35', sex='male',
-                          shirt_size='L', user_type='Student')
+                          shirt_size='L', user_type='Student', ukco='')
 
     activity = Activity(datetime=datetime(2020, 11, 5, 15, 32, 15), distance=10, duration=time(0, 20, 0),
                         average_duration_per_km=time(0, 2, 0), type=ActivityType.Run, user_id=user.id)

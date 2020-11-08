@@ -6,6 +6,7 @@ import mast.queries
 import json
 import datetime
 from mast import db, app, bcr
+from mast.tools.sis_authentication import authenticate_via_sis
 
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
                  'Thursday', 'Friday', 'Saturday')
@@ -81,7 +82,6 @@ def get_global_contest():
     # checkpoints = session.get_challenge_parts()
     checkpoints = {'a': 2, 'b': 3}
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
-
 
 
 @app.route('/running_5_km')
@@ -161,9 +161,6 @@ def get_personal_stats():
 @app.route('/user_settings', methods=['GET', 'POST'])
 @login_required
 def user_settings():
-    # TODO: Mockups for User settings - user #1
-    user = db.session.query(User).get(1)
-
     update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
     change_password_form = ChangePasswordForm(name='chp')
@@ -172,26 +169,35 @@ def user_settings():
         if request.form['submit'] == 'Update profile':
             update_profile_form = UpdateProfileForm(request.form)
             if update_profile_form.validate():
-                # TODO: validate the form based on db
-                # TODO: update the data in the db
-                # TODO delete next later
-
-                user.verify()
+                current_user.complete_profile(first_name=update_profile_form.first_name.data,
+                                              last_name=update_profile_form.last_name.data,
+                                              age=update_profile_form.age.data,
+                                              sex=update_profile_form.sex.data,
+                                              shirt_size=update_profile_form.shirt_size.data,
+                                              user_type=update_profile_form.user_type.data,
+                                              ukco=update_profile_form.ukco.data,
+                                              display_name=update_profile_form.display_name.data,
+                                              anonymous=not update_profile_form.competing.data)
+                # TODO: Bugfix
+                if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None, ukco=current_user.uk_id, is_employee=False):
+                    current_user.verify()
             else:
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
         elif request.form['submit'] == 'Change password':
             change_password_form = ChangePasswordForm(request.form)
             if change_password_form.validate():
-                # TODO: update db
-                pass
+                hashed_password = bcr.generate_password_hash(change_password_form.password.data).decode('UTF-8')
+                db.session.query(User).filter(User.id == current_user.id).update({User.password: hashed_password})
+                db.session.commit()
+                return redirect(url_for('user_settings'))
             else:
                 # Keep the form visible if it contains errors
                 display_change_password_form = 'block'
 
     # For GET and after POST method
     return render_template("user_settings.html", title='User Settings',
-                           profile=user,
+                           profile=current_user,
                            update_profile_form=update_profile_form,
                            display_update_profile_form=display_update_profile_form,
                            change_password_form=change_password_form,
