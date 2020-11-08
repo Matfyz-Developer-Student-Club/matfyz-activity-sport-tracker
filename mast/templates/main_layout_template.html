@@ -19,6 +19,9 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
     integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
+  <!-- Custom CSS sheets -->
+  <link href="{{url_for('static', filename='forms.css')}}" rel="stylesheet">
+
   <style>
     .bd-placeholder-img {
       font-size: 1.125rem;
@@ -111,7 +114,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link activity-wrap" href="#">
-                <img class="activity" src="{{ url_for('static', filename='pics/Jogging.svg') }}" alt="Jogging" width="16" height="16">
+                <img class="activity" src="{{ url_for('static', filename='pics/jogging.svg') }}" alt="Jogging" width="16" height="16">
                 Running / Jogging
                 <span class="sr-only"></span>
               </a>
@@ -128,11 +131,10 @@
       </nav>
 
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-        <div
-          class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+
           {%block content_page%}
           {%endblock content_page%}
-        </div>
+
       </main>
     </div>
   </div>
@@ -146,6 +148,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
   <script src="{{ url_for('static', filename='main_layout_template.js')}}"></script>
+  <script src="{{ url_for('static', filename='user_settings.js')}}"></script>
+  <script src="{{ url_for('static', filename='form_validation.js')}}"></script>
 </body>
 
 </html>
