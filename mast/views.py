@@ -2,8 +2,9 @@ from flask import redirect, request, render_template, url_for
 from mast.forms import LoginForm, RegisterForm
 from mast import app
 
+
 @app.route('/', methods=['GET', 'POST'])
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/main', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         form = LoginForm()
@@ -12,7 +13,7 @@ def login():
         form = LoginForm(request.form)
         if form.validate():
             # TODO: redirect the user to main page
-            return 'MAST homepage'
+            return render_template("personal_dashboard.html", title='Home')
         else:
             return render_template('login.html', form=form)
 
@@ -41,11 +42,27 @@ def home():
 def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
 
+
 @app.route('/user_settings')
 def user_settings():
     return render_template("user_settings.html", title='User Settings')
 
+
 @app.route('/integrations')
 def integrations():
     return render_template("integrations.html", title='Integrations')
-  
+
+
+@app.route('/running_5_km')
+def running_5_km():
+    return render_template("running_5_km.html", title='Running - 5 km')
+
+
+@app.route('/running_10_km')
+def running_10_km():
+    return render_template("running_10_km.html", title='Running - 10 km')
+
+
+@app.route('/running_jogging')
+def running_jogging():
+    return render_template("running_jogging.html", title='Running / Jogging')
