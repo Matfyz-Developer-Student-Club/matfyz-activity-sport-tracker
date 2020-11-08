@@ -1,6 +1,6 @@
-from flask import redirect, request, render_template, url_for, jsonify
-from flask_login import login_user, current_user, logout_user, login_required
-from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
+from flask import redirect, request, render_template, url_for
+from mast import app
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
 from mast.models import User
 import mast.queries
 import json
@@ -54,14 +54,22 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/personal_dashboard')
-@app.route('/home')
+@app.route('/personal_dashboard', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
     session = mast.queries.Queries()
     last_activities = session.get_user_last_activities(current_user.id, 10)
     last_activities = [] if not last_activities else last_activities
-    return render_template("personal_dashboard.html", title='Home', last_activities=last_activities)
+    add_activity_form = AddActivityForm()
+    if request.method == 'POST':
+        add_activity_form = AddActivityForm(request.form)
+        if add_activity_form.validate():
+            # TODO: validate uploaded file
+            # TODO: add the record to the databse
+            pass
+        # Else render form with errors
+    return render_template("personal_dashboard.html", title='Home', last_activities=last_activities, form=add_activity_form)
 
 
 @app.route('/get_personal_stats')
