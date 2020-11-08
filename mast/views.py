@@ -63,8 +63,20 @@ def logout():
 def home():
     session = mast.queries.Queries()
     last_activities = session.get_user_last_activities(current_user.id, 10)
-    last_activities = [] if not last_activities else last_activities
+    # last_activities = [] if not last_activities else last_activities
+    last_activities = []    
     return render_template("personal_dashboard.html", title='Home', last_activities=last_activities)
+
+
+@app.route('/get_personal_stats')
+@login_required
+def get_personal_stats():
+    session = mast.queries.Queries()
+    data = session.get_total_distances_by_user_in_last_days(user_id=current_user.id, days=len(_DAY_IN_WEEKS))
+    labels = [key for key, val in data.items()]
+    data = [val for key, val in data.items()]
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
 
 
 @app.route('/global_dashboard')
@@ -147,16 +159,6 @@ def get_running_jogging():
     return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
 
 
-@app.route('/get_personal_stats')
-@login_required
-def get_personal_stats():
-    today = datetime.datetime.now()
-    labels = [_DAY_IN_WEEKS[(day - 1) % 7] + ' ' + today.date().strftime("%x") for day in
-              range(today.day, today.day + 7)]
-    # TODO: get current_user db snapshot for last period
-    data = [12, 19, 3, 5, 2, 3, 7]
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
-
 
 @app.route('/user_settings', methods=['GET', 'POST'])
 @login_required
@@ -179,7 +181,8 @@ def user_settings():
                                               display_name=update_profile_form.display_name.data,
                                               anonymous=not update_profile_form.competing.data)
                 # TODO: Bugfix
-                if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None, ukco=current_user.uk_id, is_employee=False):
+                if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
+                                        ukco=current_user.uk_id, is_employee=False):
                     current_user.verify()
             else:
                 # Keep the form visible if it contains errors
