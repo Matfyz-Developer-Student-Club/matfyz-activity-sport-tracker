@@ -283,7 +283,12 @@ def get_running_jogging():
 
 @app.route('/cycling')
 def cycling():
-    return render_template("cycling.html")
+    # TODO: replace with data from query
+    items = []
+    for i in range(6):
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        items.append(item)
+    return render_template("cycling.html", items=items)
 
 
 @app.route('/get_cycling')
