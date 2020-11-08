@@ -1,21 +1,13 @@
 from flask import redirect, request, render_template, url_for, jsonify
+from mast.forms import LoginForm, RegisterForm, UpdateProfile, ChangePassword, UpdateProfileForm, ChangePasswordForm
 from mast import app
-from mast.forms import LoginForm, RegisterForm, UpdateProfile, ChangePassword
-from mast.models import UserMockup, Profile
+from mast.models import User
+from mast import db
 import json
 import datetime
 
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
                  'Thursday', 'Friday', 'Saturday')
-
-# Mockups for User settings
-verified_profile = Profile("jon.doe@example.com")
-verified_profile.verify_profile(
-    first_name='Jon', last_name='Doe', age=18, sex='male', employee=False, nickname='JD')
-unverified_profile = Profile("alice@example.com")
-user = UserMockup(unverified_profile)
-
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -54,7 +46,6 @@ def home():
 @app.route('/global_dashboard')
 def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
-
 
 @app.route('/running_5_km')
 def running_5_km():
@@ -310,7 +301,6 @@ def get_cycling():
 
     return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
 
-
 @app.route('/get_personal_stats')
 def get_personal_stats():
     today = datetime.datetime.now()
@@ -335,25 +325,29 @@ def get_global_contest_bike():
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 
+
 @app.route('/user_settings', methods=['GET', 'POST'])
 def user_settings():
-    update_profile_form = UpdateProfile(name='up')
+    # TODO: Mockups for User settings - user #1
+    user = db.session.query(User).get(1)
+
+    update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
-    change_password_form = ChangePassword(name='chp')
+    change_password_form = ChangePasswordForm(name='chp')
     display_change_password_form = 'none'
     if request.method == 'POST':
         if request.form['submit'] == 'Update profile':
-            update_profile_form = UpdateProfile(request.form)
+            update_profile_form = UpdateProfileForm(request.form)
             if update_profile_form.validate():
                 # TODO: validate the form based on db
                 # TODO: update the data in the db
                 # TODO delete next later
-                user.profile = verified_profile
+                user.verify()
             else:
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
         elif request.form['submit'] == 'Change password':
-            change_password_form = ChangePassword(request.form)
+            change_password_form = ChangePasswordForm(request.form)
             if change_password_form.validate():
                 # TODO: update db
                 pass
@@ -363,7 +357,7 @@ def user_settings():
 
     # For GET and after POST method
     return render_template("user_settings.html", title='User Settings',
-                           profile=user.profile,
+                           profile=user,
                            update_profile_form=update_profile_form,
                            display_update_profile_form=display_update_profile_form,
                            change_password_form=change_password_form,
