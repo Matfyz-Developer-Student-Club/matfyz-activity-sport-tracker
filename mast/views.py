@@ -1,15 +1,14 @@
 from flask import redirect, request, render_template, url_for
 from mast import app
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
-from mast.models import UserMockup, Profile
+from mast.models import User
 
 # Mockups for User settings
-verified_profile = Profile("jon.doe@example.com")
-verified_profile.complete_profile(first_name='Jon', last_name='Doe', age='<=35', sex='male', shirt_size='M', competing=True,
-                                  employee=True, display_name='JD')
-unverified_profile = Profile("alice@example.com")
-user = UserMockup(unverified_profile)
-
+verified_profile = User("jon.doe@example.com", "")
+verified_profile.complete_profile(name='Jon', surname='Doe', age='<=35', sex='male', t_shirt='M',
+                                  user_type='employee', display_name='JD')
+unverified_profile = User("alice@example.com", "")
+user = unverified_profile
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -64,7 +63,7 @@ def user_settings():
                 # TODO: validate the form based on db
                 # TODO: update the data in the db
                 # TODO delete next later
-                user.profile = verified_profile
+                user.verify()
             else:
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
@@ -79,7 +78,7 @@ def user_settings():
 
     # For GET and after POST method
     return render_template("user_settings.html", title='User Settings',
-                           profile=user.profile,
+                           profile=user,
                            update_profile_form=update_profile_form,
                            display_update_profile_form=display_update_profile_form,
                            change_password_form=change_password_form,

@@ -61,8 +61,8 @@ class UpdateProfileForm(LoggingFlaskForm):
     age = RadioField('Age', validators=[DataRequired()], choices=['<=35', '>35'])
     sex = RadioField('Sex', validators=[DataRequired()], choices=['male', 'female'])
     shirt_size = RadioField('Shirt size', validators=[DataRequired()], choices=['S', 'M', 'L'])
-    employee = BooleanField('Faculty employee', validators=[DataRequired()],
-                            description='Does not apply to employed students.')
+    user_type = RadioField('Relation to the faculty', validators=[DataRequired()],
+                           choices=['student', 'employee', 'alumni'])
     competing = BooleanField('I want to compete', validators=[DataRequired()],
                              description='Display my results on the public scoreboards.')
     submit = SubmitField('Update profile')
