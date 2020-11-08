@@ -13,6 +13,31 @@ class Queries(object):
                    Season.end_date >= dt.date.today()).\
             one()
 
+    def get_user_last_activities(self, user_id: int, number: int):
+        """
+        Returns the last activities by specified user.
+        :param user_id: ID of user.
+        :param number: Number of returned activities.
+        :returns: List of last activities.
+        """
+        return db.session.query(Activity).\
+            filter(Activity.user_id == user_id,
+                   func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date).\
+            order_by(Activity.datetime.desc()).\
+            limit(number).\
+            first()
+
+    def save_new_user_activities(self, user_id: int, activity: Activity):
+        """
+        Saves new activity by user.
+        :param user_id: ID of user.
+        :param activity: New activity to be saved.
+        """
+        activity.user_id = user_id
+        db.session.add(activity)
+        db.session.commit()
+
     def get_best_run_activity_by_user(self, user_id: int, competition: Competition):
         """
         Returns the best run activity by a specified user in a specified competition.
