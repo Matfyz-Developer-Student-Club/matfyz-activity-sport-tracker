@@ -4,11 +4,11 @@ from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswor
 from mast.models import User
 
 # Mockups for User settings
-verified_profile = User("jon.doe@example.com", "")
-verified_profile.complete_profile(name='Jon', surname='Doe', age='<=35', sex='male', t_shirt='M',
-                                  user_type='employee', display_name='JD')
-unverified_profile = User("alice@example.com", "")
-user = unverified_profile
+# verified_profile = User("jon.doe@example.com", "")
+# verified_profile.complete_profile(name='Jon', surname='Doe', age='<=35', sex='male', t_shirt='M',
+#                                   user_type='employee', display_name='JD')
+# unverified_profile = User("alice@example.com", "")
+# user = unverified_profile
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])

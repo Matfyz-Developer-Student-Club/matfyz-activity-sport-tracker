@@ -2,7 +2,7 @@ from mast import db
 from mast.models import Season, ChallengePart
 from datetime import date
 
-from mast.models import User, Activity, UserType, Sex, Age, ActivityType
+from mast.models import User, Activity, ActivityType
 from datetime import datetime, time
 
 
@@ -115,10 +115,9 @@ def init():
 
 
 def test_data():
-    user = User(email='a@b.cz', password='', name='Donald', surname='Trump',
-                sex=Sex.Male, age=Age.Over35, type=UserType.Student)
-    db.session.add(user)
-    db.session.flush()
+    user = User(email='a@b.cz', password='')
+    user.complete_profile(first_name='Donald', last_name='Trump', age='>35', sex='male',
+                          shirt_size='L', user_type='Student')
 
     activity = Activity(datetime=datetime(2020, 11, 5, 15, 32, 15), distance=12.5, duration=time(0, 18, 45),
                         average_duration_per_km=time(0, 1, 30), type=ActivityType.Run, user_id=user.id)
@@ -136,10 +135,9 @@ def test_data():
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Ride, user_id=user.id)
     db.session.add(activity)
 
-    user = User(email='a@b.com', password='', name='Joe', surname='Biden',
-                sex=Sex.Male, age=Age.Over35, type=UserType.Student)
-    db.session.add(user)
-    db.session.flush()
+    user = User(email='a@b.com', password='')
+    user.complete_profile(first_name='Joe', last_name='Biden', age='>35', sex='male',
+                          shirt_size='L', user_type='Student')
 
     activity = Activity(datetime=datetime(2020, 11, 5, 15, 32, 15), distance=10, duration=time(0, 20, 0),
                         average_duration_per_km=time(0, 2, 0), type=ActivityType.Run, user_id=user.id)
