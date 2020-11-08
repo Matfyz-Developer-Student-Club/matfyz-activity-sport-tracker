@@ -1,3 +1,8 @@
 {% extends "main_layout_template.html" %}
 {% block content_page %}
+    <canvas class="my-4 w-100" id="myChart_foot" width="900" height="100"></canvas>
+    <canvas class="my-4 w-100" id="myChart_bike" width="900" height="100"></canvas>
+    <script src="{{ url_for('static', filename='node_modules/chart.js/dist/Chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='global_contest_foot.js') }}"></script>
+    <script src="{{ url_for('static', filename='global_contest_bike.js') }}"></script>
 {% endblock content_page %}

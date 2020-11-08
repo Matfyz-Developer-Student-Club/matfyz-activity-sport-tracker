@@ -1,0 +1,22 @@
+{% extends "main_layout_template.html" %}
+{% block content_page %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <canvas class="my-4 w-100" id="run_competition" width="900" height="380"></canvas>
+                <script src="{{ url_for('static', filename='10_km_chart.js') }}"></script>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <h1>Personal Statistics</h1>
+                <table id="personalStats" class="display" width="100%"></table>
+            </div>
+            <div class="col-sm">
+                <h1>Global Statistics</h1>
+                <table id="globalStats" class="display" width="100%"></table>
+            </div>
+        </div>
+    </div>
+
+{% endblock content_page %}

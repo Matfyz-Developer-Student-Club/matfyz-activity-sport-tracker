@@ -54,6 +54,35 @@ def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
 
 
+@app.route('/ten_km_contest')
+def ten_km_contest():
+    return render_template("running_10_km.html")
+
+
+@app.route('/running_10_km')
+def running_ten_km():
+    global_data = [
+        0,
+        0,
+        0,
+    ]
+    # TODO: replace with data from query - personal data of a concrete user
+    personal_data = [
+        1,
+        1,
+        2,
+    ]
+    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
+    labels = [
+        '43',
+        '44',
+        '45',
+    ]
+
+    return jsonify(
+        {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+
+
 @app.route('/get_personal_stats')
 def get_personal_stats():
     today = datetime.datetime.now()
@@ -61,6 +90,20 @@ def get_personal_stats():
               range(today.day, today.day + 7)]
     # TODO: get current_user db snapshot for last period
     data = [12, 19, 3, 5, 2, 3, 7]
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
+
+@app.route('/get_global_contest_foot')
+def get_global_contest_foot():
+    labels = ["Where we gonna make it on foot."]
+    data = [425]
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
+
+@app.route('/get_global_contest_bike')
+def get_global_contest_bike():
+    labels = ["Where we gonna make it by bike."]
+    data = [211]
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 
