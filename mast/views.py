@@ -156,7 +156,11 @@ def get_running_5_km():
 
 @app.route('/running_10_km')
 def running_10_km():
-    return render_template("running_10_km.html")
+    items = []
+    for i in range(6):
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        items.append(item)
+    return render_template("running_10_km.html", items=items)
 
 
 @app.route('/get_running_10_km')
