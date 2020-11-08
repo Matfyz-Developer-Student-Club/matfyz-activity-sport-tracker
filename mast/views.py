@@ -1,9 +1,13 @@
-from flask import redirect, request, render_template, url_for
-from mast import app
+from flask import redirect, request, render_template, url_for, jsonify
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
+from mast import app
 from mast.models import User
 from mast import db
+import json
+import datetime
 
+_DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
+                 'Thursday', 'Friday', 'Saturday')
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -36,12 +40,290 @@ def register():
 @app.route('/personal_dashboard')
 @app.route('/home')
 def home():
-    return render_template("personal_dashboard.html", title='Home')
+    return render_template("personal_dashboard.html", title='Home', value_t=20)
 
 
 @app.route('/global_dashboard')
 def global_dashboard():
     return render_template("global_dashboard.html", title='Global Dashboard')
+
+@app.route('/running_5_km')
+def running_5_km():
+    # TODO: replace with data from query
+    items = []
+    for i in range(6):
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        items.append(item)
+    return render_template("running_5_km.html", items=items)
+
+
+@app.route('/get_running_5_km')
+def get_running_5_km():
+    # TODO: replace with data from query - data of all users
+    global_data = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        4,
+        3,
+        4,
+        5,
+        2,
+        3,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0, ]
+    # TODO: replace with data from query - personal data of a concrete user
+    personal_data = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0, ]
+    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
+    labels = [
+        '20',
+        '21',
+        '22',
+        '23',
+        '24',
+        '25',
+        '26',
+        '27',
+        '28',
+        '29',
+        '30',
+        '31',
+        '32',
+        '33',
+        '34',
+        '35',
+        '36',
+        '37',
+        '38',
+        '39',
+        '41',
+        '42',
+        '43',
+        '44',
+        '45',
+    ]
+
+    return jsonify({'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+
+
+@app.route('/running_10_km')
+def running_10_km():
+    items = []
+    for i in range(6):
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        items.append(item)
+    return render_template("running_10_km.html", items=items)
+
+
+@app.route('/get_running_10_km')
+def get_running_10_km():
+    # TODO: replace with data from query - data of all users
+    global_data = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0, ]
+    # TODO: replace with data from query - personal data of a concrete user
+    personal_data = [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0, ]
+    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
+    labels = [
+        '20',
+        '21',
+        '22',
+        '23',
+        '24',
+        '25',
+        '26',
+        '27',
+        '28',
+        '29',
+        '30',
+        '31',
+        '32',
+        '33',
+        '34',
+        '35',
+        '36',
+        '37',
+        '38',
+        '39',
+        '41',
+        '42',
+        '43',
+        '44',
+        '45',
+    ]
+
+    return jsonify(
+        {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+
+
+@app.route('/running_jogging')
+def running_jogging():
+    items = []
+    for i in range(6):
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        items.append(item)
+    return render_template("running_jogging.html", items=items)
+
+
+@app.route('/get_running_jogging')
+def get_running_jogging():
+
+    # TODO: replace with data from query - personal data of a concrete user
+    personal_data = [
+        0,
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+    ]
+    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
+    labels = ['Monday', 'Tuesday', 'Wednesday',
+              'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
+
+
+@app.route('/cycling')
+def cycling():
+    # TODO: replace with data from query
+    items = []
+    for i in range(6):
+        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
+        items.append(item)
+    return render_template("cycling.html", items=items)
+
+
+@app.route('/get_cycling')
+def get_cycling():
+
+    # TODO: replace with data from query - personal data of a concrete user
+    personal_data = [
+        0,
+        1,
+        3,
+        2,
+        2,
+        3,
+        1,
+    ]
+    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
+    labels = ['Monday', 'Tuesday', 'Wednesday',
+              'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
+
+@app.route('/get_personal_stats')
+def get_personal_stats():
+    today = datetime.datetime.now()
+    labels = [_DAY_IN_WEEKS[(day - 1) % 7] + ' ' + today.date().strftime("%x") for day in
+              range(today.day, today.day + 7)]
+    # TODO: get current_user db snapshot for last period
+    data = [12, 19, 3, 5, 2, 3, 7]
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
+
+@app.route('/get_global_contest_foot')
+def get_global_contest_foot():
+    labels = ["Where we gonna make it on foot."]
+    data = [425]
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
+
+@app.route('/get_global_contest_bike')
+def get_global_contest_bike():
+    labels = ["Where we gonna make it by bike."]
+    data = [211]
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
 
 
 @app.route('/user_settings', methods=['GET', 'POST'])
@@ -86,4 +368,3 @@ def user_settings():
 @app.route('/integrations')
 def integrations():
     return render_template("integrations.html", title='Integrations')
-  
