@@ -113,7 +113,8 @@ def running_5_km():
 @app.route('/get_running_5_km')
 @login_required
 def get_running_5_km():
-    # TODO: replace with data from query - data of all users
+    session = mast.queries.Queries()
+    global_data = session.get_top_users_best_run(Competition.Run5km, Sex.Male)
     return jsonify(
         {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
 
