@@ -1,15 +1,13 @@
-import os
-
-from flask import redirect, request, render_template, url_for
-from werkzeug.utils import secure_filename
-
-from mast import app
-from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
-from mast.models import User
-import mast.queries
 import json
+import os
 import datetime
-from mast import db, app, bcr
+import mast
+from flask import redirect, request, render_template, url_for, jsonify
+from flask_login import login_user, current_user, logout_user, login_required
+from werkzeug.utils import secure_filename
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
+from mast.models import User, Competition, Sex, Age
+from mast import db, app, bcr, queries
 from mast.tools.sis_authentication import authenticate_via_sis
 
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
