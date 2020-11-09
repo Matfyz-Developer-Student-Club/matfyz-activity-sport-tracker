@@ -21,7 +21,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-group" method="post" enctype="multipart/form-data">
-                        {{ form.csrf_token }}
+                        {{ form.hidden_tag() }}
 
                         {{ render_inline_radio_field(form.activity) }}
 
@@ -54,7 +54,6 @@
         </div>
     </div>
     <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-    <script src="{{ url_for('static', filename='node_modules/chart.js/dist/Chart.js') }}"></script>
     <script src="{{ url_for('static', filename='main_layout_template.js') }}"></script>
     <h2>Achievements</h2>
     <div class="table-responsive"></div>
