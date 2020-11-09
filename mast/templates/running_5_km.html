@@ -24,7 +24,28 @@
                 </table>
             </div>
             <div class="col-sm">
-                <h1>Global Statistics</h1>
+                <h1>Global Statistics - Men Under 35</h1>
+                <table id="personalStats" class="display table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Distance</th>
+                        <th>Time</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>{{ item.date }}</td>
+                            <td>{{ item.distance }}</td>
+                            <td>{{ item.time }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm">
+                <h1>Global Statistics - Men Above 35</h1>
                 <table id="personalStats" class="display table table-striped table-sm">
                     <thead>
                     <tr>

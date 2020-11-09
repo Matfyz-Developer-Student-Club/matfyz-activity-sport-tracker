@@ -104,17 +104,35 @@ def running_5_km():
 @app.route('/running_10_km')
 @login_required
 def running_10_km():
-    items = []
-    for i in range(6):
-        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i * 6)
-        items.append(item)
-    return render_template("running_10_km.html", title="Running-10", items=items)
+    session = mast.queries.Queries()
+    user_ten = session.get_best_run_activities_by_user(current_user.id, Competition.Run10km, 10)
+    ten_runner_men_under = session.get_top_users_best_run(Competition.Run10km, Sex.Male, Age.Under35, 10)
+    ten_runner_men_above = session.get_top_users_best_run(Competition.Run10km, Sex.Male, Age.Over35, 10)
+    ten_runner_women_under = session.get_top_users_best_run(Competition.Run10km, Sex.Female, Age.Under35, 10)
+    ten_runner_women_above = session.get_top_users_best_run(Competition.Run10km, Sex.Female, Age.Over35, 10)
+
+    print(ten_runner_men_under)
+    print(ten_runner_men_above)
+    print(ten_runner_women_under)
+    print(ten_runner_women_above)
+
+    return render_template("running_10_km.html", title="Running-10", user_ten=user_ten,
+                           ten_runner_men_above=ten_runner_men_above, ten_runner_men_under=ten_runner_men_under,
+                           ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under)
 
 
 @app.route('/running_jogging')
 @login_required
 def running_jogging():
-    return render_template("running_jogging.html", title="Jogging")
+    session = mast.queries.Queries()
+    jogging_global = session.get_top_users_total_distance_on_feet(10)
+    jogging_personal = session.get_user_last_activities_on_feet(current_user.id, 10)
+
+    jogging_personal = jogging_personal if jogging_personal else []
+    jogging_global = jogging_global if jogging_global else []
+
+    return render_template("running_jogging.html", title="Jogging", jogging_global=jogging_global,
+                           jogging_personal=jogging_personal)
 
 
 @app.route('/user_settings', methods=['GET', 'POST'])
@@ -168,7 +186,14 @@ def user_settings():
 @app.route('/cycling')
 @login_required
 def cycling():
-    return render_template("cycling.html", title="Cycling")
+    session = mast.queries.Queries()
+    cyclists_global = session.get_top_users_total_distance_on_bike(10)
+    cyclist_personal = session.get_user_last_activities_on_bike(current_user.id, 10)
+
+    cyclist_personal = cyclist_personal if cyclist_personal else []
+    cyclists_global = cyclists_global if cyclists_global else []
+    return render_template("cycling.html", title="Cycling", cyclist_personal=cyclist_personal,
+                           cyclists_global=cyclists_global)
 
 
 @app.route('/integrations')

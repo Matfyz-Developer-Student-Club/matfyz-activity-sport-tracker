@@ -1,6 +1,6 @@
 {% extends "main_layout_template.html" %}
 {% block content_page %}
-<div class="container mb-4">
+    <div class="container mb-4">
         <div class="row-fluid">
             <div class="col-sm mb-4">
                 <h1>Personal Statistics</h1>
@@ -13,32 +13,57 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for item in items %}
+                    {% for item in user_ten %}
                         <tr>
-                            <td>{{ item.date }}</td>
-                            <td>{{ item.distance }}</td>
-                            <td>{{ item.time }}</td>
+                            <td>{{ item['datetime'] }}</td>
+                            <td>{{ item['distance'] }}</td>
+                            <td>{{ item['duration'] }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
             </div>
             <div class="col-sm">
-                <h1>Global Statistics</h1>
+                <h1>Global Statistics - Men Under 35</h1>
                 <table id="personalStats" class="display table table-striped table-sm">
                     <thead>
                     <tr>
+                        <th>Name</th>
                         <th>Date</th>
                         <th>Distance</th>
                         <th>Time</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for item in items %}
+                    {% for item in ten_runner_men_under %}
                         <tr>
-                            <td>{{ item.date }}</td>
-                            <td>{{ item.distance }}</td>
-                            <td>{{ item.time }}</td>
+                            <td>{{ item[0]['email'] }}</td>
+                            <td>{{ item[1]['datetime'] }}</td>
+                            <td>{{ item[1]['distance'] }}</td>
+                            <td>{{ item[1]['duration'] }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm">
+                <h1>Global Statistics - Men Above 35</h1>
+                <table id="personalStats" class="display table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Distance</th>
+                        <th>Time</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in ten_runner_men_above %}
+                        <tr>
+                            <td>{{ item[0]['email'] }}</td>
+                            <td>{{ item[1]['datetime'] }}</td>
+                            <td>{{ item[1]['distance'] }}</td>
+                            <td>{{ item[1]['duration'] }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -49,17 +74,19 @@
                 <table id="personalStats" class="display table table-striped table-sm">
                     <thead>
                     <tr>
+                        <th>Name</th>
                         <th>Date</th>
                         <th>Distance</th>
                         <th>Time</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for item in items %}
+                    {% for item in ten_runner_women_under %}
                         <tr>
-                            <td>{{ item.date }}</td>
-                            <td>{{ item.distance }}</td>
-                            <td>{{ item.time }}</td>
+                            <td>{{ item[0]['email'] }}</td>
+                            <td>{{ item[1]['datetime'] }}</td>
+                            <td>{{ item[1]['distance'] }}</td>
+                            <td>{{ item[1]['duration'] }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -70,17 +97,19 @@
                 <table id="personalStats" class="display table table-striped table-sm">
                     <thead>
                     <tr>
+                        <th>Name</th>
                         <th>Date</th>
                         <th>Distance</th>
                         <th>Time</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for item in items %}
+                    {% for item in ten_runner_women_above %}
                         <tr>
-                            <td>{{ item.date }}</td>
-                            <td>{{ item.distance }}</td>
-                            <td>{{ item.time }}</td>
+                            <td>{{ item[0]['email'] }}</td>
+                            <td>{{ item[1]['datetime'] }}</td>
+                            <td>{{ item[1]['distance'] }}</td>
+                            <td>{{ item[1]['duration'] }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -88,4 +117,5 @@
             </div>
         </div>
     </div>
+
 {% endblock content_page %}
