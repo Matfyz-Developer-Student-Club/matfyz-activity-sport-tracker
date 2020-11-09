@@ -203,15 +203,15 @@ def user_settings():
                 display_change_password_form = 'block'
 
     # For GET and after POST method
-    update_profile_form.first_name.data = current_user.first_name
-    update_profile_form.last_name.data = current_user.last_name
-    update_profile_form.display_name.data = current_user.display_name
-    update_profile_form.ukco.data = current_user.uk_id
-    update_profile_form.age.data = current_user.age.value
-    update_profile_form.sex.data = current_user.sex.value
-    update_profile_form.shirt_size.data = current_user.shirt_size
-    update_profile_form.user_type.data = current_user.type.value
-    update_profile_form.competing.data = current_user.anonymous
+    update_profile_form.first_name.data = current_user.first_name if current_user.first_name else ''
+    update_profile_form.last_name.data = current_user.last_name if current_user.last_name else ''
+    update_profile_form.display_name.data = current_user.display_name if current_user.display_name else ''
+    update_profile_form.ukco.data = current_user.uk_id if current_user.uk_id else ''
+    update_profile_form.age.data = current_user.age.value if current_user.age else None
+    update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
+    update_profile_form.shirt_size.data = current_user.shirt_size if current_user.shirt_size else None
+    update_profile_form.user_type.data = current_user.type.value if current_user.type else None
+    update_profile_form.competing.data = current_user.anonymous if current_user.anonymous else None
 
     return render_template("user_settings.html", title='User Settings',
                            profile=current_user,
