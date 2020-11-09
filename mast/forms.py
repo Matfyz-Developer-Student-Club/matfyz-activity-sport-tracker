@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 import logging
+from mast.models import User
 
 ## Logging setup
 form_logger = logging.getLogger('form_submission')
@@ -44,6 +45,11 @@ class RegisterForm(LoggingFlaskForm):
                              render_kw={**min_length_attribute(8), **max_length_attribute(50)})
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Create an account')
+
+    def validate_email(self, email):
+        user_email = User.query.filter_by(email=email.data).first()
+        if user_email:
+            raise ValidationError(f'Email {email.data} is already in use!')
 
 
 class LoginForm(LoggingFlaskForm):

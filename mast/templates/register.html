@@ -1,9 +1,9 @@
 {% from "_formhelpers.html" import render_field, render_checkbox, render_submit_button %}
 {% extends "auth_template.html" %}
 {% block form %}
-<form class="form-signin" method="post">
+<form class="form-signin" method="post" enctype="application/x-www-form-urlencoded">
 
-    {{ form.csrf_token }}
+    {{ form.hidden_tag() }}
 
     <div class="text-center mb-4">
         <h1 class="h2 mb-3">
@@ -13,7 +13,6 @@
         </h1>
         <p>Compete, track and enjoy</p>
     </div>
-
     {{ render_text_field(form.email, autofocus=true, type='email') }}
 
     {{ render_text_field(form.password) }}

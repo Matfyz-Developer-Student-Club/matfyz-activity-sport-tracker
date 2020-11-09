@@ -4,9 +4,10 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import logging
+from os import urandom
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8e32c05c0914f857f3cadce4aff1cdd0'
+app.config['SECRET_KEY'] = urandom(24)
 csrf = CSRFProtect(app)
 
 # Logging setup
