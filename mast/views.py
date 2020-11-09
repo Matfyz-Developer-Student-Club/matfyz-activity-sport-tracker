@@ -26,13 +26,12 @@ def login():
     else:
         form = LoginForm(request.form)
         if form.validate():
-            user = User.query.filter_by(email=form.email.data).first()
+            user = User.query.filter_by(email=form.email.data.lower()).first()
             if user and bcr.check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
                 return redirect(url_for('home'))
             else:
-                form.email.errors.append('Your username or password is invalid!')
-        # TODO: Inform user about incorrect passwd
+                form.email.errors.append('Specified pair of email and password is invalid!')
     return render_template('login.html', form=form)
 
 
@@ -47,9 +46,7 @@ def register():
         form = RegisterForm(request.form)
         if form.validate_on_submit():
             hashed_password = bcr.generate_password_hash(form.password.data).decode('UTF-8')
-            user = User(email=form.email.data, password=hashed_password)
-            db.session.add(user)
-            db.session.commit()
+            user = User(email=form.email.data.lower(), password=hashed_password)
             login_user(user)
             return redirect(url_for('home'))
         else:

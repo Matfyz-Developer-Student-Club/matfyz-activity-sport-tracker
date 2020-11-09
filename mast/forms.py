@@ -48,7 +48,7 @@ class RegisterForm(LoggingFlaskForm):
     submit = SubmitField('Create an account')
 
     def validate_email(self, email):
-        user_email = User.query.filter_by(email=email.data).first()
+        user_email = User.query.filter_by(email=email.data.lower()).first()
         if user_email:
             raise ValidationError(f'Email {email.data} is already in use!')
 
