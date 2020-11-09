@@ -1,6 +1,6 @@
-from mast import db
 from mast.models import Season, ChallengePart
 from datetime import date
+from mast import db
 
 from mast.models import User, Activity, ActivityType
 from datetime import datetime, time
