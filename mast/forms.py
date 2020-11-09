@@ -81,7 +81,7 @@ class ChangePasswordForm(LoggingFlaskForm):
 
 
 class AddActivityForm(LoggingFlaskForm):
-    activity = RadioField('Activity', validators=[DataRequired()], choices=['walk', 'run', 'bike'])
+    activity = RadioField('Activity', validators=[DataRequired()], choices=['Walk', 'Run', 'Ride'])
     file = FileField('GPX file', validators=[FileRequired()])
     submit = SubmitField('Add activity')
 

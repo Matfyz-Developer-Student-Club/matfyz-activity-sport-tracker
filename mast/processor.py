@@ -27,6 +27,7 @@ class GPXProcessor(object):
 
         output_buffer = []
         total_time = []
+        activity_start = []
         try:
             for input_file in os.listdir(self.LANDING_DIR):
                 if Path(input_file).suffix in self.__ALLOWED_EXTENSIONS:
@@ -42,14 +43,15 @@ class GPXProcessor(object):
                         namespace + self.__TRKPT_ELM)
 
                     if activities[0].find(namespace + self.__TIME_ELM) is not None:
-                        total_time.append(self.__calculate_total_time(
-                            [activity.find(namespace + self.__TIME_ELM) for activity in activities]))
+                        time_seg = [activity.find(namespace + self.__TIME_ELM) for activity in activities]
+                        activity_start.append(parser.parse(time_seg[0].text))
+                        total_time.append(self.__calculate_total_time(time_seg))
                     output_buffer.append(self.__calculate_orthodromic_distance(activities))
                 else:
                     raise AssertionError("Forbidden file extension encountered!")
         except Exception as ex:
             logging.error("Processing of the landing directory was unsuccessful!\n", ex)
-        return zip(output_buffer, total_time)
+        return list(zip(output_buffer, total_time, activity_start))
 
     def __calculate_total_time(self, time_segments: list):
         """

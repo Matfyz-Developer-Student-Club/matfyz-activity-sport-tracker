@@ -6,11 +6,13 @@ from flask import redirect, request, render_template, url_for, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
-from mast.models import User, Competition, Sex, Age
+from mast.models import User, Competition, Sex, Age, Activity, ActivityType
 from mast import db, app, bcr, queries
 from mast.tools.sis_authentication import authenticate_via_sis
+from mast.processor import GPXProcessor
 
 UPLOAD_FILE_DIR = 'landing'
+PROCESSOR = GPXProcessor()
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -67,7 +69,25 @@ def home():
         # TODO: validate uploaded file
         # TODO: add the record to the database
         filename = secure_filename(add_activity_form.file.data.filename)
-        add_activity_form.file.data.save(os.path.join(UPLOAD_FILE_DIR, filename))
+        path = os.path.join(__file__, os.pardir)
+        add_activity_form.file.data.save(os.path.join(os.path.abspath(path), UPLOAD_FILE_DIR, filename))
+        a_type = ActivityType
+        if add_activity_form.activity == ActivityType.Ride.name:
+            a_type = ActivityType.Ride
+        elif add_activity_form.activity == ActivityType.Run.name:
+            a_type = ActivityType.Run
+        else:
+            a_type = ActivityType.Walk
+
+        activity = PROCESSOR.process_input_data()
+        # PROCESSOR.landing_cleanup()
+        seconds = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
+        avg_time = activity[0][1] / activity[0][0]
+        avg_time = (datetime.datetime(2000, 1, 1, 0) + avg_time).time()
+        new_activity = Activity(datetime=activity[0][2], distance=activity[0][0], duration=seconds,
+                                average_duration_per_km=avg_time, type=a_type)
+        session.save_new_user_activities(current_user.id, new_activity)
+
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form)
 
 
