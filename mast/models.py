@@ -63,6 +63,17 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def __str__(self):
+        return self.display()
+
+    def display(self):
+        if self.anonymous:
+            return 'Anonymous'
+        elif self.display_name:
+            return self.display_name
+        else:
+            return self.first_name + ' ' + self.last_name
+
     def complete_profile(self, first_name, last_name, age, sex, shirt_size, user_type, display_name=None):
         assert(first_name is not None and
                last_name is not None and
