@@ -98,16 +98,7 @@ def running_5_km():
     for i in range(6):
         item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i * 6)
         items.append(item)
-    return render_template("running_5_km.html", items=items)
-
-
-@app.route('/get_running_5_km')
-@login_required
-def get_running_5_km():
-    session = mast.queries.Queries()
-    global_data = session.get_top_users_best_run(Competition.Run5km, Sex.Male)
-    return jsonify(
-        {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+    return render_template("running_5_km.html", title="Running-5", items=items)
 
 
 @app.route('/running_10_km')
@@ -117,41 +108,13 @@ def running_10_km():
     for i in range(6):
         item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i * 6)
         items.append(item)
-    return render_template("running_10_km.html", items=items)
-
-
-@app.route('/get_running_10_km')
-@login_required
-def get_running_10_km():
-    # TODO: replace with data from query - data of all users
-    return jsonify(
-        {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+    return render_template("running_10_km.html", title="Running-10", items=items)
 
 
 @app.route('/running_jogging')
 @login_required
 def running_jogging():
-    return render_template("running_jogging.html")
-
-
-@app.route('/get_running_jogging')
-@login_required
-def get_running_jogging():
-    # TODO: replace with data from query - personal data of a concrete user
-    personal_data = [
-        0,
-        1,
-        1,
-        2,
-        2,
-        3,
-        3,
-    ]
-    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
-    labels = ['Monday', 'Tuesday', 'Wednesday',
-              'Thursday', 'Friday', 'Saturday', 'Sunday']
-
-    return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
+    return render_template("running_jogging.html", title="Jogging")
 
 
 @app.route('/user_settings', methods=['GET', 'POST'])
@@ -174,7 +137,7 @@ def user_settings():
                                               ukco=update_profile_form.ukco.data,
                                               display_name=update_profile_form.display_name.data,
                                               anonymous=not update_profile_form.competing.data)
-                # TODO: Bugfix
+
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
                                         ukco=current_user.uk_id, is_employee=False):
                     current_user.verify()
@@ -205,7 +168,7 @@ def user_settings():
 @app.route('/cycling')
 @login_required
 def cycling():
-    return render_template("cycling.html")
+    return render_template("cycling.html", title="Cycling")
 
 
 @app.route('/integrations')
