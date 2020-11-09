@@ -1,16 +1,20 @@
+import json
+import os
+import datetime
+import mast
 from flask import redirect, request, render_template, url_for, jsonify
 from flask_login import login_user, current_user, logout_user, login_required
-from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
+from werkzeug.utils import secure_filename
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
 from mast.models import User, Competition, Sex, Age
-import mast.queries
-import json
-import datetime
-from mast import db, app, bcr
+from mast import db, app, bcr, queries
 from mast.tools.sis_authentication import authenticate_via_sis
 
 _DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
                  'Thursday', 'Friday', 'Saturday')
 
+
+UPLOAD_FILE_DIR = 'landing'
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -54,15 +58,20 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/personal_dashboard')
-@app.route('/home')
+@app.route('/personal_dashboard', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
     session = mast.queries.Queries()
     last_activities = session.get_user_last_activities(current_user.id, 10)
     last_activities = [] if not last_activities else last_activities
-    return render_template("personal_dashboard.html", title='Home', last_activities=last_activities)
-
+    add_activity_form = AddActivityForm()
+    if add_activity_form.validate_on_submit():
+        # TODO: validate uploaded file
+        # TODO: add the record to the database
+        filename = secure_filename(add_activity_form.file.data.filename)
+        add_activity_form.file.data.save(os.path.join(UPLOAD_FILE_DIR, filename))
+    return render_template("personal_dashboard.html", title='Home', form=add_activity_form)
 
 @app.route('/get_personal_stats')
 @login_required
