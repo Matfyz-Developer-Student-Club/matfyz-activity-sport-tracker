@@ -71,7 +71,7 @@
 
             <div id="change_password_div" style="display:{{ display_change_password_form }}" class="col-4 offset-2">
                 <form class="form-group" method="post">
-                    {{ change_password_form.csrf_token }}
+                    {{ change_password_form.hidden_tag() }}
 
                     {{ render_text_field(change_password_form.password) }}
 

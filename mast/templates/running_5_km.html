@@ -40,7 +40,7 @@
                     <tbody>
                     {% for item in five_runner_men_under %}
                         <tr>
-                            <td>{{ item[0]['email'] }}</td>
+                            <td>{{ item[0].display() }}</td>
                             <td>{{ item[1]['datetime'] }}</td>
                             <td>{{ item[1]['distance'] }}</td>
                             <td>{{ item[1]['duration'] }}</td>
@@ -65,7 +65,7 @@
                     <tbody>
                     {% for item in five_runner_men_above %}
                         <tr>
-                            <td>{{ item[0]['email'] }}</td>
+                            <td>{{ item[0].display() }}</td>
                             <td>{{ item[1]['datetime'] }}</td>
                             <td>{{ item[1]['distance'] }}</td>
                             <td>{{ item[1]['duration'] }}</td>
@@ -90,7 +90,7 @@
                     <tbody>
                     {% for item in five_runner_women_under %}
                         <tr>
-                            <td>{{ item[0]['email'] }}</td>
+                            <td>{{ item[0].display() }}</td>
                             <td>{{ item[1]['datetime'] }}</td>
                             <td>{{ item[1]['distance'] }}</td>
                             <td>{{ item[1]['duration'] }}</td>
@@ -115,7 +115,7 @@
                     <tbody>
                     {% for item in five_runner_women_above %}
                         <tr>
-                            <td>{{ item[0]['email'] }}</td>
+                            <td>{{ item[0].display() }}</td>
                             <td>{{ item[1]['datetime'] }}</td>
                             <td>{{ item[1]['distance'] }}</td>
                             <td>{{ item[1]['duration'] }}</td>
