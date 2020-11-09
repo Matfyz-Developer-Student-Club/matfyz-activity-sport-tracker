@@ -90,7 +90,7 @@ class ChangePasswordForm(LoggingFlaskForm):
 
 class AddActivityForm(LoggingFlaskForm):
     activity = RadioField('Activity', validators=[DataRequired()], choices=['Walk', 'Run', 'Ride'])
-    file = FileField('GPX file', validators=[FileRequired()])
+    file = FileField('GPX file', validators=[FileRequired()], render_kw={'accept': '.xml,.gpx'})
     submit = SubmitField('Add activity')
 
     def validate_file(self, file):

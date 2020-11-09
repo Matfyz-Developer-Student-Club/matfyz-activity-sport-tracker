@@ -82,13 +82,14 @@ def home():
             a_type = ActivityType.Walk
 
         activity = PROCESSOR.process_input_data()
-        # PROCESSOR.landing_cleanup()
+        PROCESSOR.landing_cleanup()
         seconds = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
         avg_time = activity[0][1] / activity[0][0]
         avg_time = (datetime.datetime(2000, 1, 1, 0) + avg_time).time()
         new_activity = Activity(datetime=activity[0][2], distance=activity[0][0], duration=seconds,
                                 average_duration_per_km=avg_time, type=a_type)
         session.save_new_user_activities(current_user.id, new_activity)
+        return redirect(url_for('home'))
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
                            last_activities=last_activities)
