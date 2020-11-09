@@ -13,20 +13,49 @@ class Queries(object):
                    Season.end_date >= dt.date.today()).\
             one()
 
-    def get_user_last_activities(self, user_id: int, number: int):
+    def _get_user_last_activities(self, user_id: int, activity_types: list,  number: int):
         """
-        Returns the last activities by specified user.
+        Returns the last activities of specified types by specified user.
         :param user_id: ID of user.
+        :param activity_types: Types of activities we want to sum to total distance.
         :param number: Number of returned activities.
         :returns: List of last activities.
         """
         return db.session.query(Activity).\
             filter(Activity.user_id == user_id,
                    func.date(Activity.datetime) >= self.SEASON.start_date,
-                   func.date(Activity.datetime) <= self.SEASON.end_date).\
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type.in_(activity_types)).\
             order_by(Activity.datetime.desc()).\
             limit(number).\
             all()
+
+    def get_user_last_activities(self, user_id: int,  number: int):
+        """
+        Returns the last activities by specified user.
+        :param user_id: ID of user.
+        :param number: Number of returned activities.
+        :returns: List of last activities.
+        """
+        return self._get_user_last_activities(user_id, [ActivityType.Run, ActivityType.Walk, ActivityType.Ride], number)
+
+    def get_user_last_activities_on_feet(self, user_id: int,  number: int):
+        """
+        Returns the last run/walk activities by specified user.
+        :param user_id: ID of user.
+        :param number: Number of returned activities.
+        :returns: List of last activities.
+        """
+        return self._get_user_last_activities(user_id, [ActivityType.Run, ActivityType.Walk], number)
+
+    def get_user_last_activities_on_bike(self, user_id: int,  number: int):
+        """
+        Returns the last bike activities by specified user.
+        :param user_id: ID of user.
+        :param number: Number of returned activities.
+        :returns: List of last activities.
+        """
+        return self._get_user_last_activities(user_id, [ActivityType.Ride], number)
 
     def save_new_user_activities(self, user_id: int, activity: Activity):
         """
@@ -38,11 +67,12 @@ class Queries(object):
         db.session.add(activity)
         db.session.commit()
 
-    def get_best_run_activity_by_user(self, user_id: int, competition: Competition):
+    def get_best_run_activities_by_user(self, user_id: int, competition: Competition, number: int):
         """
         Returns the best run activity by a specified user in a specified competition.
         :param user_id: ID of user.
         :param competition: Competition where we want the best run.
+        :param number: Number of returned activities.
         :returns: Activity instance for the best run.
         """
         return db.session.query(Activity).\
@@ -52,21 +82,38 @@ class Queries(object):
                    Activity.type == ActivityType.Run,
                    Activity.distance >= competition.value).\
             order_by(Activity.average_duration_per_km.asc()).\
-            first()
+            limit(number).\
+            all()
 
-    def get_total_distance_by_user(self, user_id: int, activity_type: ActivityType):
+    def _get_total_distance_by_user(self, user_id: int, activity_types: list):
         """
-        Returns the total distance taken by a specified user in a specified type of activity.
+        Returns the total distance taken by a specified user in a specified types of activity.
         :param user_id: ID of user.
-        :param activity_type: Type of activity for which we want the total distance.
+        :param activity_types: Types of activities we want to sum to total distance.
         :returns: The total distance in kilometres.
         """
         return db.session.query(func.sum(Activity.distance)).\
             filter(Activity.user_id == user_id,
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type == activity_type).\
+                   Activity.type.in_(activity_types)).\
             scalar()
+
+    def get_total_distance_on_feet(self, user_id: int):
+        """
+        Returns the total run/walk distance taken by a specified user.
+        :param user_id: ID of user.
+        :returns: The total distance in kilometres.
+        """
+        return self._get_total_distance_by_user(user_id, [ActivityType.Run, ActivityType.Walk])
+
+    def get_global_total_distance_on_bike(self, user_id: int):
+        """
+        Returns the total ride distance taken by a specified user.
+        :param user_id: ID of user.
+        :returns: The total distance in kilometres.
+        """
+        return self._get_total_distance_by_user(user_id, [ActivityType.Ride])
 
     def get_total_distances_by_user_in_last_days(self, user_id: int, days: int):
         """
