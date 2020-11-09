@@ -181,7 +181,7 @@ def user_settings():
                                               user_type=update_profile_form.user_type.data,
                                               ukco=update_profile_form.ukco.data,
                                               display_name=update_profile_form.display_name.data,
-                                              anonymous=not update_profile_form.competing.data)
+                                              anonymous=update_profile_form.competing.data)
 
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
                                         ukco=current_user.uk_id, is_employee=False):
