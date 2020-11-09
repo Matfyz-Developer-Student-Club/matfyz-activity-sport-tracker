@@ -132,3 +132,6 @@ dmypy.json
 
 # Server landing zone
 landing
+
+# DB
+*.db

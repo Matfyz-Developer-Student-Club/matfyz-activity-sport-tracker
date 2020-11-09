@@ -65,11 +65,11 @@ class UpdateProfileForm(LoggingFlaskForm):
                        render_kw={**min_length_attribute(8), **max_length_attribute(8)})
     age = RadioField('Age', validators=[DataRequired()], choices=['<=35', '>35'])
     sex = RadioField('Sex', validators=[DataRequired()], choices=['male', 'female'])
-    shirt_size = RadioField('Shirt size', validators=[DataRequired()], choices=['S', 'M', 'L'])
-    user_type = RadioField('Relation to the faculty', validators=[DataRequired()],
+    shirt_size = RadioField('Shirt size', validators=[DataRequired()], choices=['S', 'M', 'L', 'XL', 'XXL'])
+    user_type = RadioField('I am', validators=[DataRequired()],
                            choices=['student', 'employee', 'alumni'])
-    competing = BooleanField('I want to compete', validators=[DataRequired()],
-                             description='Display my results on the public scoreboards.')
+    competing = BooleanField('I want to compete anonymously', validators=[DataRequired()],
+                             description='Results will be on the public scoreboards without name.')
     submit = SubmitField('Update profile')
 
 
