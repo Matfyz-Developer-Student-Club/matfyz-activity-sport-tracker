@@ -1,5 +1,42 @@
 {% extends "main_layout_template.html" %}
+{% from "_formhelpers.html" import render_text_field, render_inline_radio_field, render_checkbox_field, render_submit_button, render_file_upload_field %}
+
 {% block content_page %}
+<!-- Launch the modal immediately if the form was erroneous -->
+    {% if form.errors %}
+        <div class="alert alert-danger mt-2" role="alert">
+            Error: {{ ', '.join(form.errors['file']) }}
+        </div>
+    {% endif %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="addActivity" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add activity</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-group" method="post" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+
+                        {{ render_inline_radio_field(form.activity) }}
+
+                        {{ render_file_upload_field(form.file) }}
+
+                        {{ render_submit_button(form.submit) }}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Personal Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
@@ -11,6 +48,9 @@
                 <span data-feather="calendar"></span>
                 This week
             </button>
+            <div class="btn-group ml-4">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addActivity"> Add Activity </button>
+            </div>
         </div>
     </div>
     <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
