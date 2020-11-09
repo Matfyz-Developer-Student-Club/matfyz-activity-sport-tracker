@@ -8,6 +8,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, Radio
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 import logging
 from mast.models import User
+from flask_login import current_user
 
 ## Logging setup
 form_logger = logging.getLogger('form_submission')
