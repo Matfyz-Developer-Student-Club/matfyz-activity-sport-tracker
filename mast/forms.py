@@ -61,7 +61,8 @@ class LoginForm(LoggingFlaskForm):
 
 
 class UpdateProfileForm(LoggingFlaskForm):
-    first_name = StringField('First name', validators=[DataRequired(), Length(min=2, max=50)],
+    first_name = StringField('First name',
+                             validators=[DataRequired(), Length(min=2, max=50)],
                              render_kw={**min_length_attribute(2), **max_length_attribute(50)})
     last_name = StringField('Last name', validators=[DataRequired(), Length(min=2, max=50)],
                             render_kw={**min_length_attribute(2), **max_length_attribute(50)})
@@ -75,7 +76,7 @@ class UpdateProfileForm(LoggingFlaskForm):
     shirt_size = RadioField('Shirt size', validators=[DataRequired()], choices=['S', 'M', 'L', 'XL', 'XXL'])
     user_type = RadioField('I am', validators=[DataRequired()],
                            choices=['student', 'employee', 'alumni'])
-    competing = BooleanField('I want to compete anonymously', validators=[DataRequired()],
+    competing = BooleanField('I want to compete anonymously',
                              description='Results will be on the public scoreboards without name.')
     submit = SubmitField('Update profile')
 

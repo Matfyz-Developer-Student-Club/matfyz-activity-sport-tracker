@@ -186,6 +186,7 @@ def user_settings():
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
                                         ukco=current_user.uk_id, is_employee=False):
                     current_user.verify()
+                    return redirect(url_for('user_settings'))
             else:
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
@@ -201,6 +202,16 @@ def user_settings():
                 display_change_password_form = 'block'
 
     # For GET and after POST method
+    update_profile_form.first_name.data = current_user.first_name
+    update_profile_form.last_name.data = current_user.last_name
+    update_profile_form.display_name.data = current_user.display_name
+    update_profile_form.ukco.data = current_user.uk_id
+    update_profile_form.age.data = current_user.age.value
+    update_profile_form.sex.data = current_user.sex.value
+    update_profile_form.shirt_size.data = current_user.shirt_size
+    update_profile_form.user_type.data = current_user.type.value
+    update_profile_form.competing.data = current_user.anonymous
+
     return render_template("user_settings.html", title='User Settings',
                            profile=current_user,
                            update_profile_form=update_profile_form,

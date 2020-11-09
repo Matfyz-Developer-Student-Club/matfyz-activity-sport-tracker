@@ -9,8 +9,8 @@ def load_user(user_id):
 
 
 class Sex(Enum):
-    Male = 1
-    Female = 2
+    Male = 'male'
+    Female = 'female'
 
     def __repr__(self):
         return self.name
@@ -20,8 +20,8 @@ class Sex(Enum):
 
 
 class Age(Enum):
-    Under35 = 1
-    Over35 = 2
+    Under35 = '<=35'
+    Over35 = '>35'
 
     def __repr__(self):
         return self.name
@@ -31,9 +31,9 @@ class Age(Enum):
 
 
 class UserType(Enum):
-    Student = 1
-    Employee = 2
-    Alumni = 3
+    Student = 'student'
+    Employee = 'employee'
+    Alumni = 'alumni'
 
     def __repr__(self):
         return self.name
