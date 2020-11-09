@@ -10,7 +10,8 @@
                          height="256">
                     <div class="card-body">
                         {% if profile.verified %}
-                            <h4 class="card-title">{{ profile.first_name }} {{ '"' + profile.display_name + '"' }} {{ profile.last_name }} </h4>
+                            <h4 class="card-title">
+                                {{ profile.first_name }} {% if profile.display_name != '' %}{{ '"' + profile.display_name + '"' }}{% endif %} {{ profile.last_name }} </h4>
                             <h5>
                                 <span class="badge badge-success">Verified</span>
                                 {% if profile.competing %}

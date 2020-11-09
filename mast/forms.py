@@ -58,7 +58,7 @@ class UpdateProfileForm(LoggingFlaskForm):
                              render_kw={**min_length_attribute(2), **max_length_attribute(50)})
     last_name = StringField('Last name', validators=[DataRequired(), Length(min=2, max=50)],
                             render_kw={**min_length_attribute(2), **max_length_attribute(50)})
-    display_name = StringField('Display name', validators=[Length(2, 50)],
+    display_name = StringField('Display name', validators=[Length(0, 50)],
                                render_kw={**min_length_attribute(2), **max_length_attribute(50)},
                                description='Optional name to show on the scoreboards.')
     ukco = StringField('UKČO', validators=[DataRequired(), Length(min=8, max=8)],
