@@ -1,9 +1,11 @@
+from pathlib import Path
 from typing import Dict, Any, Callable
 
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired
+from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField, FileField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 import logging
 
 ## Logging setup
@@ -82,3 +84,10 @@ class AddActivityForm(LoggingFlaskForm):
     activity = RadioField('Activity', validators=[DataRequired()], choices=['walk', 'run', 'bike'])
     file = FileField('GPX file', validators=[FileRequired()])
     submit = SubmitField('Add activity')
+
+    def validate_file(self, file):
+        filename = secure_filename(file.data.filename)
+        if filename == "":
+            raise ValidationError("Provided file has invalid filename.")
+        if Path(filename).suffix.lower() not in ['.gpx', '.xml']:
+            raise ValidationError("Forbidden extension. Allowed extensions: '.gpx', '.xml'")
