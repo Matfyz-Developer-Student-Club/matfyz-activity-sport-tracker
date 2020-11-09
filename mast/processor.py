@@ -46,7 +46,7 @@ class GPXProcessor(object):
                         time_seg = [activity.find(namespace + self.__TIME_ELM) for activity in activities]
                         activity_start.append(parser.parse(time_seg[0].text))
                         total_time.append(self.__calculate_total_time(time_seg))
-                    output_buffer.append(self.__calculate_orthodromic_distance(activities))
+                    output_buffer.append(round(self.__calculate_orthodromic_distance(activities), 1))
                 else:
                     raise AssertionError("Forbidden file extension encountered!")
         except Exception as ex:
@@ -96,4 +96,4 @@ class GPXProcessor(object):
 
 
 if __name__ == '__main__':
-    GPXProcessor().landing_cleanup()
+    print(list(GPXProcessor().process_input_data()))
