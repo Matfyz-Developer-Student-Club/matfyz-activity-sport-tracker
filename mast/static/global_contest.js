@@ -3,9 +3,7 @@ jQuery(document).ready(function () {
 
     function getCheckPoint(value) {
         // check if the property/key is defined in the object itself, not in parent'
-        console.log(value);
         if (_checkpoints.hasOwnProperty(value)) {
-            console.log(_checkpoints[value]);
             return _checkpoints[value] + ' - '
         } else {
             return '';
