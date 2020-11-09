@@ -89,11 +89,11 @@ class GPXProcessor(object):
         """
         try:
             for input_file in os.listdir(self.LANDING_DIR):
-                os.remove(input_file)
+                os.remove(os.path.join(self.LANDING_DIR, input_file))
                 logging.info(f"File {input_file} has been removed successfully.")
         except Exception as ex:
             logging.warning("Deletion was unsuccessful!", ex)
 
 
 if __name__ == '__main__':
-    print(list(GPXProcessor().process_input_data()))
+    GPXProcessor().landing_cleanup()
