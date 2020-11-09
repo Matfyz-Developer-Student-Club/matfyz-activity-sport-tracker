@@ -72,9 +72,9 @@ def home():
         path = os.path.join(__file__, os.pardir)
         add_activity_form.file.data.save(os.path.join(os.path.abspath(path), UPLOAD_FILE_DIR, filename))
         a_type = ActivityType
-        if add_activity_form.activity == ActivityType.Ride.name:
+        if add_activity_form.activity.data == ActivityType.Ride.name:
             a_type = ActivityType.Ride
-        elif add_activity_form.activity == ActivityType.Run.name:
+        elif add_activity_form.activity.data == ActivityType.Run.name:
             a_type = ActivityType.Run
         else:
             a_type = ActivityType.Walk
@@ -88,7 +88,7 @@ def home():
                                 average_duration_per_km=avg_time, type=a_type)
         session.save_new_user_activities(current_user.id, new_activity)
 
-    return render_template("personal_dashboard.html", title='Home', form=add_activity_form)
+    return render_template("personal_dashboard.html", title='Home', form=add_activity_form, last_activities=last_activities)
 
 
 @app.route('/get_personal_stats')
