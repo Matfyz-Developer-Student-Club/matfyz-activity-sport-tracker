@@ -24,14 +24,11 @@ def login():
             user = User.query.filter_by(email=form.email.data).first()
             if user and bcr.check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
-                next_page = request.args.get('next')
-
-                if next_page:
-                    redirect(next_page)
-                else:
-                    return redirect(url_for('home'))
+                return redirect(url_for('home'))
+            else:
+                form.email.errors.append('Your username or password is invalid!')
         # TODO: Inform user about incorrect passwd
-        return render_template('login.html', form=form)
+    return render_template('login.html', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -63,8 +60,7 @@ def logout():
 def home():
     session = mast.queries.Queries()
     last_activities = session.get_user_last_activities(current_user.id, 10)
-    # last_activities = [] if not last_activities else last_activities
-    last_activities = []
+    last_activities = [] if not last_activities else last_activities
     return render_template("personal_dashboard.html", title='Home', last_activities=last_activities)
 
 
@@ -89,9 +85,8 @@ def global_dashboard():
 def get_global_contest():
     session = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.", "Where we gonna make it on foot."]
-    data = session.get_global_total_distance_on_bike()
-    # checkpoints = session.get_challenge_parts()
-    checkpoints = {'a': 2, 'b': 3}
+    data = [session.get_global_total_distance_on_bike(), session.get_global_total_distance_on_feet()]
+    checkpoints = session.get_challenge_parts()
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
 
 

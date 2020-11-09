@@ -4,10 +4,10 @@
         <h1 class="h2">Personal Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" style="visibility: hidden;" >Share</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" style="visibility: hidden;">Export</button>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" style="visibility: hidden;">
                 <span data-feather="calendar"></span>
                 This week
             </button>
@@ -31,16 +31,16 @@
         {% for activity in last_activities %}
         <tr>
             <td>
-                activity['datetime']
+                {{ activity['datetime'] }}
             </td>
             <td>
-                activity['distance']
+                {{ activity['distance'] }}
             </td>
             <td>
-                activity['duration']
+                {{ activity['duration'] }}
             </td>
             <td>
-                activity['type']
+                {{ activity['type'] }}
             </td>
         </tr>
         {% endfor %}

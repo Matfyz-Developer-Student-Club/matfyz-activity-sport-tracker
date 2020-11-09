@@ -35,16 +35,34 @@ class UserType(Enum):
     Employee = 2
     Alumni = 3
 
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
 
 class ActivityType(Enum):
     Walk = 1
     Run = 2
     Ride = 3
 
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
 
 class Competition(Enum):
     Run5km = 5
     Run10km = 10
+
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
 
 
 class User(db.Model, UserMixin):
