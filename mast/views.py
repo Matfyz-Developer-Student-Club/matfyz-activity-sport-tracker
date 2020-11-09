@@ -10,11 +10,8 @@ from mast.models import User, Competition, Sex, Age
 from mast import db, app, bcr, queries
 from mast.tools.sis_authentication import authenticate_via_sis
 
-_DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
-                 'Thursday', 'Friday', 'Saturday')
-
-
 UPLOAD_FILE_DIR = 'landing'
+
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
@@ -73,11 +70,12 @@ def home():
         add_activity_form.file.data.save(os.path.join(UPLOAD_FILE_DIR, filename))
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form)
 
+
 @app.route('/get_personal_stats')
 @login_required
 def get_personal_stats():
     session = mast.queries.Queries()
-    data = session.get_total_distances_by_user_in_last_days(user_id=current_user.id, days=len(_DAY_IN_WEEKS))
+    data = session.get_total_distances_by_user_in_last_days(user_id=current_user.id, days=7)
     labels = [key for key, val in data.items()]
     data = [val for key, val in data.items()]
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
@@ -102,12 +100,17 @@ def get_global_contest():
 @app.route('/running_5_km')
 @login_required
 def running_5_km():
-    # TODO: replace with data from query
-    items = []
-    for i in range(6):
-        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i * 6)
-        items.append(item)
-    return render_template("running_5_km.html", title="Running-5", items=items)
+    session = mast.queries.Queries()
+    user_five = session.get_best_run_activities_by_user(current_user.id, Competition.Run5km, 10)
+    five_runner_men_under = session.get_top_users_best_run(Competition.Run5km, Sex.Male, Age.Under35, 10)
+    five_runner_men_above = session.get_top_users_best_run(Competition.Run5km, Sex.Male, Age.Over35, 10)
+    five_runner_women_under = session.get_top_users_best_run(Competition.Run5km, Sex.Female, Age.Under35, 10)
+    five_runner_women_above = session.get_top_users_best_run(Competition.Run5km, Sex.Female, Age.Over35, 10)
+
+    return render_template("running_5_km.html", title="Running-5", user_five=user_five,
+                           five_runner_men_above=five_runner_men_above, five_runner_men_under=five_runner_men_under,
+                           five_runner_women_above=five_runner_women_above,
+                           five_runner_women_under=five_runner_women_under)
 
 
 @app.route('/running_10_km')
@@ -119,11 +122,6 @@ def running_10_km():
     ten_runner_men_above = session.get_top_users_best_run(Competition.Run10km, Sex.Male, Age.Over35, 10)
     ten_runner_women_under = session.get_top_users_best_run(Competition.Run10km, Sex.Female, Age.Under35, 10)
     ten_runner_women_above = session.get_top_users_best_run(Competition.Run10km, Sex.Female, Age.Over35, 10)
-
-    print(ten_runner_men_under)
-    print(ten_runner_men_above)
-    print(ten_runner_women_under)
-    print(ten_runner_women_above)
 
     return render_template("running_10_km.html", title="Running-10", user_ten=user_ten,
                            ten_runner_men_above=ten_runner_men_above, ten_runner_men_under=ten_runner_men_under,
