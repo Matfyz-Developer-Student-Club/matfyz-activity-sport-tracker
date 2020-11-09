@@ -2,12 +2,12 @@ import json
 import os
 import datetime
 import mast
-from flask import redirect, request, render_template, url_for, jsonify
+from flask import redirect, request, render_template, url_for, jsonify, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
 from mast.models import User, Competition, Sex, Age, Activity, ActivityType
-from mast import db, app, bcr, queries
+from mast import db, bcr, queries, app
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.processor import GPXProcessor
 
@@ -88,7 +88,8 @@ def home():
                                 average_duration_per_km=avg_time, type=a_type)
         session.save_new_user_activities(current_user.id, new_activity)
 
-    return render_template("personal_dashboard.html", title='Home', form=add_activity_form, last_activities=last_activities)
+    return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
+                           last_activities=last_activities)
 
 
 @app.route('/get_personal_stats')

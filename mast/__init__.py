@@ -13,12 +13,10 @@ csrf = CSRFProtect(app)
 # Logging setup
 logging.basicConfig(level=logging.DEBUG)
 
-# TODO: Uncomment when database will be prepared
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 bcr = Bcrypt(app)
 
-# TODO: Uncomment when database will be prepared
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
