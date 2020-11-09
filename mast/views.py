@@ -18,7 +18,9 @@ PROCESSOR = GPXProcessor()
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
         form = LoginForm()
         return render_template('login.html', form=form)
     else:
@@ -36,7 +38,9 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'GET':
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
         form = RegisterForm('register_form')
         return render_template('register.html', form=form)
     else:
@@ -46,7 +50,8 @@ def register():
             user = User(email=form.email.data, password=hashed_password)
             db.session.add(user)
             db.session.commit()
-            return redirect(url_for('login'))
+            login_user(user)
+            return redirect(url_for('home'))
         else:
             return render_template('register.html', form=form)
 
