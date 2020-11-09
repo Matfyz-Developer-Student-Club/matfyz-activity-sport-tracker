@@ -99,7 +99,7 @@ class Queries(object):
                    Activity.type.in_(activity_types)).\
             scalar()
 
-    def get_total_distance_on_feet(self, user_id: int):
+    def get_total_distance_by_user_on_feet(self, user_id: int):
         """
         Returns the total run/walk distance taken by a specified user.
         :param user_id: ID of user.
@@ -107,7 +107,7 @@ class Queries(object):
         """
         return self._get_total_distance_by_user(user_id, [ActivityType.Run, ActivityType.Walk])
 
-    def get_global_total_distance_on_bike(self, user_id: int):
+    def get_total_distance_by_user_on_bike(self, user_id: int):
         """
         Returns the total ride distance taken by a specified user.
         :param user_id: ID of user.
