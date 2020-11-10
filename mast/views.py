@@ -18,35 +18,37 @@ PROCESSOR = GPXProcessor()
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
         form = LoginForm()
         return render_template('login.html', form=form)
     else:
         form = LoginForm(request.form)
         if form.validate():
-            user = User.query.filter_by(email=form.email.data).first()
+            user = User.query.filter_by(email=form.email.data.lower()).first()
             if user and bcr.check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
                 return redirect(url_for('home'))
             else:
-                form.email.errors.append('Your username or password is invalid!')
-        # TODO: Inform user about incorrect passwd
+                form.email.errors.append('Specified pair of email and password is invalid!')
     return render_template('login.html', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'GET':
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
         form = RegisterForm('register_form')
         return render_template('register.html', form=form)
     else:
         form = RegisterForm(request.form)
         if form.validate_on_submit():
-            hashed_password = bcr.generate_password_hash(form.password.data).decode('UTF-8')
-            user = User(email=form.email.data, password=hashed_password)
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for('login'))
+            hashed_password = bcr.generate_password_hash(form.password.data.strip()).decode('UTF-8')
+            user = User(email=form.email.data.lower().strip(), password=hashed_password)
+            login_user(user)
+            return redirect(url_for('home'))
         else:
             return render_template('register.html', form=form)
 
@@ -66,8 +68,6 @@ def home():
     last_activities = [] if not last_activities else last_activities
     add_activity_form = AddActivityForm()
     if add_activity_form.validate_on_submit():
-        # TODO: validate uploaded file
-        # TODO: add the record to the database
         filename = secure_filename(add_activity_form.file.data.filename)
         path = os.path.join(__file__, os.pardir)
         add_activity_form.file.data.save(os.path.join(os.path.abspath(path), UPLOAD_FILE_DIR, filename))
@@ -80,13 +80,14 @@ def home():
             a_type = ActivityType.Walk
 
         activity = PROCESSOR.process_input_data()
-        # PROCESSOR.landing_cleanup()
+        PROCESSOR.landing_cleanup()
         seconds = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
         avg_time = activity[0][1] / activity[0][0]
         avg_time = (datetime.datetime(2000, 1, 1, 0) + avg_time).time()
         new_activity = Activity(datetime=activity[0][2], distance=activity[0][0], duration=seconds,
                                 average_duration_per_km=avg_time, type=a_type)
         session.save_new_user_activities(current_user.id, new_activity)
+        return redirect(url_for('home'))
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
                            last_activities=last_activities)
@@ -102,10 +103,10 @@ def get_personal_stats():
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 
-@app.route('/global_dashboard')
+@app.route('/matfyz_challenges')
 @login_required
-def global_dashboard():
-    return render_template("global_dashboard.html", title='Global Dashboard')
+def matfyz_challenges():
+    return render_template("matfyz_challenges.html", title='Matfyz Challenges')
 
 
 @app.route('/get_global_contest')
@@ -174,18 +175,18 @@ def user_settings():
         if request.form['submit'] == 'Update profile':
             update_profile_form = UpdateProfileForm(request.form)
             if update_profile_form.validate():
-                current_user.complete_profile(first_name=update_profile_form.first_name.data,
-                                              last_name=update_profile_form.last_name.data,
+                current_user.complete_profile(first_name=update_profile_form.first_name.data.strip(),
+                                              last_name=update_profile_form.last_name.data.strip(),
                                               age=update_profile_form.age.data,
                                               sex=update_profile_form.sex.data,
                                               shirt_size=update_profile_form.shirt_size.data,
                                               user_type=update_profile_form.user_type.data,
-                                              ukco=update_profile_form.ukco.data,
-                                              display_name=update_profile_form.display_name.data,
+                                              ukco=update_profile_form.ukco.data.strip(),
+                                              display_name=update_profile_form.display_name.data.strip(),
                                               anonymous=update_profile_form.competing.data)
 
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
-                                        ukco=current_user.uk_id, is_employee=False):
+                                        ukco=current_user.uk_id, is_employee=current_user.type.value):
                     current_user.verify()
                     return redirect(url_for('user_settings'))
             else:
@@ -203,23 +204,22 @@ def user_settings():
                 display_change_password_form = 'block'
 
     # For GET and after POST method
-    update_profile_form.first_name.data = current_user.first_name if current_user.first_name else ''
-    update_profile_form.last_name.data = current_user.last_name if current_user.last_name else ''
-    update_profile_form.display_name.data = current_user.display_name if current_user.display_name else ''
-    update_profile_form.ukco.data = current_user.uk_id if current_user.uk_id else ''
-    update_profile_form.age.data = current_user.age.value if current_user.age else None
-    update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
-    update_profile_form.shirt_size.data = current_user.shirt_size if current_user.shirt_size else None
-    update_profile_form.user_type.data = current_user.type.value if current_user.type else None
-    update_profile_form.competing.data = current_user.anonymous if current_user.anonymous else None
+    update_profile_form.first_name.data = current_user.first_name or ''
+    update_profile_form.last_name.data = current_user.last_name or ''
+    update_profile_form.display_name.data = current_user.display_name or ''
+    update_profile_form.ukco.data = current_user.uk_id or ''
+    update_profile_form.age.data = current_user.age.value or None
+    update_profile_form.sex.data = current_user.sex.value or None
+    update_profile_form.shirt_size.data = current_user.shirt_size or None
+    update_profile_form.user_type.data = current_user.type.value or None
+    update_profile_form.competing.data = current_user.anonymous or None
 
     return render_template("user_settings.html", title='User Settings',
                            profile=current_user,
                            update_profile_form=update_profile_form,
                            display_update_profile_form=display_update_profile_form,
                            change_password_form=change_password_form,
-                           display_change_password_form=display_change_password_form,
-                           )
+                           display_change_password_form=display_change_password_form)
 
 
 @app.route('/cycling')
@@ -233,6 +233,12 @@ def cycling():
     cyclists_global = cyclists_global if cyclists_global else []
     return render_template("cycling.html", title="Cycling", cyclist_personal=cyclist_personal,
                            cyclists_global=cyclists_global)
+
+
+@app.route('/faq')
+@login_required
+def faq():
+    return render_template("faq.html", title='Frequently Asked Questions')
 
 
 @app.route('/integrations')

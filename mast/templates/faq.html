@@ -1,0 +1,110 @@
+{% extends "main_layout_template.html" %}
+{% block content_page %}
+    <div class="container mb-4">
+        <div class="row-fluid">
+            <div class="col-sm mb-4">
+                <h1>How do I submit new activity?</h1>
+                <p>
+                    For now, we only accept valid .gpx (resp. .xml) files.
+                    Many fitness tracking apps provide a way to export your run or bike track to GPX format.
+                    Among known supported apps are STRAVA or Endomondo.
+                </p>
+
+                <p>
+                    Another and the more tedious option is to create your own GPX file manually with some of the available web tools.
+                </p>
+
+                <p>
+                    Since we understand the unnecessary complexity behind this process, we plan to integrate with the STRAVA application soon as it should simplify this process greatly.
+                    We are open to provide integration with other apps and we would welcome your suggestions as to what fitness trackers are you using.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h1>How do I compete?</h1>
+                <p>
+                    Well, all you need to do is to complete your profile on the User Settings page.
+                    You can choose an optional display name that would be used in place of your real name on scoreboards or you can compete completely anonymously.
+                </p>
+
+                <p>
+                    It may seem like we require a lot of personal information.
+                    We have tried to cut it down to a minimum, however, we need that information in order to properly verify you within the faculty.
+                    Additionally, the t-shirt size is (as you probably guessed it) for your rewards.
+                </p>
+
+                <p>
+                    If you don’t want to share your information you can contact us and we should be able to find solution and update our page.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h1>I see competitions like 5 and 10 km run. How can I enter them?</h1>
+                <p>
+                    Sports instructors decided on a simple solution to this: every submission is accounted if it meets length criteria.
+                    The way it works is that we count average time per km and if you ran more than 5 km your average time will be recorded in this competition; if you ran more than 10 km your submission will enter both competitions.
+                </p>
+
+                <p>
+                    We understand that this is not the best approach but if your aim is to compete in these competitions you should plan your runs ahead and give your best on given length.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h1>What are the global challenges?</h1>
+                <p>
+                    Global challenges are meant to unite us as the faculty and see how far we can get.
+                    The goals have been chosen by our sports instructors.
+                    They may seem tedious, however, our instructors said that they will actively participate to help us all reach these goals :D
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h1>Are there any rewards?</h1>
+                <p>
+                    Yes! Since this project is meant as a replacement for traditional MFF deans sports day, you can expect rewards that will be announced soon and also an iconic MFF t-shirt.
+                </p>
+
+                <p>
+                    In addition to that, since the Department of Physical Education (KTV) sports lessons and clubs are canceled this semester, our student senator Patrícia advocated for credit rewards.
+                    For more details, see the next question.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h1>How can I earn credits?</h1>
+                <p>
+                    To get credits for Optional Physical Education (subject code NTVY006), you need to get 60 points.
+                    You will get one point for every kilometer on foot (run or walk) and half of the point for every kilometer on a bike.
+                </p>
+
+                <p>
+                    It is completely up to you whether you run 60 km, or ride 120 km, or create your own combination, e.g. run 30 km and ride 60 km.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h1>Is it only me or does this system have serious fraudulent issues?</h1>
+                <p>
+                    Well, you are right, even though we have tried to implement some safety requirements, this system is still easily exploitable.
+                    We believe that you all understand what is the idea behind sports competitions on the Faculty of Mathematics and Physics (and Computer Science*) and thus we rely on your honesty and manners.
+                </p>
+
+                <p>
+                    Although, some extraordinary results may undergo additional verification (and may even improve our submission parsing system).
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h1>I have encountered some technical difficulties. How should I report them?</h1>
+                <p>
+                    Honestly, that is pretty much expected due to time constraints on this project. We welcome all bug reports on <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a>.
+                </p>
+
+                <p>
+                    Additionally, you can contribute to this project and others by joining our club: <a href="https://matfyz-developer-student-club.github.io/websites/">Matfyz Developer Student Club</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock content_page %}
