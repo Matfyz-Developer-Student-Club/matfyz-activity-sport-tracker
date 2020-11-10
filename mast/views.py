@@ -81,10 +81,11 @@ def home():
 
         activity = PROCESSOR.process_input_data()
         PROCESSOR.landing_cleanup()
-        seconds = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
-        avg_time = activity[0][1] / activity[0][0]
-        avg_time = (datetime.datetime(2000, 1, 1, 0) + avg_time).time()
-        new_activity = Activity(datetime=activity[0][2], distance=activity[0][0], duration=seconds,
+        seconds = activity[0][1].total_seconds()
+        avg_seconds = round(seconds / activity[0][0])
+        full_time = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
+        avg_time = (datetime.datetime(2000, 1, 1, 0) + datetime.timedelta(seconds=avg_seconds)).time()
+        new_activity = Activity(datetime=activity[0][2], distance=activity[0][0], duration=full_time,
                                 average_duration_per_km=avg_time, type=a_type)
         session.save_new_user_activities(current_user.id, new_activity)
         return redirect(url_for('home'))
@@ -114,7 +115,7 @@ def matfyz_challenges():
 def get_global_contest():
     session = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.", "Where we gonna make it on foot."]
-    data = [session.get_global_total_distance_on_bike(), session.get_global_total_distance_on_feet()]
+    data = [session.get_global_total_distance_on_bike(), session.get_global_total_distance_on_foot()]
     checkpoints = session.get_challenge_parts()
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
 
@@ -154,8 +155,8 @@ def running_10_km():
 @login_required
 def running_jogging():
     session = mast.queries.Queries()
-    jogging_global = session.get_top_users_total_distance_on_feet(10)
-    jogging_personal = session.get_user_last_activities_on_feet(current_user.id, 10)
+    jogging_global = session.get_top_users_total_distance_on_foot(10)
+    jogging_personal = session.get_user_last_activities_on_foot(current_user.id, 10)
 
     jogging_personal = jogging_personal if jogging_personal else []
     jogging_global = jogging_global if jogging_global else []
