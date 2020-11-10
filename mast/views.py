@@ -185,7 +185,7 @@ def user_settings():
                                               anonymous=update_profile_form.competing.data)
 
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
-                                        ukco=current_user.uk_id, is_employee=False):
+                                        ukco=current_user.uk_id, is_employee=current_user.type.value):
                     current_user.verify()
                     return redirect(url_for('user_settings'))
             else:
