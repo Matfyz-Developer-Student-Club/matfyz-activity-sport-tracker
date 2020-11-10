@@ -102,6 +102,15 @@
                             Integrations
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a {% if title == 'Frequently Asked Questions' %} class="nav-link activity-wrap active" {% else %}
+                                                                          class="nav-link activity-wrap" {% endif %}
+                                                                          href="{{ url_for( 'faq') }}">
+                            <img src="{{ url_for('static', filename='pics/question.svg') }}" alt="Frequently Asked Questions"
+                                 width="16" height="16">
+                            Frequently Asked Questions
+                        </a>
+                    </li>
                 </ul>
 
                 <h6

@@ -238,6 +238,12 @@ def cycling():
                            cyclists_global=cyclists_global)
 
 
+@app.route('/faq')
+@login_required
+def faq():
+    return render_template("faq.html", title='Frequently Asked Questions')
+
+
 @app.route('/integrations')
 @login_required
 def integrations():
