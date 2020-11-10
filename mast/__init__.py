@@ -8,6 +8,11 @@ from os import environ, urandom
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = environ.get('SECRET_KEY') or urandom(24)
+app.config['TESTING'] = False
+app.config['DEBUG'] = False
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['REMEMBER_COOKIE_SECURE'] = True
+app.config['CSRF_ENABLED'] = True
 csrf = CSRFProtect(app)
 
 # Logging setup
