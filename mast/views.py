@@ -45,8 +45,8 @@ def register():
     else:
         form = RegisterForm(request.form)
         if form.validate_on_submit():
-            hashed_password = bcr.generate_password_hash(form.password.data).decode('UTF-8')
-            user = User(email=form.email.data.lower(), password=hashed_password)
+            hashed_password = bcr.generate_password_hash(form.password.data.strip()).decode('UTF-8')
+            user = User(email=form.email.data.lower().strip(), password=hashed_password)
             login_user(user)
             return redirect(url_for('home'))
         else:
@@ -103,10 +103,10 @@ def get_personal_stats():
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 
-@app.route('/global_dashboard')
+@app.route('/matfyz_challenges')
 @login_required
-def global_dashboard():
-    return render_template("global_dashboard.html", title='Global Dashboard')
+def matfyz_challenges():
+    return render_template("matfyz_challenges.html", title='Matfyz Challenges')
 
 
 @app.route('/get_global_contest')
@@ -181,8 +181,8 @@ def user_settings():
                                               sex=update_profile_form.sex.data,
                                               shirt_size=update_profile_form.shirt_size.data,
                                               user_type=update_profile_form.user_type.data,
-                                              ukco=update_profile_form.ukco.data,
-                                              display_name=update_profile_form.display_name.data,
+                                              ukco=update_profile_form.ukco.data.strip(),
+                                              display_name=update_profile_form.display_name.data.strip(),
                                               anonymous=update_profile_form.competing.data)
 
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
