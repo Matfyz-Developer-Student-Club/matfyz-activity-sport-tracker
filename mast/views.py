@@ -68,8 +68,6 @@ def home():
     last_activities = [] if not last_activities else last_activities
     add_activity_form = AddActivityForm()
     if add_activity_form.validate_on_submit():
-        # TODO: validate uploaded file
-        # TODO: add the record to the database
         filename = secure_filename(add_activity_form.file.data.filename)
         path = os.path.join(__file__, os.pardir)
         add_activity_form.file.data.save(os.path.join(os.path.abspath(path), UPLOAD_FILE_DIR, filename))
@@ -177,8 +175,8 @@ def user_settings():
         if request.form['submit'] == 'Update profile':
             update_profile_form = UpdateProfileForm(request.form)
             if update_profile_form.validate():
-                current_user.complete_profile(first_name=update_profile_form.first_name.data,
-                                              last_name=update_profile_form.last_name.data,
+                current_user.complete_profile(first_name=update_profile_form.first_name.data.strip(),
+                                              last_name=update_profile_form.last_name.data.strip(),
                                               age=update_profile_form.age.data,
                                               sex=update_profile_form.sex.data,
                                               shirt_size=update_profile_form.shirt_size.data,
@@ -206,23 +204,22 @@ def user_settings():
                 display_change_password_form = 'block'
 
     # For GET and after POST method
-    update_profile_form.first_name.data = current_user.first_name if current_user.first_name else ''
-    update_profile_form.last_name.data = current_user.last_name if current_user.last_name else ''
-    update_profile_form.display_name.data = current_user.display_name if current_user.display_name else ''
-    update_profile_form.ukco.data = current_user.uk_id if current_user.uk_id else ''
-    update_profile_form.age.data = current_user.age.value if current_user.age else None
-    update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
-    update_profile_form.shirt_size.data = current_user.shirt_size if current_user.shirt_size else None
-    update_profile_form.user_type.data = current_user.type.value if current_user.type else None
-    update_profile_form.competing.data = current_user.anonymous if current_user.anonymous else None
+    update_profile_form.first_name.data = current_user.first_name or ''
+    update_profile_form.last_name.data = current_user.last_name or ''
+    update_profile_form.display_name.data = current_user.display_name or ''
+    update_profile_form.ukco.data = current_user.uk_id or ''
+    update_profile_form.age.data = current_user.age or None
+    update_profile_form.sex.data = current_user.sex or None
+    update_profile_form.shirt_size.data = current_user.shirt_size or None
+    update_profile_form.user_type.data = current_user.type or None
+    update_profile_form.competing.data = current_user.anonymous or None
 
     return render_template("user_settings.html", title='User Settings',
                            profile=current_user,
                            update_profile_form=update_profile_form,
                            display_update_profile_form=display_update_profile_form,
                            change_password_form=change_password_form,
-                           display_change_password_form=display_change_password_form,
-                           )
+                           display_change_password_form=display_change_password_form)
 
 
 @app.route('/cycling')
