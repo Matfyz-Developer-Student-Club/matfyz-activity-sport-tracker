@@ -18,35 +18,37 @@ PROCESSOR = GPXProcessor()
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
         form = LoginForm()
         return render_template('login.html', form=form)
     else:
         form = LoginForm(request.form)
         if form.validate():
-            user = User.query.filter_by(email=form.email.data).first()
+            user = User.query.filter_by(email=form.email.data.lower()).first()
             if user and bcr.check_password_hash(user.password, form.password.data):
                 login_user(user, remember=form.remember.data)
                 return redirect(url_for('home'))
             else:
-                form.email.errors.append('Your username or password is invalid!')
-        # TODO: Inform user about incorrect passwd
+                form.email.errors.append('Specified pair of email and password is invalid!')
     return render_template('login.html', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'GET':
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
         form = RegisterForm('register_form')
         return render_template('register.html', form=form)
     else:
         form = RegisterForm(request.form)
         if form.validate_on_submit():
             hashed_password = bcr.generate_password_hash(form.password.data).decode('UTF-8')
-            user = User(email=form.email.data, password=hashed_password)
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for('login'))
+            user = User(email=form.email.data.lower(), password=hashed_password)
+            login_user(user)
+            return redirect(url_for('home'))
         else:
             return render_template('register.html', form=form)
 
@@ -80,13 +82,14 @@ def home():
             a_type = ActivityType.Walk
 
         activity = PROCESSOR.process_input_data()
-        # PROCESSOR.landing_cleanup()
+        PROCESSOR.landing_cleanup()
         seconds = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
         avg_time = activity[0][1] / activity[0][0]
         avg_time = (datetime.datetime(2000, 1, 1, 0) + avg_time).time()
         new_activity = Activity(datetime=activity[0][2], distance=activity[0][0], duration=seconds,
                                 average_duration_per_km=avg_time, type=a_type)
         session.save_new_user_activities(current_user.id, new_activity)
+        return redirect(url_for('home'))
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
                            last_activities=last_activities)
@@ -233,6 +236,12 @@ def cycling():
     cyclists_global = cyclists_global if cyclists_global else []
     return render_template("cycling.html", title="Cycling", cyclist_personal=cyclist_personal,
                            cyclists_global=cyclists_global)
+
+
+@app.route('/faq')
+@login_required
+def faq():
+    return render_template("faq.html", title='Frequently Asked Questions')
 
 
 @app.route('/integrations')

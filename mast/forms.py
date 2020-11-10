@@ -48,7 +48,7 @@ class RegisterForm(LoggingFlaskForm):
     submit = SubmitField('Create an account')
 
     def validate_email(self, email):
-        user_email = User.query.filter_by(email=email.data).first()
+        user_email = User.query.filter_by(email=email.data.lower()).first()
         if user_email:
             raise ValidationError(f'Email {email.data} is already in use!')
 
@@ -90,7 +90,7 @@ class ChangePasswordForm(LoggingFlaskForm):
 
 class AddActivityForm(LoggingFlaskForm):
     activity = RadioField('Activity', validators=[DataRequired()], choices=['Walk', 'Run', 'Ride'])
-    file = FileField('GPX file', validators=[FileRequired()])
+    file = FileField('GPX file', validators=[FileRequired()], render_kw={'accept': '.xml,.gpx'})
     submit = SubmitField('Add activity')
 
     def validate_file(self, file):
