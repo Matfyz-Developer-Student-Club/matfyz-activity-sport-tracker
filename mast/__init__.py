@@ -4,16 +4,16 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import logging
-from os import urandom
+from os import environ, urandom
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = urandom(24)
+app.config['SECRET_KEY'] = environ.get('SECRET_KEY') or urandom(24)
 csrf = CSRFProtect(app)
 
 # Logging setup
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DATABASE_URL') or 'sqlite:///site.db'
 db = SQLAlchemy(app)
 bcr = Bcrypt(app)
 
