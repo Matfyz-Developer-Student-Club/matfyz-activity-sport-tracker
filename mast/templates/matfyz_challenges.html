@@ -2,4 +2,13 @@
 {% block content_page %}
     <canvas class="my-4 w-100" id="myChart" width="900" height="220"></canvas>
     <script src="{{ url_for('static', filename='global_contest.js') }}"></script>
+    <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 container-fluid">
+        <div class="row">
+            <div class="col col-2"></div>
+            <div class="col col-lg-8">
+                <img src="{{ url_for('static', filename='pics/checkpoints/01.jpg') }}" class="rounded img-fluid">
+            </div>
+            <div class="col col-2"></div>
+        </div>
+    </div>
 {% endblock content_page %}
