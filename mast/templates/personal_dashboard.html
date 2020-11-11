@@ -38,7 +38,8 @@
     </div>
 
     <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Personal Dashboard</h1>
+        <h2>Personal Dashboard</h2>
+        <h3><span class="badge badge-light">Season: {{ season['title'] }}</span></h3>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
                 <button type="button" class="btn btn-sm btn-outline-secondary" style="visibility: hidden;" >Share</button>
@@ -56,6 +57,7 @@
     <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
     <script src="{{ url_for('static', filename='main_layout_template.js') }}"></script>
     <h2>Achievements</h2>
+    <h6>Only activities between {{ season['start_date'].strftime('%B %d, %Y') }} and {{ season['end_date'].strftime('%B %d, %Y') }} are considered for competitions and challenges.</h6>
     <div class="table-responsive"></div>
     <table class="table table-striped table-sm">
         <thead>

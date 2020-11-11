@@ -91,7 +91,7 @@ def home():
         return redirect(url_for('home'))
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
-                           last_activities=last_activities)
+                           season=session.SEASON, last_activities=last_activities)
 
 
 @app.route('/get_personal_stats')
