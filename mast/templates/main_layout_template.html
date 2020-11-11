@@ -45,7 +45,7 @@
     <link href="{{ url_for('static', filename='main_layout_template.css') }}" rel="stylesheet">
 </head>
 
-<body style="min-height: 100%; height: 100%">
+<body class="h-100" style="min-height: 100%; height: 100%">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="{{ url_for('home') }}">Mathletics</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
@@ -62,7 +62,7 @@
 <div class="container-fluid">
     <div class="row">
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-            <div class="sidebar-sticky pt-3">
+            <div class="sidebar-sticky d-flex flex-column pt-3 h-100">
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a {% if title == 'Home' %} class="nav-link activity-wrap active" {% else %}
@@ -111,10 +111,10 @@
                     </li>
                 </ul>
 
-                <h6
-                        class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span wfd-id="13">Sport Disciplines</span>
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span wfd-id="13">Sports Competitions</span>
                 </h6>
+
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a {% if title == 'Running-5' %} class="nav-link activity-wrap active" {% else %}
@@ -156,6 +156,12 @@
                         </a>
                     </li>
                 </ul>
+
+                <footer class="footer mt-auto py-3">
+                    <div class="container">
+                        <span class="text-muted">Powered by <a href="https://matfyz-developer-student-club.github.io/websites/" target="_blank">Matfyz Developer Student Club</a>.</span>
+                    </div>
+                </footer>
             </div>
         </nav>
 
@@ -167,6 +173,7 @@
         </main>
     </div>
 </div>
+
 <script src="{{ url_for('static', filename='user_settings.js') }}"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js "
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI "
