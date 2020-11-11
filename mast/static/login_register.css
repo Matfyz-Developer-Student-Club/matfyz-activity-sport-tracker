@@ -1,0 +1,31 @@
+body {
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
+  
+  .masthead {
+    height: 100vh;
+    min-height: 500px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .home {
+    background-image: url("/static/pics/background_med.jpg");
+  }
+  
+  .login {
+    background-image: url("/static/pics/background2_med.jpg");
+  }
+
+  .register{
+    background-image: url("/static/pics/background3_med.jpg");
+  }
+  
+  .adjust_height::before{
+    display: block;
+    content: " ";
+    height: 65px;
+    visibility: hidden;
+  }
