@@ -1,7 +1,7 @@
 {% from "_formhelpers.html" import render_text_field, render_checkbox_field, render_submit_button %}
 <html lang="en">
 
-<body onload="IsButtonNeeded()">
+<body>
     <!-- Navigation -->
     <nav class="navbar navbar-dark navbar-expand-lg bg-dark shadow fixed-top">
         <div class="container">
@@ -12,7 +12,10 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#login" onclick="ShowButton()">Log in</a>
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#login">Log in</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="https://matfyz-developer-student-club.github.io/websites/">About
@@ -64,9 +67,6 @@
                     {% endblock form%}
                 </div>
             </div>
-
-
-            <button onclick="topFunction()" id="myBtn" title="Go to top">Home</button>
         </div>
     </header>
 </body>
