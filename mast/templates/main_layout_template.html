@@ -4,10 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
     <meta name="author" content="Matfyz Developer Student Club">
     <link rel="icon" href="{{ url_for( 'static', filename='../static/pics/activity.svg') }}">
-    <meta name="generator" content="Jekyll v4.1.1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"></script>
@@ -47,7 +45,7 @@
     <link href="{{ url_for('static', filename='main_layout_template.css') }}" rel="stylesheet">
 </head>
 
-<body>
+<body style="min-height: 100%; height: 100%">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="{{ url_for('home') }}">Mathletics</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
@@ -76,12 +74,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a {% if title == 'Global Dashboard' %} class="nav-link activity-wrap active" {% else %}
+                        <a {% if title == 'Matfyz Challenges' %} class="nav-link activity-wrap active" {% else %}
                                                                 class="nav-link activity-wrap" {% endif %}
-                                                                href="{{ url_for( 'global_dashboard') }}">
+                                                                href="{{ url_for( 'matfyz_challenges') }}">
                             <img src="{{ url_for('static', filename='pics/bar-chart-2.svg') }}"
                                  alt="Global Statistics" width="16" height="16">
-                            Global Dashboard
+                            Matfyz Challenges
                         </a>
                     </li>
                     <li class="nav-item">
@@ -140,10 +138,10 @@
                     <li class="nav-item">
                         <a {% if title == 'Jogging' %} class="nav-link activity-wrap active" {% else %}
                                                        class="nav-link activity-wrap" {% endif %}
-                                                       href="{{ url_for( 'running_jogging') }}">
+                                                       href="{{ url_for( 'running_walking') }}">
                             <img class="activity" src="{{ url_for('static', filename='pics/jogging.svg') }}"
                                  alt="Jogging" width="16" height="16">
-                            Running / Jogging
+                            Running / Walking
                             <span class="sr-only"></span>
                         </a>
                     </li>
