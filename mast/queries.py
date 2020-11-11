@@ -11,7 +11,14 @@ class Queries(object):
         self.SEASON = db.session.query(Season).\
             filter(Season.start_date <= dt.date.today(),
                    Season.end_date >= dt.date.today()).\
-            one()
+            first()
+        if self.SEASON is None:
+            self.SEASON = db.session.query(Season).\
+                filter(Season.start_date > dt.date.today()).\
+                order_by(Season.start_date.asc()).\
+                first()
+        if self.SEASON is None:
+            self.SEASON = Season(title='', start_date=dt.date.today(), end_date=dt.date.today())
 
     def _get_user_last_activities(self, user_id: int, activity_types: list,  number: int):
         """
