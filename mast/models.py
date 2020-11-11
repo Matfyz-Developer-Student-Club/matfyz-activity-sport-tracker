@@ -96,6 +96,14 @@ class User(db.Model, UserMixin):
     def __str__(self):
         return self.display()
 
+    def is_completed(self):
+        return self.first_name is not None and\
+               self.last_name is not None and\
+               self.sex is not None and\
+               self.age is not None and\
+               self.type is not None and\
+               self.uk_id is not None
+
     def display(self):
         if self.anonymous:
             return 'Anonymous'

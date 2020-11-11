@@ -81,16 +81,17 @@ def home():
 
         activity = PROCESSOR.process_input_data()
         PROCESSOR.landing_cleanup()
-        seconds = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
-        avg_time = activity[0][1] / activity[0][0]
-        avg_time = (datetime.datetime(2000, 1, 1, 0) + avg_time).time()
-        new_activity = Activity(datetime=activity[0][2], distance=activity[0][0], duration=seconds,
+        seconds = activity[0][1].total_seconds()
+        avg_seconds = round(seconds / activity[0][0])
+        full_time = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
+        avg_time = (datetime.datetime(2000, 1, 1, 0) + datetime.timedelta(seconds=avg_seconds)).time()
+        new_activity = Activity(datetime=activity[0][2], distance=activity[0][0], duration=full_time,
                                 average_duration_per_km=avg_time, type=a_type)
         session.save_new_user_activities(current_user.id, new_activity)
         return redirect(url_for('home'))
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
-                           last_activities=last_activities)
+                           season=session.SEASON, last_activities=last_activities)
 
 
 @app.route('/get_personal_stats')
@@ -114,7 +115,7 @@ def matfyz_challenges():
 def get_global_contest():
     session = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.", "Where we gonna make it on foot."]
-    data = [session.get_global_total_distance_on_bike(), session.get_global_total_distance_on_feet()]
+    data = [session.get_global_total_distance_on_bike(), session.get_global_total_distance_on_foot()]
     checkpoints = session.get_challenge_parts()
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
 
@@ -150,17 +151,17 @@ def running_10_km():
                            ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under)
 
 
-@app.route('/running_jogging')
+@app.route('/running_walking')
 @login_required
-def running_jogging():
+def running_walking():
     session = mast.queries.Queries()
-    jogging_global = session.get_top_users_total_distance_on_feet(10)
-    jogging_personal = session.get_user_last_activities_on_feet(current_user.id, 10)
+    jogging_global = session.get_top_users_total_distance_on_foot(10)
+    jogging_personal = session.get_user_last_activities_on_foot(current_user.id, 10)
 
     jogging_personal = jogging_personal if jogging_personal else []
     jogging_global = jogging_global if jogging_global else []
 
-    return render_template("running_jogging.html", title="Jogging", jogging_global=jogging_global,
+    return render_template("running_walking.html", title="Jogging", jogging_global=jogging_global,
                            jogging_personal=jogging_personal)
 
 
@@ -208,10 +209,10 @@ def user_settings():
     update_profile_form.last_name.data = current_user.last_name or ''
     update_profile_form.display_name.data = current_user.display_name or ''
     update_profile_form.ukco.data = current_user.uk_id or ''
-    update_profile_form.age.data = current_user.age.value or None
-    update_profile_form.sex.data = current_user.sex.value or None
+    update_profile_form.age.data = current_user.age.value if current_user.age else None
+    update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
     update_profile_form.shirt_size.data = current_user.shirt_size or None
-    update_profile_form.user_type.data = current_user.type.value or None
+    update_profile_form.user_type.data = current_user.type.value if current_user.type else None
     update_profile_form.competing.data = current_user.anonymous or None
 
     return render_template("user_settings.html", title='User Settings',
