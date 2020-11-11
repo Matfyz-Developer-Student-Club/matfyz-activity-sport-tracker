@@ -151,9 +151,9 @@ def running_10_km():
                            ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under)
 
 
-@app.route('/running_jogging')
+@app.route('/running_walking')
 @login_required
-def running_jogging():
+def running_walking():
     session = mast.queries.Queries()
     jogging_global = session.get_top_users_total_distance_on_foot(10)
     jogging_personal = session.get_user_last_activities_on_foot(current_user.id, 10)
@@ -161,7 +161,7 @@ def running_jogging():
     jogging_personal = jogging_personal if jogging_personal else []
     jogging_global = jogging_global if jogging_global else []
 
-    return render_template("running_jogging.html", title="Jogging", jogging_global=jogging_global,
+    return render_template("running_walking.html", title="Jogging", jogging_global=jogging_global,
                            jogging_personal=jogging_personal)
 
 
