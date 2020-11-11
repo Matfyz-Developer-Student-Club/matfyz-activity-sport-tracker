@@ -1,41 +1,83 @@
-{% extends "auth_template.html" %}
-{% block form %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-4 ml-4">
-            <img src="{{ url_for('static', filename='pics/running.svg') }}" alt="athlete" id="athlete" >
-        </div>
-        <div class="col-md-2">
-        </div>
-        <div class="col-md-3">
-            <form class="form-group" method="post">
+{% from "_formhelpers.html" import render_text_field, render_checkbox_field, render_submit_button %}
+<html lang="en">
 
-                {{ form.hidden_tag() }}
+<body onload="IsButtonNeeded()">
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark navbar-expand-lg bg-dark shadow fixed-top">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#login" onclick="ShowButton()">Log in</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://matfyz-developer-student-club.github.io/websites/">About
+                            Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-                <div class="text-center mb-4">
-                    <h1 class="h2 mb-3">
-                        Matfyz<br>
-                        Activity<br>
-                        <span class="primary_header">Sport<br>Tracker</span>
-                    </h1>
-                    <p>Compete, track and enjoy</p>
+    <!-- Full Page Image Header with Vertically Centered Content -->
+    <header class="masthead home">
+        <div class="container h-100">
+            <div class="row h-50 align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-1">Mathletics</h1>
+                    <p class="lead">Compete, track and enjoy</p>
+                    <form action="{{ url_for( 'register' ) }}">
+                        <input class="btn btn-outline-dark" type="submit" value="Join Us" />
+                    </form>
                 </div>
-
-                {{ render_text_field(form.email, autofocus=true, type='email') }}
-
-                {{ render_text_field(form.password) }}
-
-                <div class="checkbox mb-3">
-                    {{ render_checkbox_field(form.remember) }}
-                    <br>
-                    <a href="{{ url_for( 'register' ) }}">Create a new account.</a>
-                </div>
-
-                {{ render_submit_button(form.submit) }}
-
-            </form>
+            </div>
         </div>
-    </div>
-</div>
+    </header>
 
-{% endblock form%}
+    <!-- login part of the page -->
+    <header class="masthead login">
+        <div id="login" class="container h-100">
+            <div class="row justify-content-center align-middle">
+                <div class="col-5 text-center">
+                    {% block form %}
+                    <form class="form-group" method="post">
+
+                        {{ form.hidden_tag() }}
+
+                        {{ render_text_field(form.email, autofocus=true, type='email') }}
+
+                        {{ render_text_field(form.password) }}
+
+                        <div class="checkbox mb-3">
+                            {{ render_checkbox_field(form.remember) }}
+                            <br>
+                            <a href="{{ url_for( 'register' ) }}">Create a new account.</a>
+                        </div>
+
+                        {{ render_submit_button(form.submit) }}
+
+                    </form>
+                    {% endblock form%}
+                </div>
+            </div>
+
+
+            <button onclick="topFunction()" id="myBtn" title="Go to top">Home</button>
+        </div>
+    </header>
+</body>
+
+<script src="{{ url_for('static', filename='login.js') }}"></script>
+<link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</html>
