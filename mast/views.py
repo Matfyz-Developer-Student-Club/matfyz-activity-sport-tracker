@@ -113,7 +113,9 @@ def get_personal_stats():
 @app.route('/matfyz_challenges')
 @login_required
 def matfyz_challenges():
-    return render_template("matfyz_challenges.html", title='Matfyz Challenges')
+    session = mast.queries.Queries()
+    current_checkpoint = session.get_current_challenge_part()
+    return render_template("matfyz_challenges.html", title='Matfyz Challenges', current_checkpoint=current_checkpoint)
 
 
 @app.route('/get_global_contest')
