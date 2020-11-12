@@ -228,7 +228,7 @@ class Queries(object):
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type.in_(activity_types)).\
-            scalar()
+            scalar() or 0
 
     def get_global_total_distance_on_foot(self):
         """
@@ -261,3 +261,19 @@ class Queries(object):
             result[dist] = item.target
 
         return result
+
+    def get_current_challenge_part(self):
+        """
+        Returns the order number of current part of challenge -
+        the one where the better of on foot / on bike challenge is.
+        :returns: String representing the order number.
+        """
+        dist = max(self.get_global_total_distance_on_foot(), self.get_global_total_distance_on_bike())
+        checkpoints = self.get_challenge_parts()
+
+        result = 0
+        for d in checkpoints.keys():
+            if d <= dist:
+                result = result + 1
+
+        return '%02d' % result

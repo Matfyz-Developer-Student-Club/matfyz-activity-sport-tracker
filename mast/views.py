@@ -113,7 +113,9 @@ def get_personal_stats():
 @app.route('/matfyz_challenges')
 @login_required
 def matfyz_challenges():
-    return render_template("matfyz_challenges.html", title='Matfyz Challenges')
+    session = mast.queries.Queries()
+    current_checkpoint = session.get_current_challenge_part()
+    return render_template("matfyz_challenges.html", title='Matfyz Challenges', current_checkpoint=current_checkpoint)
 
 
 @app.route('/get_global_contest')
@@ -262,6 +264,12 @@ def cycling():
 @login_required
 def faq():
     return render_template("faq.html", title='Frequently Asked Questions')
+
+
+@app.route('/about_competitions')
+@login_required
+def about_competitions():
+    return render_template("about_competitions.html", title='About Competitions')
 
 
 @app.route('/integrations')
