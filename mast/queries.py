@@ -147,7 +147,7 @@ class Queries(object):
             result[(first_day + dt.timedelta(days=i)).isoformat()] = 0
 
         for item in query_result:
-            result[item.day] = item.distance
+            result[item.day.isoformat()] = item.distance
 
         return result
 
