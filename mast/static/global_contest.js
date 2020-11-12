@@ -58,7 +58,7 @@ jQuery(document).ready(function () {
                             ticks: {
                                 beginAtZero: true,
                                 suggestedMin: 0,
-                                suggestedMax: 500,
+                                suggestedMax: 900,
                                 callback: function (value, index, values) {
                                     return getCheckPoint(value) + value;
                                 }
