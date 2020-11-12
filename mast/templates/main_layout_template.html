@@ -117,6 +117,15 @@
 
                 <ul class="nav flex-column">
                     <li class="nav-item">
+                        <a {% if title == 'About Competitions' %} class="nav-link activity-wrap active" {% else %}
+                                                                  class="nav-link activity-wrap" {% endif %}
+                                                                  href="{{ url_for( 'about_competitions') }}">
+                            <img src="{{ url_for('static', filename='pics/trophy.svg') }}" alt="About Competitions"
+                                 width="16" height="16">
+                            About Competitions
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a {% if title == 'Running-5' %} class="nav-link activity-wrap active" {% else %}
                                                          class="nav-link activity-wrap" {% endif %}
                                                          href="{{ url_for( 'running_5_km') }}">

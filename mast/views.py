@@ -264,6 +264,12 @@ def faq():
     return render_template("faq.html", title='Frequently Asked Questions')
 
 
+@app.route('/about_competitions')
+@login_required
+def about_competitions():
+    return render_template("about_competitions.html", title='About Competitions')
+
+
 @app.route('/integrations')
 @login_required
 def integrations():
