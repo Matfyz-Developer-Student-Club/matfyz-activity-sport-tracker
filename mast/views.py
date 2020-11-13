@@ -84,11 +84,9 @@ def home():
             a_type = ActivityType.Walk
 
         activity = PROCESSOR.process_input_data(filename)
-        print(activity)
         PROCESSOR.landing_cleanup(filename)
         seconds = activity[0][1].total_seconds()
         avg_seconds = round(seconds / activity[0][0]) if activity[0][0] > 0 else 0
-        print(activity)
         full_time = (datetime.datetime(2000, 1, 1, 0) + activity[0][1]).time()
         avg_time = (datetime.datetime(2000, 1, 1, 0) +
                     datetime.timedelta(seconds=avg_seconds)).time()

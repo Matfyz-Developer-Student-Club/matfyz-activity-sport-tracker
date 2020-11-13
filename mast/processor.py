@@ -32,22 +32,24 @@ class GPXProcessor(object):
         try:
             input_file = os.path.join(self.LANDING_DIR, input_file)
             if Path(input_file).suffix in self.__ALLOWED_EXTENSIONS:
-                tree = ET.parse(os.path.join(self.LANDING_DIR, input_file))
-                root = tree.getroot()
+                with open(os.path.join(self.LANDING_DIR, input_file), mode='rb') as xml_inp:
+                    tree = ET.parse(xml_inp)
+                    root = tree.getroot()
 
-                # Find the child element of tracking point including namespace
-                pom_elem = findall('\{.*\}.*', root[0].tag if len(root) > 1 else root[0].tag)
-                # Cut of namespace prefix
-                namespace = findall('\{.*\}', pom_elem[0])[0]
-                trk = root.find(namespace + self.__TRK_ELM)
-                activities = trk.find(namespace + self.__TRKSEG_ELM).findall(
-                    namespace + self.__TRKPT_ELM)
+                    # Find the child element of tracking point including namespace
+                    pom_elem = findall('\{.*\}.*', root[0].tag if len(root) > 1 else root[0].tag)
+                    # Cut of namespace prefix
+                    namespace = findall('\{.*\}', pom_elem[0])[0]
+                    trk = root.find(namespace + self.__TRK_ELM)
+                    activities = trk.find(namespace + self.__TRKSEG_ELM).findall(
+                        namespace + self.__TRKPT_ELM)
 
-                if activities[0].find(namespace + self.__TIME_ELM) is not None:
-                    time_seg = [activity.find(namespace + self.__TIME_ELM) for activity in activities]
-                    activity_start.append(parser.parse(time_seg[0].text))
-                    total_time.append(self.__calculate_total_time(time_seg))
-                output_buffer.append(round(self.__calculate_orthodromic_distance(activities), 1))
+                    if activities[0].find(namespace + self.__TIME_ELM) is not None:
+                        time_seg = [activity.find(namespace + self.__TIME_ELM) for activity in activities]
+                        activity_start.append(parser.parse(time_seg[0].text))
+                        total_time.append(self.__calculate_total_time(time_seg))
+                    output_buffer.append(round(self.__calculate_orthodromic_distance(activities), 1))
+                    xml_inp.close()
             else:
                 raise AssertionError("Forbidden file extension encountered!")
         except Exception as ex:
