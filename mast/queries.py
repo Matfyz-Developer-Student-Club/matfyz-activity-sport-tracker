@@ -11,7 +11,14 @@ class Queries(object):
         self.SEASON = db.session.query(Season).\
             filter(Season.start_date <= dt.date.today(),
                    Season.end_date >= dt.date.today()).\
-            one()
+            first()
+        if self.SEASON is None:
+            self.SEASON = db.session.query(Season).\
+                filter(Season.start_date > dt.date.today()).\
+                order_by(Season.start_date.asc()).\
+                first()
+        if self.SEASON is None:
+            self.SEASON = Season(title='', start_date=dt.date.today(), end_date=dt.date.today())
 
     def _get_user_last_activities(self, user_id: int, activity_types: list,  number: int):
         """
@@ -39,7 +46,7 @@ class Queries(object):
         """
         return self._get_user_last_activities(user_id, [ActivityType.Run, ActivityType.Walk, ActivityType.Ride], number)
 
-    def get_user_last_activities_on_feet(self, user_id: int,  number: int):
+    def get_user_last_activities_on_foot(self, user_id: int, number: int):
         """
         Returns the last run/walk activities by specified user.
         :param user_id: ID of user.
@@ -99,7 +106,7 @@ class Queries(object):
                    Activity.type.in_(activity_types)).\
             scalar()
 
-    def get_total_distance_by_user_on_feet(self, user_id: int):
+    def get_total_distance_by_user_on_foot(self, user_id: int):
         """
         Returns the total run/walk distance taken by a specified user.
         :param user_id: ID of user.
@@ -195,7 +202,7 @@ class Queries(object):
             limit(number).\
             all()
 
-    def get_top_users_total_distance_on_feet(self, number: int):
+    def get_top_users_total_distance_on_foot(self, number: int):
         """
         Returns top users in the total run/walk distance.
         :param number: Number of users in the top users list.
@@ -221,9 +228,9 @@ class Queries(object):
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type.in_(activity_types)).\
-            scalar()
+            scalar() or 0
 
-    def get_global_total_distance_on_feet(self):
+    def get_global_total_distance_on_foot(self):
         """
         Returns the total run/walk distance by all users.
         :returns: The total distance in kilometres.
@@ -254,3 +261,19 @@ class Queries(object):
             result[dist] = item.target
 
         return result
+
+    def get_current_challenge_part(self):
+        """
+        Returns the order number of current part of challenge -
+        the one where the better of on foot / on bike challenge is.
+        :returns: String representing the order number.
+        """
+        dist = max(self.get_global_total_distance_on_foot(), self.get_global_total_distance_on_bike())
+        checkpoints = self.get_challenge_parts()
+
+        result = 0
+        for d in checkpoints.keys():
+            if d <= dist:
+                result = result + 1
+
+        return '%02d' % result

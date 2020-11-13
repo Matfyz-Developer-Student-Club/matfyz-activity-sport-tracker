@@ -3,11 +3,12 @@
     <div class="container mb-4">
         <div class="row-fluid">
             <div class="col-sm mb-4">
-                <h1>How do I submit new activity?</h1>
+                <h2>How do I submit new activity?</h2>
                 <p>
-                    For now, we only accept valid .gpx (resp. .xml) files.
+                    For now, we only accept valid GPX (.gpx or .xml) files.
                     Many fitness tracking apps provide a way to export your run or bike track to GPX format.
-                    Among known supported apps are STRAVA or Endomondo.
+                    One of the most common tracking app is STRAVA.
+                    To export GPX file, <a href="https://www.strava.com/login" target="_blank">log in to your STRAVA account</a> on PC and follow the screenshot below.
                 </p>
 
                 <p>
@@ -18,10 +19,20 @@
                     Since we understand the unnecessary complexity behind this process, we plan to integrate with the STRAVA application soon as it should simplify this process greatly.
                     We are open to provide integration with other apps and we would welcome your suggestions as to what fitness trackers are you using.
                 </p>
+
+                <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 container-fluid">
+                    <div class="row">
+                        <div class="col col-2"></div>
+                        <div class="col col-lg-8">
+                            <img src="{{ url_for('static', filename='pics/strava.jpg') }}" class="rounded img-fluid">
+                        </div>
+                        <div class="col col-2"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-sm mb-4">
-                <h1>How do I compete?</h1>
+                <h2>How do I compete?</h2>
                 <p>
                     Well, all you need to do is to complete your profile on the User Settings page.
                     You can choose an optional display name that would be used in place of your real name on scoreboards or you can compete completely anonymously.
@@ -39,7 +50,7 @@
             </div>
 
             <div class="col-sm mb-4">
-                <h1>I see competitions like 5 and 10 km run. How can I enter them?</h1>
+                <h2>I see competitions like 5 and 10 km run. How can I enter them?</h2>
                 <p>
                     Sports instructors decided on a simple solution to this: every submission is accounted if it meets length criteria.
                     The way it works is that we count average time per km and if you ran more than 5 km your average time will be recorded in this competition; if you ran more than 10 km your submission will enter both competitions.
@@ -51,7 +62,7 @@
             </div>
 
             <div class="col-sm mb-4">
-                <h1>What are the global challenges?</h1>
+                <h2>What are the global Matfyz challenges?</h2>
                 <p>
                     Global challenges are meant to unite us as the faculty and see how far we can get.
                     The goals have been chosen by our sports instructors.
@@ -60,19 +71,19 @@
             </div>
 
             <div class="col-sm mb-4">
-                <h1>Are there any rewards?</h1>
+                <h2>Are there any rewards?</h2>
                 <p>
-                    Yes! Since this project is meant as a replacement for traditional MFF deans sports day, you can expect rewards that will be announced soon and also an iconic MFF t-shirt.
+                    Yes! Since this project is meant as a replacement for traditional MFF Dean's sports day, you can expect rewards that will be announced soon and also an iconic MFF t-shirt.
                 </p>
 
                 <p>
-                    In addition to that, since the Department of Physical Education (KTV) sports lessons and clubs are canceled this semester, our student senator Patrícia advocated for credit rewards.
+                    Moreover, since the Department of Physical Education (KTV) sports lessons and the faculty sports club (Vysokoškolský sportovní klub MFF) are canceled this semester, our student senator Patrícia advocated for credit rewards.
                     For more details, see the next question.
                 </p>
             </div>
 
             <div class="col-sm mb-4">
-                <h1>How can I earn credits?</h1>
+                <h2>How can I earn credits?</h2>
                 <p>
                     To get credits for Optional Physical Education (subject code NTVY006), you need to get 60 points.
                     You will get one point for every kilometer on foot (run or walk) and half of the point for every kilometer on a bike.
@@ -84,7 +95,7 @@
             </div>
 
             <div class="col-sm mb-4">
-                <h1>Is it only me or does this system have serious fraudulent issues?</h1>
+                <h2>Is it only me or does this system have serious fraudulent issues?</h2>
                 <p>
                     Well, you are right, even though we have tried to implement some safety requirements, this system is still easily exploitable.
                     We believe that you all understand what is the idea behind sports competitions on the Faculty of Mathematics and Physics (and Computer Science*) and thus we rely on your honesty and manners.
@@ -96,13 +107,13 @@
             </div>
 
             <div class="col-sm mb-4">
-                <h1>I have encountered some technical difficulties. How should I report them?</h1>
+                <h2>I have encountered some technical difficulties. How should I report them?</h2>
                 <p>
                     Honestly, that is pretty much expected due to time constraints on this project. We welcome all bug reports on <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a>.
                 </p>
 
                 <p>
-                    Additionally, you can contribute to this project and others by joining our club: <a href="https://matfyz-developer-student-club.github.io/websites/">Matfyz Developer Student Club</a>.
+                    Additionally, you can contribute to this project and others by joining our club: <a href="https://matfyz-developer-student-club.github.io/websites/" target="_blank">Matfyz Developer Student Club</a>.
                 </p>
             </div>
         </div>

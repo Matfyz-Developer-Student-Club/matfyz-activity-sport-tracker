@@ -1,0 +1,78 @@
+{% extends "main_layout_template.html" %}
+{% block content_page %}
+    <div class="container mb-4">
+        <div class="row-fluid">
+            <div class="col-sm mb-4">
+                <p>
+                    We are presenting a competition in collaboration with the Department of Physical Education (KTV MFF UK).
+                    Our goal is to replace traditional Dean's sports day but also to remind everyone that exercising is crucial for maintaining good health, especially in this time of lock downs.
+                </p>
+                <p>
+                    Our sports instructors decided to set several competitions and categories.
+                    However, this competition is also about having fun!
+                    Together, we all will try to get to the easternmost point of the Czech Republic then Slovakia, and around Europe.
+                </p>
+                <p>
+                    The top competitors and contributors will be rewarded.
+                    The best 10 participants will get a t-shirt and the Dean will reward the best 3 participants from each category with a special prize.
+                </p>
+                <p>
+                    Do not lose your hope even if you can't reach the highest places in the leaderboard!
+                    You can still earn credit for Optional Physical Education.
+                    For more info about the conditions for the credit, <a href="{{ url_for( 'faq') }}">check out the FAQ</a>.
+                </p>
+                <p style="font-weight: 500">
+                    We wish good luck to all contestants!
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>Running - 5 km</h2>
+                <p>
+                    Are you fast runner in shorter distances?
+                    Submit any run with distance of at least 5 km and you are in.
+                    The winner is the one with the shortest average time per kilometer.
+                </p>
+                <p>
+                    This competition is divided into four categories: men under 35, men over 35, women under 35, and women over 35.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>Running - 10 km</h2>
+                <p>
+                    Can you run fast even in longer distances?
+                    Just submit any run with distance of at least 10 km and beat all students and teachers.
+                    Again, the shortest average time per kilometer will decide.
+                </p>
+                <p>
+                    This competition is divided into four categories: men under 35, men over 35, women under 35, and women over 35.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>Running / Walking</h2>
+                <p>
+                    Do you prefer long runs or long walks in dark forests? No problem!
+                    You can be the winner in the total distance on foot.
+                    Every running and walking activity is counted.
+                </p>
+                <p>
+                    This competition is not divided into categories.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>Cycling</h2>
+                <p>
+                    Are you the best biker of the world?
+                    It doesn't matter whether you ride single tracks somewhere in the mountains or you just ride to the groceries.
+                    Track your ride, submit, and win the longest total distance on bike.
+                </p>
+                <p>
+                    This competition is not divided into categories.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock content_page %}
