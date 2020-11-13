@@ -1,20 +1,64 @@
+/**
+ * @version 2
+ */
+
+//Create horizontalBar plug-in for ChartJS
+let originalLineDraw = Chart.controllers.horizontalBar.prototype.draw;
+Chart.helpers.extend(Chart.controllers.horizontalBar.prototype, {
+
+  draw: function () {
+      originalLineDraw.apply(this, arguments);
+
+      let chart = this.chart;
+      let ctx = chart.chart.ctx;
+
+      let indexList = chart.config.options.linesAtIndex;
+      let color_id = 0
+      for (let index of indexList) {
+
+          let xaxis = chart.scales['x-axis-0'];
+          let yaxis = chart.scales['y-axis-0'];
+
+          let x1 = xaxis.getPixelForValue(index);
+          let y1 = 0;
+
+          let x2 = xaxis.getPixelForValue(index);
+          let y2 = yaxis.height + 8;
+
+          let color = _checkpoints_colors[color_id];
+          color_id = (color_id + 1) % 2;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 3
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+
+          ctx.restore();
+      }
+  }
+});
+
+function getCheckPoint(value) {
+    // check if the property/key is defined in the object itself, not in parent'
+    if (_checkpoints.hasOwnProperty(value)) {
+        return _checkpoints[value]
+    } else {
+        return '';
+    }
+}
+
+let _data;
+let _labels;
+let _checkpoints;
+let _checkpoints_colors = ['rgba(0, 123, 255, 1)', 'rgba(24, 222, 56, 1)']
+let csrftoken = $('meta[name=csrf-token]').attr('content')
+let _ctx = document.getElementById('myChart').getContext('2d')
+
 /* globals Chart:false, feather:false */
 jQuery(document).ready(function () {
-
-    function getCheckPoint(value) {
-        // check if the property/key is defined in the object itself, not in parent'
-        if (_checkpoints.hasOwnProperty(value)) {
-            return _checkpoints[value] + ' - '
-        } else {
-            return '';
-        }
-    }
-
-
-    let _data;
-    let _labels;
-    let _checkpoints;
-    let csrftoken = $('meta[name=csrf-token]').attr('content')
 
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
@@ -29,17 +73,18 @@ jQuery(document).ready(function () {
         type: "GET",
         data: {vals: ''},
         success: function (response) {
-            full_data = JSON.parse(response.payload);
+            let full_data = JSON.parse(response.payload);
             _data = full_data['data'];
             _labels = full_data['labels'];
             _checkpoints = full_data['checkpoints'];
+            let keys = Object.keys(_checkpoints)
+            let max = Math.ceil(parseInt(keys[keys.length - 1]) / 100) * 100;
 
-            var myChart_foot = new Chart(document.getElementById('myChart').getContext('2d'), {
+            let myChart_foot = new Chart(_ctx, {
                 type: 'horizontalBar',
                 data: {
                     labels: _labels,
                     datasets: [{
-                        label: 'Distance in Km',
                         data: _data,
                         backgroundColor: [
                             'rgba(54, 162, 235, 0.2)',
@@ -53,15 +98,17 @@ jQuery(document).ready(function () {
                     }]
                 },
                 options: {
+                    linesAtIndex: keys,
+                    legend: {
+                        display: false
+                    },
                     scales: {
                         xAxes: [{
                             ticks: {
                                 beginAtZero: true,
                                 suggestedMin: 0,
-                                suggestedMax: 900,
-                                callback: function (value, index, values) {
-                                    return getCheckPoint(value) + value;
-                                }
+                                suggestedMax: max,
+                                callback: function (value) { return value + ' km'; }
                             }
                         }],
                         yAxes: []
