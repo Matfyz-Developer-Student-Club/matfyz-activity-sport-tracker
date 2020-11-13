@@ -124,9 +124,8 @@ def get_global_contest():
     session = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.",
               "Where we gonna make it on foot."]
-    data = [session.get_global_total_distance_on_bike(
-    ), session.get_global_total_distance_on_foot()]
-    checkpoints = session.get_challenge_parts()
+    data = [session.get_global_total_distance_on_bike(), session.get_global_total_distance_on_foot()]
+    checkpoints = session.get_challenge_parts_to_display()
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
 
 

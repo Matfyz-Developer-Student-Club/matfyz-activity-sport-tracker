@@ -147,7 +147,7 @@ class Queries(object):
             result[(first_day + dt.timedelta(days=i)).isoformat()] = 0
 
         for item in query_result:
-            result[item.day] = item.distance
+            result[item.day.isoformat()] = item.distance
 
         return result
 
@@ -244,7 +244,7 @@ class Queries(object):
         """
         return self._get_global_total_distance([ActivityType.Ride])
 
-    def get_challenge_parts(self):
+    def _get_challenge_parts(self):
         """
         Returns the list of all parts of challenge.
         :returns: Dictionary containing names of check points and distances.
@@ -262,6 +262,28 @@ class Queries(object):
 
         return result
 
+    def get_challenge_parts_to_display(self):
+        """
+        Returns the list of all parts of challenge to be displayed -
+        all completed parts, current part and one more (if present).
+        :returns: Dictionary containing names of check points and distances.
+        """
+        dist = max(self.get_global_total_distance_on_foot(), self.get_global_total_distance_on_bike())
+        checkpoints = self._get_challenge_parts()
+
+        result = {}
+        one_more = True
+        for d, target in checkpoints.items():
+            if d <= dist:
+                result[d] = target
+            elif one_more:
+                result[d] = target
+                one_more = False
+            else:
+                result[d] = target
+                break
+        return result
+
     def get_current_challenge_part(self):
         """
         Returns the order number of current part of challenge -
@@ -269,7 +291,7 @@ class Queries(object):
         :returns: String representing the order number.
         """
         dist = max(self.get_global_total_distance_on_foot(), self.get_global_total_distance_on_bike())
-        checkpoints = self.get_challenge_parts()
+        checkpoints = self._get_challenge_parts()
 
         result = 0
         for d in checkpoints.keys():

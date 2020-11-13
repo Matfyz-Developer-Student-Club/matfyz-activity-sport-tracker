@@ -1,7 +1,7 @@
 {% extends "main_layout_template.html" %}
 {% block content_page %}
     <canvas class="my-4 w-100" id="myChart" width="900" height="220"></canvas>
-    <script src="{{ url_for('static', filename='global_contest.js') }}"></script>
+    <script src="{{ url_for('static', filename='global_contest.js', version=2) }}"></script>
     <div class="d-flex justify-content-between flex-wrap align-items-center pb-2 mb-3 container-fluid">
         <div class="row">
             <div class="col col-3"></div>
