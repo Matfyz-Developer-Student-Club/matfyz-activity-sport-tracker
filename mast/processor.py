@@ -59,13 +59,23 @@ class GPXProcessor(object):
                     except Exception as e:
                         logging.error("Malformed GPX file, no timestamp for activity start present.", e)
 
+                    inter_seg = [None, None]
+
                     # If there is no timestamp skip
                     for activity_seg in activities.keys():
+                        if inter_seg[0] is not None:
+                            inter_seg[1] = activities[activity_seg][0]
+                            time_seg = [c_activity.find(namespace + self.__TIME_ELM) for c_activity in inter_seg]
+                            total_time.append(self.__calculate_total_time(time_seg))
+                            output_buffer.append(self.__calculate_orthodromic_distance(inter_seg))
+
                         time_seg = [c_activity.find(namespace + self.__TIME_ELM) for c_activity in
                                     activities[activity_seg]]
                         total_time.append(self.__calculate_total_time(time_seg))
-                        output_buffer.append(round(self.__calculate_orthodromic_distance(activities[activity_seg]), 1))
-                    total_distance = sum(output_buffer)
+                        output_buffer.append(self.__calculate_orthodromic_distance(activities[activity_seg]))
+
+                        inter_seg[0] = activities[activity_seg][-1]
+                    total_distance = round(sum(output_buffer), 1)
                     activity_duration = sum(total_time, datetime.timedelta())
 
                     xml_inp.close()
