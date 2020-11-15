@@ -277,4 +277,3 @@ class Queries(object):
                 result = result + 1
 
         return '%02d' % result
-
