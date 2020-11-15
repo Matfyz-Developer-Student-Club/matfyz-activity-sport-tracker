@@ -7,14 +7,18 @@ import logging
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or os.urandom(24)
+app.config['TESTING'] = False
+app.config['DEBUG'] = False
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['REMEMBER_COOKIE_SECURE'] = True
 app.config['CSRF_ENABLED'] = True
 csrf = CSRFProtect(app)
 
 # Logging setup
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///site.db'
 db = SQLAlchemy(app)
 bcr = Bcrypt(app)
 
