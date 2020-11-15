@@ -5,6 +5,7 @@ import os
 from re import findall
 import logging
 from dateutil import parser
+import datetime
 
 
 class GPXProcessor(object):
@@ -29,6 +30,8 @@ class GPXProcessor(object):
         output_buffer = []
         total_time = []
         activity_start = []
+        total_distance = 0
+        activity_duration = None
         try:
             input_file = os.path.join(self.LANDING_DIR, input_file)
             if Path(input_file).suffix in self.__ALLOWED_EXTENSIONS:
@@ -41,20 +44,36 @@ class GPXProcessor(object):
                     # Cut of namespace prefix
                     namespace = findall('\{.*\}', pom_elem[0])[0]
                     trk = root.find(namespace + self.__TRK_ELM)
-                    activities = trk.find(namespace + self.__TRKSEG_ELM).findall(
-                        namespace + self.__TRKPT_ELM)
+                    # Find all trk segments
+                    trk_seg = [seg for seg in trk.findall(namespace + self.__TRKSEG_ELM)]
 
-                    if activities[0].find(namespace + self.__TIME_ELM) is not None:
-                        time_seg = [activity.find(namespace + self.__TIME_ELM) for activity in activities]
-                        activity_start.append(parser.parse(time_seg[0].text))
+                    # Create dict where key is the seg and its value is array of activity points
+                    activities = {seg: seg.findall(namespace + self.__TRKPT_ELM) for seg in trk_seg}
+
+                    timestamp_start = None
+
+                    try:
+                        timestamp_start = activities[list(activities.keys())[0]][0].find(namespace + self.__TIME_ELM)
+                        if timestamp_start is not None:
+                            activity_start.append(parser.parse(timestamp_start.text))
+                    except Exception as e:
+                        logging.error("Malformed GPX file, no timestamp for activity start present.", e)
+
+                    # If there is no timestamp skip
+                    for activity_seg in activities.keys():
+                        time_seg = [c_activity.find(namespace + self.__TIME_ELM) for c_activity in
+                                    activities[activity_seg]]
                         total_time.append(self.__calculate_total_time(time_seg))
-                    output_buffer.append(round(self.__calculate_orthodromic_distance(activities), 1))
+                        output_buffer.append(round(self.__calculate_orthodromic_distance(activities[activity_seg]), 1))
+                    total_distance = sum(output_buffer)
+                    activity_duration = sum(total_time, datetime.timedelta())
+
                     xml_inp.close()
             else:
                 raise AssertionError("Forbidden file extension encountered!")
         except Exception as ex:
             logging.error("Processing of the landing directory was unsuccessful!\n", ex)
-        return list(zip(output_buffer, total_time, activity_start))
+        return list(zip([total_distance], [activity_duration], activity_start))
 
     def __calculate_total_time(self, time_segments: list):
         """
