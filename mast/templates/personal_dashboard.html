@@ -2,13 +2,6 @@
 {% from "_formhelpers.html" import render_text_field, render_inline_radio_field, render_checkbox_field, render_submit_button, render_file_upload_field %}
 
 {% block content_page %}
-<!-- Launch the modal immediately if the form was erroneous -->
-    {% if form.errors %}
-        <div class="alert alert-danger mt-2" role="alert">
-            Error: {{ ', '.join(form.errors['file']) }}
-        </div>
-    {% endif %}
-
     <!-- Modal -->
     <div class="modal fade" id="addActivity" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -36,6 +29,18 @@
             </div>
         </div>
     </div>
+
+    {% for msg in errors %}
+        <div class="alert alert-danger mt-2" role="alert">
+            Error: {{ msg }}
+        </div>
+    {% endfor %}
+
+    {% for msg in info %}
+        <div class="alert alert-success mt-2" role="alert">
+            Info: {{ msg }}
+        </div>
+    {% endfor %}
 
     <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h2>Personal Dashboard</h2>
