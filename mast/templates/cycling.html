@@ -1,47 +1,56 @@
 {% extends "main_layout_template.html" %}
 {% block content_page %}
-    <div class="container mb-4">
-        <div class="row-fluid">
-            <div class="col-sm mb-4">
-                <h1>Personal Statistics</h1>
-                <table id="personalStats" class="display table table-striped table-sm">
-                    <thead>
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <canvas class="my-4 w-100" id="run_competition" width="900" height="380"></canvas>
+            <script src="{{ url_for('static', filename='cycling_chart.js') }}"></script>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <h1>Personal Statistics</h1>
+            <table id="personalStats" class="display table" width="100%">
+                <thead class="thead-dark">
                     <tr>
                         <th>Date</th>
                         <th>Distance</th>
                         <th>Time</th>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in cyclist_personal %}
-                        <tr>
-                            <td>{{ item['datetime'] }}</td>
-                            <td>{{ item['distance'] }}</td>
-                            <td>{{ item['duration'] }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-sm">
-                <h1>Global Statistics</h1>
-                <table id="personalStats" class="display table table-striped table-sm">
-                    <thead>
+                </thead>
+                <tbody>
+                    {% for item in items %}
                     <tr>
-                        <th>Name</th>
-                        <th>Distance</th>
+                        <td>{{item.date}}</td>
+                        <td>{{item.distance}}</td>
+                        <td>{{item.time}}</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in cyclists_global %}
-                        <tr>
-                            <td>{{ item[0].display() }}</td>
-                            <td>{{ item[1] }}</td>
-                        </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm">
+            <h1>Global Statistics</h1>
+            <table id="globalStats" class="display table" width="100%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Date</th>
+                        <th>Distance</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{item.date}}</td>
+                        <td>{{item.distance}}</td>
+                        <td>{{item.time}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
+
 {% endblock content_page %}
