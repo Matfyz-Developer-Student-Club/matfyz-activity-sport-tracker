@@ -2,6 +2,7 @@ from math import radians, cos, sin, asin, sqrt
 import xml.etree.ElementTree as ET
 from pathlib import Path
 import os
+import sys
 from re import findall
 import logging
 from dateutil import parser
@@ -17,21 +18,22 @@ class GPXProcessor(object):
     __TIME_ELM = 'time'
     __TRK_ELM = 'trk'
 
+    __namespace = ''
+    __track_time = True
+
     def __init__(self):
         super().__init__()
 
-    def process_input_data(self, input_file: str) -> zip:
+    def process_input_data(self, input_file: str) -> list:
         """
         Purpose of this method is to iterate over each .xml file
         within landing layer, load its content and fetch all
         coordinates in order to calculate total distance in Km.
         """
 
-        output_buffer = []
-        total_time = []
-        activity_start = []
         total_distance = 0
         activity_duration = None
+        activity_start = None
         try:
             input_file = os.path.join(self.LANDING_DIR, input_file)
             if Path(input_file).suffix in self.__ALLOWED_EXTENSIONS:
@@ -39,74 +41,77 @@ class GPXProcessor(object):
                     tree = ET.parse(xml_inp)
                     root = tree.getroot()
 
-                    # Find the child element of tracking point including namespace
-                    pom_elem = findall('\{.*\}.*', root[0].tag if len(root) > 1 else root[0].tag)
+                    # Find the child element of tracking point including __namespace
+                    pom_elem = findall('{.*}.*', root[0].tag if len(root) > 1 else root[0].tag)
                     # Cut of namespace prefix
-                    namespace = findall('\{.*\}', pom_elem[0])[0]
-                    trk = root.find(namespace + self.__TRK_ELM)
+                    self.__namespace = findall('{.*}', pom_elem[0])[0]
+                    trk = root.find(self.__namespace + self.__TRK_ELM)
                     # Find all trk segments
-                    trk_seg = [seg for seg in trk.findall(namespace + self.__TRKSEG_ELM)]
+                    trk_seg = [seg for seg in trk.findall(self.__namespace + self.__TRKSEG_ELM)]
 
                     # Create dict where key is the seg and its value is array of activity points
-                    activities = {seg: seg.findall(namespace + self.__TRKPT_ELM) for seg in trk_seg}
-
-                    timestamp_start = None
+                    segments = {seg: seg.findall(self.__namespace + self.__TRKPT_ELM) for seg in trk_seg}
 
                     try:
-                        timestamp_start = activities[list(activities.keys())[0]][0].find(namespace + self.__TIME_ELM)
+                        timestamp_start = segments[list(segments.keys())[0]][0].find(self.__namespace + self.__TIME_ELM)
                         if timestamp_start is not None:
-                            activity_start.append(parser.parse(timestamp_start.text))
+                            activity_start = parser.parse(timestamp_start.text)
+                        else:
+                            self.__track_time = False
                     except Exception as e:
-                        logging.error("Malformed GPX file, no timestamp for activity start present.", e)
+                        logging.info("No timestamp for activity start present.", e)
+                        self.__track_time = False
 
-                    inter_seg = [None, None]
+                    inter_segment = [None, None]
+                    segments_distance = []
+                    segments_time = []
 
                     # If there is no timestamp skip
-                    for activity_seg in activities.keys():
-                        if inter_seg[0] is not None:
-                            inter_seg[1] = activities[activity_seg][0]
-                            time_seg = [c_activity.find(namespace + self.__TIME_ELM) for c_activity in inter_seg]
-                            total_time.append(self.__calculate_total_time(time_seg))
-                            output_buffer.append(self.__calculate_orthodromic_distance(inter_seg))
+                    for segment in segments.values():
+                        if inter_segment[0] is not None:
+                            inter_segment[1] = segment[0]
+                            segments_time.append(self.__calculate_total_time(inter_segment))
+                            segments_distance.append(self.__calculate_orthodromic_distance(inter_segment))
 
-                        time_seg = [c_activity.find(namespace + self.__TIME_ELM) for c_activity in
-                                    activities[activity_seg]]
-                        total_time.append(self.__calculate_total_time(time_seg))
-                        output_buffer.append(self.__calculate_orthodromic_distance(activities[activity_seg]))
+                        segments_time.append(self.__calculate_total_time(segment))
+                        segments_distance.append(self.__calculate_orthodromic_distance(segment))
 
-                        inter_seg[0] = activities[activity_seg][-1]
-                    total_distance = round(sum(output_buffer), 1)
-                    activity_duration = sum(total_time, datetime.timedelta())
+                        inter_segment[0] = segment[-1]
+                    total_distance = round(sum(segments_distance), 1)
+                    activity_duration = sum(segments_time, datetime.timedelta())
 
                     xml_inp.close()
             else:
                 raise AssertionError("Forbidden file extension encountered!")
         except Exception as ex:
             logging.error("Processing of the landing directory was unsuccessful!\n", ex)
-        return list(zip([total_distance], [activity_duration], activity_start))
+        return [total_distance, activity_duration, activity_start]
 
-    def __calculate_total_time(self, time_segments: list):
+    def __calculate_total_time(self, segment: list) -> datetime.timedelta:
         """
         Purpose of this method is to calculate the time of the give activity.
-        : param time_segments: List of timestamps.
+        :param segment: List of track points.
         :return: Total time spent on activity.
         """
-        return parser.parse(time_segments[-1].text) - parser.parse(time_segments[0].text)
+        if not self.__track_time:
+            return datetime.timedelta()
+        segment_time = [c_activity.find(self.__namespace + self.__TIME_ELM) for c_activity in segment]
+        return parser.parse(segment_time[-1].text) - parser.parse(segment_time[0].text)
 
-    def __calculate_orthodromic_distance(self, coords: list) -> float:
+    def __calculate_orthodromic_distance(self, segment: list) -> float:
         """
         Purpose of this method is to calculate distance between provided
         coordinates in order to obtain total distance.
-        :param coords: List of coordinates.
+        :param segment: List of track points.
         :return: Total distance achieved.
         """
         buffer = 0
 
-        for index in range(len(coords) - 1):
-            lat1 = radians(float(coords[index].attrib['lat']))
-            lat2 = radians(float(coords[index + 1].attrib['lat']))
-            lon1 = radians(float(coords[index].attrib['lon']))
-            lon2 = radians(float(coords[index + 1].attrib['lon']))
+        for index in range(len(segment) - 1):
+            lat1 = radians(float(segment[index].attrib['lat']))
+            lat2 = radians(float(segment[index + 1].attrib['lat']))
+            lon1 = radians(float(segment[index].attrib['lon']))
+            lon2 = radians(float(segment[index + 1].attrib['lon']))
 
             dist_lat = lat2 - lat1
             dist_lon = lon2 - lon1
@@ -127,4 +132,4 @@ class GPXProcessor(object):
 
 
 if __name__ == '__main__':
-    print(list(GPXProcessor().process_input_data('test.gpx')))
+    print(GPXProcessor().process_input_data(sys.argv[1]))
