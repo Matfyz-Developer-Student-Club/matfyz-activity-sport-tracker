@@ -18,9 +18,6 @@ class GPXProcessor(object):
     __TIME_ELM = 'time'
     __TRK_ELM = 'trk'
 
-    __namespace = ''
-    __track_time = True
-
     def __init__(self):
         super().__init__()
 
@@ -44,23 +41,24 @@ class GPXProcessor(object):
                     # Find the child element of tracking point including __namespace
                     pom_elem = findall('{.*}.*', root[0].tag if len(root) > 1 else root[0].tag)
                     # Cut of namespace prefix
-                    self.__namespace = findall('{.*}', pom_elem[0])[0]
-                    trk = root.find(self.__namespace + self.__TRK_ELM)
+                    namespace = findall('{.*}', pom_elem[0])[0]
+                    trk = root.find(namespace + self.__TRK_ELM)
                     # Find all trk segments
-                    trk_seg = [seg for seg in trk.findall(self.__namespace + self.__TRKSEG_ELM)]
+                    trk_seg = [seg for seg in trk.findall(namespace + self.__TRKSEG_ELM)]
 
                     # Create dict where key is the seg and its value is array of activity points
-                    segments = {seg: seg.findall(self.__namespace + self.__TRKPT_ELM) for seg in trk_seg}
+                    segments = {seg: seg.findall(namespace + self.__TRKPT_ELM) for seg in trk_seg}
 
+                    track_time = True
                     try:
-                        timestamp_start = segments[list(segments.keys())[0]][0].find(self.__namespace + self.__TIME_ELM)
+                        timestamp_start = segments[list(segments.keys())[0]][0].find(namespace + self.__TIME_ELM)
                         if timestamp_start is not None:
                             activity_start = parser.parse(timestamp_start.text)
                         else:
-                            self.__track_time = False
+                            track_time = False
                     except Exception as e:
                         logging.info("No timestamp for activity start present.", e)
-                        self.__track_time = False
+                        track_time = False
 
                     inter_segment = [None, None]
                     segments_distance = []
@@ -70,10 +68,12 @@ class GPXProcessor(object):
                     for segment in segments.values():
                         if inter_segment[0] is not None:
                             inter_segment[1] = segment[0]
-                            segments_time.append(self.__calculate_total_time(inter_segment))
+                            if track_time:
+                                segments_time.append(self.__calculate_total_time(inter_segment, namespace))
                             segments_distance.append(self.__calculate_orthodromic_distance(inter_segment))
 
-                        segments_time.append(self.__calculate_total_time(segment))
+                        if track_time:
+                            segments_time.append(self.__calculate_total_time(segment, namespace))
                         segments_distance.append(self.__calculate_orthodromic_distance(segment))
 
                         inter_segment[0] = segment[-1]
@@ -87,15 +87,14 @@ class GPXProcessor(object):
             logging.error("Processing of the landing directory was unsuccessful!\n", ex)
         return [total_distance, activity_duration, activity_start]
 
-    def __calculate_total_time(self, segment: list) -> datetime.timedelta:
+    def __calculate_total_time(self, segment: list, namespace: str) -> datetime.timedelta:
         """
         Purpose of this method is to calculate the time of the give activity.
         :param segment: List of track points.
+        :param namespace: Namespace to be find in elements.
         :return: Total time spent on activity.
         """
-        if not self.__track_time:
-            return datetime.timedelta()
-        segment_time = [c_activity.find(self.__namespace + self.__TIME_ELM) for c_activity in segment]
+        segment_time = [c_activity.find(namespace + self.__TIME_ELM) for c_activity in segment]
         return parser.parse(segment_time[-1].text) - parser.parse(segment_time[0].text)
 
     def __calculate_orthodromic_distance(self, segment: list) -> float:
