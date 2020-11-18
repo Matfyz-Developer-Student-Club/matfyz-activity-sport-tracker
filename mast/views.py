@@ -2,7 +2,6 @@ import json
 import os
 import datetime
 import mast
-import logging
 from flask import redirect, request, render_template, url_for, jsonify, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
