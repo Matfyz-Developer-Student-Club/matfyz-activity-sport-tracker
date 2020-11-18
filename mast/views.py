@@ -132,11 +132,9 @@ def get_personal_stats():
 @app.route('/matfyz_challenges')
 @login_required
 def matfyz_challenges():
-    db_query = mast.queries.Queries()
-    checkpoints = db_query.get_challenge_parts_to_display()
-    current_checkpoint = db_query.get_current_challenge_part()
-    return render_template("matfyz_challenges.html", title='Matfyz Challenges',
-                           checkpoints=checkpoints, current_checkpoint=current_checkpoint)
+    session = mast.queries.Queries()
+    current_checkpoint = session.get_current_challenge_part()
+    return render_template("matfyz_challenges.html", title='Matfyz Challenges', current_checkpoint=current_checkpoint)
 
 
 @app.route('/get_global_contest')
@@ -174,16 +172,16 @@ def running_5_km():
 @app.route('/running_10_km')
 @login_required
 def running_10_km():
-    db_query = mast.queries.Queries()
-    user_ten = db_query.get_best_run_activities_by_user(
+    session = mast.queries.Queries()
+    user_ten = session.get_best_run_activities_by_user(
         current_user.id, Competition.Run10km, 10)
-    ten_runner_men_under = db_query.get_top_users_best_run(
+    ten_runner_men_under = session.get_top_users_best_run(
         Competition.Run10km, Sex.Male, Age.Under35, 10)
-    ten_runner_men_above = db_query.get_top_users_best_run(
+    ten_runner_men_above = session.get_top_users_best_run(
         Competition.Run10km, Sex.Male, Age.Over35, 10)
-    ten_runner_women_under = db_query.get_top_users_best_run(
+    ten_runner_women_under = session.get_top_users_best_run(
         Competition.Run10km, Sex.Female, Age.Under35, 10)
-    ten_runner_women_above = db_query.get_top_users_best_run(
+    ten_runner_women_above = session.get_top_users_best_run(
         Competition.Run10km, Sex.Female, Age.Over35, 10)
 
     return render_template("running_10_km.html", title="Running-10", user_ten=user_ten,
@@ -194,9 +192,9 @@ def running_10_km():
 @app.route('/running_walking')
 @login_required
 def running_walking():
-    db_query = mast.queries.Queries()
-    jogging_global = db_query.get_top_users_total_distance_on_foot(10)
-    jogging_personal = db_query.get_user_last_activities_on_foot(
+    session = mast.queries.Queries()
+    jogging_global = session.get_top_users_total_distance_on_foot(10)
+    jogging_personal = session.get_user_last_activities_on_foot(
         current_user.id, 10)
 
     jogging_personal = jogging_personal if jogging_personal else []
