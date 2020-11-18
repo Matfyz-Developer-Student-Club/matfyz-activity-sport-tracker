@@ -2,12 +2,13 @@ import json
 import os
 import datetime
 import mast
-from flask import redirect, request, render_template, url_for, session, jsonify, Blueprint
+import logging
+from flask import redirect, request, render_template, url_for, jsonify, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
 from mast.models import User, Competition, Sex, Age, Activity, ActivityType
-from mast import bcr, queries, app
+from mast import bcr, queries, app, session
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.processor import GPXProcessor
 
@@ -66,6 +67,7 @@ def logout():
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
+    session_data = mast.session.Session()
     db_query = mast.queries.Queries()
     last_activities = db_query.get_user_last_activities(current_user.id, 10)
     last_activities = [] if not last_activities else last_activities
@@ -90,7 +92,7 @@ def home():
         start_time = activity[2]
 
         if distance == 0:
-            session['errors'].append('Activity with zero distance ignored.')
+            session_data.warning('Activity of zero distance ignored.')
         elif start_time is None:
             if a_type == ActivityType.Run:
                 a_type = ActivityType.Walk
@@ -100,7 +102,7 @@ def home():
             new_activity = Activity(datetime=start_time, distance=distance, duration=full_time,
                                     average_duration_per_km=avg_time, type=a_type)
             db_query.save_new_user_activities(current_user.id, new_activity)
-            session['info'].append(str(a_type) + ' activity of ' + str(distance) + ' km added.')
+            session_data.info(str(a_type) + ' activity of ' + str(distance) + ' km added.')
         else:
             avg_seconds = round(seconds / distance)
             full_time = (datetime.datetime(2000, 1, 1, 0) + datetime.timedelta(seconds=seconds)).time()
@@ -108,17 +110,13 @@ def home():
             new_activity = Activity(datetime=start_time, distance=distance, duration=full_time,
                                     average_duration_per_km=avg_time, type=a_type)
             db_query.save_new_user_activities(current_user.id, new_activity)
-            session['info'].append(str(a_type) + ' activity of ' + str(distance) + ' km added.')
+            session_data.info(str(a_type) + ' activity of ' + str(distance) + ' km added.')
 
         return redirect(url_for('home'))
 
-    errors = session.get('errors') or []
-    info = session.get('info') or []
-    session['errors'] = []
-    session['info'] = []
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
                            season=db_query.SEASON, last_activities=last_activities,
-                           errors=errors, info=info)
+                           session_data=session_data)
 
 
 @app.route('/get_personal_stats')

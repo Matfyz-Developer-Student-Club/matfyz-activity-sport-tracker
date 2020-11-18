@@ -30,18 +30,6 @@
         </div>
     </div>
 
-    {% for msg in errors %}
-        <div class="alert alert-danger mt-2" role="alert">
-            Error: {{ msg }}
-        </div>
-    {% endfor %}
-
-    {% for msg in info %}
-        <div class="alert alert-success mt-2" role="alert">
-            Info: {{ msg }}
-        </div>
-    {% endfor %}
-
     <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h2>Personal Dashboard</h2>
         <h3><span class="badge badge-light">{{ season['title'] }}</span></h3>
