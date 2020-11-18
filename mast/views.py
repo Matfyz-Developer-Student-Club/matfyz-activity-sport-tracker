@@ -146,7 +146,7 @@ def get_global_contest():
     labels = ["Where we gonna make it by bike.",
               "Where we gonna make it on foot."]
     data = [db_query.get_global_total_distance_on_bike(), db_query.get_global_total_distance_on_foot()]
-    checkpoints = db_query.get_challenge_parts()
+    checkpoints = db_query.get_challenge_parts_to_display()
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
 
 
