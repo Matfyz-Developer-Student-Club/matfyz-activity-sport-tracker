@@ -9,6 +9,28 @@ body {
 }
 
 /*
+ * Alerts
+ */
+
+.alert .icon {
+  width: 4em;
+  text-align: center;
+  vertical-align: center;
+}
+
+.alert-danger .icon svg {
+  fill: #721c24;
+}
+
+.alert-warning .icon svg {
+  fill: #856404;
+}
+
+.alert-success .icon svg {
+  fill: #155724;
+}
+
+/*
  * Sidebar
  */
 
