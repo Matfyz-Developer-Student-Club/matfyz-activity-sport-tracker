@@ -266,7 +266,7 @@ def user_settings():
             else:
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
-        elif request.form['submit'] == 'Change password':
+        elif request.form['submit'] == 'Update password':
             change_password_form = ChangePasswordForm(request.form)
             if change_password_form.validate():
                 hashed_password = bcr.generate_password_hash(
