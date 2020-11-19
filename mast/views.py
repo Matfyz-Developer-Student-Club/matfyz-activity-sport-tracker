@@ -15,6 +15,19 @@ UPLOAD_FILE_DIR = 'landing'
 PROCESSOR = GPXProcessor()
 
 
+def check_profile_verified(session_data: session.Session):
+    if not current_user.is_completed():
+        session_data.error('Your profile is not completed! Please, go to Settings and fill in your data.<br />' +
+                           'Your activities will be considered only after your profile is verified.')
+    elif not current_user.verified:
+        session_data.warning('Your profile is not yet verified. ' +
+                             'Let us know if you are sure you filled in correct data and it takes too long.<br />' +
+                             'Your activities will be considered only after your profile is verified.')
+    else:
+        session_data.warning('Since there is a lot of incomplete profiles, we have decided to add a new rule.<br />' +
+                             'Only activities by verified users will be considered for competitions and challenges.')
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -67,6 +80,7 @@ def logout():
 @login_required
 def home():
     session_data = mast.session.Session()
+    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     last_activities = db_query.get_user_last_activities(current_user.id, 10)
     last_activities = [] if not last_activities else last_activities
@@ -132,9 +146,12 @@ def get_personal_stats():
 @app.route('/matfyz_challenges')
 @login_required
 def matfyz_challenges():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     current_checkpoint = db_query.get_current_challenge_part()
-    return render_template("matfyz_challenges.html", title='Matfyz Challenges', current_checkpoint=current_checkpoint)
+    return render_template("matfyz_challenges.html", title='Matfyz Challenges',
+                           current_checkpoint=current_checkpoint, session_data=session_data)
 
 
 @app.route('/get_global_contest')
@@ -151,6 +168,8 @@ def get_global_contest():
 @app.route('/running_5_km')
 @login_required
 def running_5_km():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     user_five = db_query.get_best_run_activities_by_user(
         current_user.id, Competition.Run5km, 10)
@@ -166,12 +185,15 @@ def running_5_km():
     return render_template("running_5_km.html", title="Running-5", user_five=user_five,
                            five_runner_men_above=five_runner_men_above, five_runner_men_under=five_runner_men_under,
                            five_runner_women_above=five_runner_women_above,
-                           five_runner_women_under=five_runner_women_under)
+                           five_runner_women_under=five_runner_women_under,
+                           session_data=session_data)
 
 
 @app.route('/running_10_km')
 @login_required
 def running_10_km():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     user_ten = db_query.get_best_run_activities_by_user(
         current_user.id, Competition.Run10km, 10)
@@ -186,12 +208,15 @@ def running_10_km():
 
     return render_template("running_10_km.html", title="Running-10", user_ten=user_ten,
                            ten_runner_men_above=ten_runner_men_above, ten_runner_men_under=ten_runner_men_under,
-                           ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under)
+                           ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under,
+                           session_data=session_data)
 
 
 @app.route('/running_walking')
 @login_required
 def running_walking():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     jogging_global = db_query.get_top_users_total_distance_on_foot(10)
     jogging_personal = db_query.get_user_last_activities_on_foot(
@@ -201,12 +226,14 @@ def running_walking():
     jogging_global = jogging_global if jogging_global else []
 
     return render_template("running_walking.html", title="Jogging", jogging_global=jogging_global,
-                           jogging_personal=jogging_personal)
+                           jogging_personal=jogging_personal,
+                           session_data=session_data)
 
 
 @app.route('/user_settings', methods=['GET', 'POST'])
 @login_required
 def user_settings():
+    session_data = mast.session.Session()
     update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
     change_password_form = ChangePasswordForm(name='chp')
@@ -228,7 +255,12 @@ def user_settings():
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
                                         ukco=current_user.uk_id, is_employee=current_user.type.value):
                     current_user.verify()
+                    session_data.info('Your profile has been been verified.')
                     return redirect(url_for('user_settings'))
+                else:
+                    session_data.warning('Your profile has not been been verified.<br />' +
+                                         'We will verify your profile in a few days if you are sure with your data.')
+
             else:
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
@@ -238,12 +270,15 @@ def user_settings():
                 hashed_password = bcr.generate_password_hash(
                     change_password_form.password.data).decode('UTF-8')
                 current_user.change_password(hashed_password)
+                session_data.info('Your password has been changed.')
                 return redirect(url_for('user_settings'))
             else:
                 # Keep the form visible if it contains errors
                 display_change_password_form = 'block'
 
     # For GET and after POST method
+    check_profile_verified(session_data)
+
     update_profile_form.first_name.data = current_user.first_name or ''
     update_profile_form.last_name.data = current_user.last_name or ''
     update_profile_form.display_name.data = current_user.display_name or ''
@@ -259,12 +294,15 @@ def user_settings():
                            update_profile_form=update_profile_form,
                            display_update_profile_form=display_update_profile_form,
                            change_password_form=change_password_form,
-                           display_change_password_form=display_change_password_form)
+                           display_change_password_form=display_change_password_form,
+                           session_data=session_data)
 
 
 @app.route('/cycling')
 @login_required
 def cycling():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     cyclists_global = db_query.get_top_users_total_distance_on_bike(10)
     cyclist_personal = db_query.get_user_last_activities_on_bike(
@@ -273,22 +311,29 @@ def cycling():
     cyclist_personal = cyclist_personal if cyclist_personal else []
     cyclists_global = cyclists_global if cyclists_global else []
     return render_template("cycling.html", title="Cycling", cyclist_personal=cyclist_personal,
-                           cyclists_global=cyclists_global)
+                           cyclists_global=cyclists_global,
+                           session_data=session_data)
 
 
 @app.route('/faq')
 @login_required
 def faq():
-    return render_template("faq.html", title='Frequently Asked Questions')
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    return render_template("faq.html", title='Frequently Asked Questions', session_data=session_data)
 
 
 @app.route('/about_competitions')
 @login_required
 def about_competitions():
-    return render_template("about_competitions.html", title='About Competitions')
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    return render_template("about_competitions.html", title='About Competitions', session_data=session_data)
 
 
 @app.route('/integrations')
 @login_required
 def integrations():
-    return render_template("integrations.html", title='Integrations')
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    return render_template("integrations.html", title='Integrations', session_data=session_data)

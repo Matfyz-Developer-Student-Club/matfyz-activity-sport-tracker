@@ -189,7 +189,8 @@ class Queries(object):
                                    Activity.average_duration_per_km == subquery.c.best_time)).\
             filter(User.sex == sex,
                    User.age == age,
-                   User.competing).\
+                   User.competing,
+                   User.verified).\
             order_by(Activity.average_duration_per_km.asc()).\
             limit(number).\
             offset(offset).\
@@ -213,7 +214,8 @@ class Queries(object):
         return db.session.query(User, subquery.c.total_distance).\
             select_from(User).\
             join(subquery, User.id == subquery.c.user_id).\
-            filter(User.competing).\
+            filter(User.competing,
+                   User.verified).\
             order_by(subquery.c.total_distance.desc()).\
             limit(number).\
             offset(offset).\
@@ -244,9 +246,12 @@ class Queries(object):
         :returns: The total distance in kilometres.
         """
         return db.session.query(func.sum(Activity.distance)).\
+            select_from(User).\
+            join(User.activities).\
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_(activity_types)).\
+                   Activity.type.in_(activity_types),
+                   User.verified).\
             scalar() or 0
 
     def get_global_total_distance_on_foot(self):
