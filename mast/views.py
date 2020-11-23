@@ -143,10 +143,7 @@ def get_personal_stats():
 
 
 @app.route('/matfyz_challenges')
-@login_required
 def matfyz_challenges():
-    session_data = mast.session.Session()
-    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     checkpoints = db_query.get_challenge_parts_to_display()
     checkpoints_enriched = []
@@ -155,13 +152,19 @@ def matfyz_challenges():
         checkpoints_enriched.append({'order': order, 'dist': dist, 'place': place})
         order = order + 1
     current_checkpoint = db_query.get_current_challenge_part()
-    return render_template("matfyz_challenges.html", title='Matfyz Challenges',
-                           checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
-                           session_data=session_data)
+
+    if current_user.is_authenticated:
+        session_data = mast.session.Session()
+        check_profile_verified(session_data)
+        return render_template("matfyz_challenges.html", title='Matfyz Challenges',
+                               checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
+                               session_data=session_data)
+    else:
+        return render_template("matfyz_challenges_public.html",
+                               checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint)
 
 
 @app.route('/get_global_contest')
-@login_required
 def get_global_contest():
     db_query = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.",

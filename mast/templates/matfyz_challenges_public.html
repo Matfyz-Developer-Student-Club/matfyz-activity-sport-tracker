@@ -1,0 +1,148 @@
+{% from "_formhelpers.html" import render_text_field, render_checkbox_field, render_submit_button %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Matfyz Developer Student Club">
+    <link rel="icon" href="{{ url_for( 'static', filename='../static/pics/activity.svg') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    <title>Mathletics - Matfyz Challenges</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <!-- Custom CSS sheets -->
+    <link href="{{ url_for('static', filename='forms.css') }}" rel="stylesheet">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+    <!-- Custom styles for this template -->
+
+    <link href="{{ url_for('static', filename='main_layout_template.css', version=2) }}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark navbar-expand-lg bg-dark shadow fixed-top">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link click_to_scroll smooth-scroll" href="{{url_for('login')}}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link click_to_scroll smooth-scroll" href="{{url_for('login')}}#login">Log
+                            in</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link click_to_scroll smooth-scroll" href="{{url_for('matfyz_challenges')}}">Matfyz Challenges</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://matfyz-developer-student-club.github.io/websites/"
+                            target="_blank">About
+                            MDSC</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+    <div class="row">
+    <main role="main" class="col-12 main">
+    <h1>Matfyz Challenges</h1>
+    <canvas class="my-4 w-100" id="myChart" width="900" height="220"></canvas>
+    <script src="{{ url_for('static', filename='global_contest.js', version=3) }}"></script>
+    <div class="d-flex justify-content-between flex-wrap align-items-center pb-2 mb-3 container-fluid">
+        <div class="row">
+            <div class="col col-xl-3 col-lg-2 col-md-1"></div>
+            <div class="col col-xl-6 col-lg-8 col-md-10 col-12">
+                <div id="accordion">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    List of checkpoints
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <table class="table table-striped table-sm">
+                                    <tbody>
+                                        {% for checkpoint in checkpoints %}
+                                        <tr>
+                                            <td style="text-align: right">
+                                                {{ checkpoint.order }}.
+                                            </td>
+                                            <td>
+                                                {{ checkpoint.place }}
+                                            </td>
+                                            <td style="text-align: right">
+                                                {{ checkpoint.dist }} km
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                    Timeline
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                                <img src="{{ url_for('static', filename='pics/checkpoints/' + current_checkpoint + '_timeline.png') }}" class="rounded img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <img src="{{ url_for('static', filename='pics/checkpoints/' + current_checkpoint + '_map.png') }}" class="rounded img-fluid">
+            </div>
+            <div class="col col-xl-3 col-lg-2 col-md-1"></div>
+        </div>
+    </div>
+    </main>
+    </div>
+    </div>
+</body>
+
+<link href="{{ url_for('static', filename='matfyz_challenges_public.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</html>
