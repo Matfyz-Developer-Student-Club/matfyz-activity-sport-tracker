@@ -149,9 +149,14 @@ def matfyz_challenges():
     check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     checkpoints = db_query.get_challenge_parts_to_display()
+    checkpoints_enriched = []
+    order = 1
+    for (dist, place) in checkpoints.items():
+        checkpoints_enriched.append({'order': order, 'dist': dist, 'place': place})
+        order = order + 1
     current_checkpoint = db_query.get_current_challenge_part()
     return render_template("matfyz_challenges.html", title='Matfyz Challenges',
-                           checkpoints=checkpoints, current_checkpoint=current_checkpoint,
+                           checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
                            session_data=session_data)
 
 

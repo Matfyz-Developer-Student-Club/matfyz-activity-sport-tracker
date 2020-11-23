@@ -144,3 +144,18 @@ a.activity-wrap:hover img {
   font-weight: 500;
   color: #333;
 }
+
+/*
+ * Tooltip
+ */
+
+#checkpoint_tooltip {
+  border-radius: 5px;
+  padding: 5px;
+  width: 200px;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #333;
+}
