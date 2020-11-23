@@ -344,3 +344,10 @@ def integrations():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
     return render_template("integrations.html", title='Integrations', session_data=session_data)
+
+
+@app.route("/statistics")
+def statistics():
+    db_query = mast.queries.Queries()
+    stats = db_query.get_stats()
+    return render_template("statistics.html", stats=stats)
