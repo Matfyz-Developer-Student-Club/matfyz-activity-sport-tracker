@@ -28,7 +28,16 @@ def check_profile_verified(session_data: session.Session):
                              'Only activities by verified users will be considered for competitions and challenges.')
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/welcome')
+def welcome():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    else:
+        form = LoginForm()
+        return render_template('welcome.html', form=form)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
