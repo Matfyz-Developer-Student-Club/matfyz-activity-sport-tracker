@@ -1,336 +1,239 @@
-from flask import redirect, request, render_template, url_for, jsonify
-from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
-from mast import app
-from mast.models import User
-from mast import db
 import json
+import os
 import datetime
+import mast
+from flask import redirect, request, render_template, url_for, jsonify, Blueprint
+from flask_login import login_user, current_user, logout_user, login_required
+from werkzeug.utils import secure_filename
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
+from mast.models import User, Competition, Sex, Age, Activity, ActivityType
+from mast import bcr, queries, app, session
+from mast.tools.sis_authentication import authenticate_via_sis
+from mast.processor import GPXProcessor
 
-_DAY_IN_WEEKS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday',
-                 'Thursday', 'Friday', 'Saturday')
+UPLOAD_FILE_DIR = 'landing'
+PROCESSOR = GPXProcessor()
+
+
+def check_profile_verified(session_data: session.Session):
+    if not current_user.is_completed():
+        session_data.error('Your profile is not completed! Please, go to Settings and fill in your data.<br />' +
+                           'Your activities will be considered only after your profile is verified.')
+    elif not current_user.verified:
+        session_data.warning('Your profile is not yet verified. ' +
+                             'Let us know if you are sure you filled in correct data and it takes too long.<br />' +
+                             'Your activities will be considered only after your profile is verified.')
+    else:
+        session_data.warning('Since there is a lot of incomplete profiles, we have decided to add a new rule.<br />' +
+                             'Only activities by verified users will be considered for competitions and challenges.')
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'GET':
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
         form = LoginForm()
         return render_template('login.html', form=form)
     else:
         form = LoginForm(request.form)
         if form.validate():
-            # TODO: redirect the user to main page
-            return redirect(url_for('home'))
-        else:
-            return render_template('login.html', form=form)
+            user = User.query.filter_by(email=form.email.data.lower()).first()
+            if user and bcr.check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('home'))
+            else:
+                form.email.errors.append(
+                    'Specified pair of email and password is invalid!')
+    return render_template('login.html', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'GET':
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
         form = RegisterForm('register_form')
         return render_template('register.html', form=form)
     else:
         form = RegisterForm(request.form)
-        if form.validate():
-            # TODO: add user to database
-            return redirect(url_for('login'))
+        if form.validate_on_submit():
+            hashed_password = bcr.generate_password_hash(
+                form.password.data.strip()).decode('UTF-8')
+            user = User(email=form.email.data.lower().strip(),
+                        password=hashed_password)
+            login_user(user)
+            return redirect(url_for('home'))
         else:
             return render_template('register.html', form=form)
 
 
-@app.route('/personal_dashboard')
-@app.route('/home')
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
+@app.route('/personal_dashboard', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
+@login_required
 def home():
-    return render_template("personal_dashboard.html", title='Home', value_t=20)
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    last_activities = db_query.get_user_last_activities(current_user.id, 10)
+    last_activities = [] if not last_activities else last_activities
+    add_activity_form = AddActivityForm()
+    if add_activity_form.validate_on_submit():
+        filename = secure_filename(add_activity_form.file.data.filename)
+        path = os.path.join(__file__, os.pardir)
+        add_activity_form.file.data.save(os.path.join(
+            os.path.abspath(path), UPLOAD_FILE_DIR, filename))
+
+        if add_activity_form.activity.data == ActivityType.Ride.name:
+            a_type = ActivityType.Ride
+        elif add_activity_form.activity.data == ActivityType.Run.name:
+            a_type = ActivityType.Run
+        else:
+            a_type = ActivityType.Walk
+
+        activity = PROCESSOR.process_input_data(filename)
+        PROCESSOR.landing_cleanup(filename)
+        distance = activity[0]
+        seconds = activity[1].total_seconds()
+        start_time = activity[2]
+
+        if distance == 0:
+            session_data.warning('Activity of zero distance ignored.')
+        elif start_time is None:
+            if a_type == ActivityType.Run:
+                a_type = ActivityType.Walk
+            start_time = datetime.datetime.now()
+            full_time = datetime.time()
+            avg_time = datetime.time()
+            new_activity = Activity(datetime=start_time, distance=distance, duration=full_time,
+                                    average_duration_per_km=avg_time, type=a_type)
+            db_query.save_new_user_activities(current_user.id, new_activity)
+            session_data.info(str(a_type) + ' activity of ' + str(distance) + ' km added.')
+        else:
+            avg_seconds = round(seconds / distance)
+            full_time = (datetime.datetime(2000, 1, 1, 0) + datetime.timedelta(seconds=seconds)).time()
+            avg_time = (datetime.datetime(2000, 1, 1, 0) + datetime.timedelta(seconds=avg_seconds)).time()
+            new_activity = Activity(datetime=start_time, distance=distance, duration=full_time,
+                                    average_duration_per_km=avg_time, type=a_type)
+            db_query.save_new_user_activities(current_user.id, new_activity)
+            session_data.info(str(a_type) + ' activity of ' + str(distance) + ' km added.')
+
+        return redirect(url_for('home'))
+
+    return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
+                           season=db_query.SEASON, last_activities=last_activities,
+                           session_data=session_data)
 
 
-@app.route('/global_dashboard')
-def global_dashboard():
-    return render_template("global_dashboard.html", title='Global Dashboard')
+@app.route('/get_personal_stats')
+@login_required
+def get_personal_stats():
+    db_query = mast.queries.Queries()
+    data = db_query.get_total_distances_by_user_in_last_days(
+        user_id=current_user.id, days=7)
+    labels = [key for key, val in data.items()]
+    data = [val for key, val in data.items()]
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
+
+@app.route('/matfyz_challenges')
+@login_required
+def matfyz_challenges():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    current_checkpoint = db_query.get_current_challenge_part()
+    return render_template("matfyz_challenges.html", title='Matfyz Challenges',
+                           current_checkpoint=current_checkpoint, session_data=session_data)
+
+
+@app.route('/get_global_contest')
+@login_required
+def get_global_contest():
+    db_query = mast.queries.Queries()
+    labels = ["Where we gonna make it by bike.",
+              "Where we gonna make it on foot."]
+    data = [db_query.get_global_total_distance_on_bike(), db_query.get_global_total_distance_on_foot()]
+    checkpoints = db_query.get_challenge_parts()
+    return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
+
 
 @app.route('/running_5_km')
+@login_required
 def running_5_km():
-    # TODO: replace with data from query
-    items = []
-    for i in range(6):
-        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
-        items.append(item)
-    return render_template("running_5_km.html", items=items)
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    user_five = db_query.get_best_run_activities_by_user(
+        current_user.id, Competition.Run5km, 10)
+    five_runner_men_under = db_query.get_top_users_best_run(
+        Competition.Run5km, Sex.Male, Age.Under35, 10)
+    five_runner_men_above = db_query.get_top_users_best_run(
+        Competition.Run5km, Sex.Male, Age.Over35, 10)
+    five_runner_women_under = db_query.get_top_users_best_run(
+        Competition.Run5km, Sex.Female, Age.Under35, 10)
+    five_runner_women_above = db_query.get_top_users_best_run(
+        Competition.Run5km, Sex.Female, Age.Over35, 10)
 
-
-@app.route('/get_running_5_km')
-def get_running_5_km():
-    # TODO: replace with data from query - data of all users
-    global_data = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        2,
-        2,
-        4,
-        3,
-        4,
-        5,
-        2,
-        3,
-        5,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0, ]
-    # TODO: replace with data from query - personal data of a concrete user
-    personal_data = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        2,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0, ]
-    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
-    labels = [
-        '20',
-        '21',
-        '22',
-        '23',
-        '24',
-        '25',
-        '26',
-        '27',
-        '28',
-        '29',
-        '30',
-        '31',
-        '32',
-        '33',
-        '34',
-        '35',
-        '36',
-        '37',
-        '38',
-        '39',
-        '41',
-        '42',
-        '43',
-        '44',
-        '45',
-    ]
-
-    return jsonify({'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+    return render_template("running_5_km.html", title="Running-5", user_five=user_five,
+                           five_runner_men_above=five_runner_men_above, five_runner_men_under=five_runner_men_under,
+                           five_runner_women_above=five_runner_women_above,
+                           five_runner_women_under=five_runner_women_under,
+                           session_data=session_data)
 
 
 @app.route('/running_10_km')
+@login_required
 def running_10_km():
-    items = []
-    for i in range(6):
-        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
-        items.append(item)
-    return render_template("running_10_km.html", items=items)
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    user_ten = db_query.get_best_run_activities_by_user(
+        current_user.id, Competition.Run10km, 10)
+    ten_runner_men_under = db_query.get_top_users_best_run(
+        Competition.Run10km, Sex.Male, Age.Under35, 10)
+    ten_runner_men_above = db_query.get_top_users_best_run(
+        Competition.Run10km, Sex.Male, Age.Over35, 10)
+    ten_runner_women_under = db_query.get_top_users_best_run(
+        Competition.Run10km, Sex.Female, Age.Under35, 10)
+    ten_runner_women_above = db_query.get_top_users_best_run(
+        Competition.Run10km, Sex.Female, Age.Over35, 10)
+
+    return render_template("running_10_km.html", title="Running-10", user_ten=user_ten,
+                           ten_runner_men_above=ten_runner_men_above, ten_runner_men_under=ten_runner_men_under,
+                           ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under,
+                           session_data=session_data)
 
 
-@app.route('/get_running_10_km')
-def get_running_10_km():
-    # TODO: replace with data from query - data of all users
-    global_data = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0, ]
-    # TODO: replace with data from query - personal data of a concrete user
-    personal_data = [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        2,
-        1,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0, ]
-    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
-    labels = [
-        '20',
-        '21',
-        '22',
-        '23',
-        '24',
-        '25',
-        '26',
-        '27',
-        '28',
-        '29',
-        '30',
-        '31',
-        '32',
-        '33',
-        '34',
-        '35',
-        '36',
-        '37',
-        '38',
-        '39',
-        '41',
-        '42',
-        '43',
-        '44',
-        '45',
-    ]
+@app.route('/running_walking')
+@login_required
+def running_walking():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    jogging_global = db_query.get_top_users_total_distance_on_foot(10)
+    jogging_personal = db_query.get_user_last_activities_on_foot(
+        current_user.id, 10)
 
-    return jsonify(
-        {'payload': json.dumps({'global_data': global_data, 'personal_data': personal_data, 'labels': labels})})
+    jogging_personal = jogging_personal if jogging_personal else []
+    jogging_global = jogging_global if jogging_global else []
 
-
-@app.route('/running_jogging')
-def running_jogging():
-    items = []
-    for i in range(6):
-        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
-        items.append(item)
-    return render_template("running_jogging.html", items=items)
-
-
-@app.route('/get_running_jogging')
-def get_running_jogging():
-
-    # TODO: replace with data from query - personal data of a concrete user
-    personal_data = [
-        0,
-        1,
-        1,
-        2,
-        2,
-        3,
-        3,
-    ]
-    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
-    labels = ['Monday', 'Tuesday', 'Wednesday',
-              'Thursday', 'Friday', 'Saturday', 'Sunday']
-
-    return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
-
-
-@app.route('/cycling')
-def cycling():
-    # TODO: replace with data from query
-    items = []
-    for i in range(6):
-        item = dict(date="2020-03-" + str(i), id=i, distance=i, time=i*6)
-        items.append(item)
-    return render_template("cycling.html", items=items)
-
-
-@app.route('/get_cycling')
-def get_cycling():
-
-    # TODO: replace with data from query - personal data of a concrete user
-    personal_data = [
-        0,
-        1,
-        3,
-        2,
-        2,
-        3,
-        1,
-    ]
-    # TODO: replace with corresponding labels from querry - 5 km  ??? maybe not necessary
-    labels = ['Monday', 'Tuesday', 'Wednesday',
-              'Thursday', 'Friday', 'Saturday', 'Sunday']
-
-    return jsonify({'payload': json.dumps({'personal_data': personal_data, 'labels': labels})})
-
-@app.route('/get_personal_stats')
-def get_personal_stats():
-    today = datetime.datetime.now()
-    labels = [_DAY_IN_WEEKS[(day - 1) % 7] + ' ' + today.date().strftime("%x") for day in
-              range(today.day, today.day + 7)]
-    # TODO: get current_user db snapshot for last period
-    data = [12, 19, 3, 5, 2, 3, 7]
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
-
-
-@app.route('/get_global_contest_foot')
-def get_global_contest_foot():
-    labels = ["Where we gonna make it on foot."]
-    data = [425]
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
-
-
-@app.route('/get_global_contest_bike')
-def get_global_contest_bike():
-    labels = ["Where we gonna make it by bike."]
-    data = [211]
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
-
+    return render_template("running_walking.html", title="Jogging", jogging_global=jogging_global,
+                           jogging_personal=jogging_personal,
+                           session_data=session_data)
 
 
 @app.route('/user_settings', methods=['GET', 'POST'])
+@login_required
 def user_settings():
-    # TODO: Mockups for User settings - user #1
-    user = db.session.query(User).get(1)
-
+    session_data = mast.session.Session()
     update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
     change_password_form = ChangePasswordForm(name='chp')
@@ -339,32 +242,98 @@ def user_settings():
         if request.form['submit'] == 'Update profile':
             update_profile_form = UpdateProfileForm(request.form)
             if update_profile_form.validate():
-                # TODO: validate the form based on db
-                # TODO: update the data in the db
-                # TODO delete next later
-                user.verify()
+                current_user.complete_profile(first_name=update_profile_form.first_name.data.strip(),
+                                              last_name=update_profile_form.last_name.data.strip(),
+                                              age=update_profile_form.age.data,
+                                              sex=update_profile_form.sex.data,
+                                              shirt_size=update_profile_form.shirt_size.data,
+                                              user_type=update_profile_form.user_type.data,
+                                              ukco=update_profile_form.ukco.data.strip(),
+                                              display_name=update_profile_form.display_name.data.strip(),
+                                              anonymous=update_profile_form.competing.data)
+
+                if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
+                                        ukco=current_user.uk_id, is_employee=current_user.type.value):
+                    current_user.verify()
+                    session_data.info('Your profile has been been verified.')
+                    return redirect(url_for('user_settings'))
+                else:
+                    session_data.warning('Your profile has not been been verified.<br />' +
+                                         'We will verify your profile in a few days if you are sure with your data.')
+
             else:
                 # Keep the form visible if it contains errors
                 display_update_profile_form = 'block'
-        elif request.form['submit'] == 'Change password':
+        elif request.form['submit'] == 'Update password':
             change_password_form = ChangePasswordForm(request.form)
             if change_password_form.validate():
-                # TODO: update db
-                pass
+                hashed_password = bcr.generate_password_hash(
+                    change_password_form.password.data).decode('UTF-8')
+                current_user.change_password(hashed_password)
+                session_data.info('Your password has been changed.')
+                return redirect(url_for('user_settings'))
             else:
                 # Keep the form visible if it contains errors
                 display_change_password_form = 'block'
 
     # For GET and after POST method
+    check_profile_verified(session_data)
+
+    update_profile_form.first_name.data = current_user.first_name or ''
+    update_profile_form.last_name.data = current_user.last_name or ''
+    update_profile_form.display_name.data = current_user.display_name or ''
+    update_profile_form.ukco.data = current_user.uk_id or ''
+    update_profile_form.age.data = current_user.age.value if current_user.age else None
+    update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
+    update_profile_form.shirt_size.data = current_user.shirt_size or None
+    update_profile_form.user_type.data = current_user.type.value if current_user.type else None
+    update_profile_form.competing.data = current_user.anonymous or None
+
     return render_template("user_settings.html", title='User Settings',
-                           profile=user,
+                           profile=current_user,
                            update_profile_form=update_profile_form,
                            display_update_profile_form=display_update_profile_form,
                            change_password_form=change_password_form,
                            display_change_password_form=display_change_password_form,
-                           )
+                           session_data=session_data)
+
+
+@app.route('/cycling')
+@login_required
+def cycling():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    cyclists_global = db_query.get_top_users_total_distance_on_bike(10)
+    cyclist_personal = db_query.get_user_last_activities_on_bike(
+        current_user.id, 10)
+
+    cyclist_personal = cyclist_personal if cyclist_personal else []
+    cyclists_global = cyclists_global if cyclists_global else []
+    return render_template("cycling.html", title="Cycling", cyclist_personal=cyclist_personal,
+                           cyclists_global=cyclists_global,
+                           session_data=session_data)
+
+
+@app.route('/faq')
+@login_required
+def faq():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    return render_template("faq.html", title='Frequently Asked Questions', session_data=session_data)
+
+
+@app.route('/about_competitions')
+@login_required
+def about_competitions():
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    return render_template("about_competitions.html", title='About Competitions', session_data=session_data)
 
 
 @app.route('/integrations')
+@login_required
 def integrations():
-    return render_template("integrations.html", title='Integrations')
+    session_data = mast.session.Session()
+    check_profile_verified(session_data)
+    return render_template("integrations.html", title='Integrations', session_data=session_data)

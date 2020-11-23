@@ -16,7 +16,7 @@ jQuery(document).ready(function () {
             _global_data = full_data['global_data'];
             _labels = full_data['labels'];
             var ctx = document.getElementById('run_competition')
-
+            console.log("was there")
             var myCanvas = new Chart(ctx, {
               type: 'line',
               data: {

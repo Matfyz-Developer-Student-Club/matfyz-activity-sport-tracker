@@ -9,11 +9,15 @@
                     <img class="card-img-top" src="static/pics/default_avatar.svg" alt="Avatar image" width="256"
                          height="256">
                     <div class="card-body">
-                        {% if profile.verified %}
+                        {% if profile.is_completed() %}
                             <h4 class="card-title">
                                 {{ profile.first_name }} {% if profile.display_name != '' %}{{ '"' + profile.display_name + '"' }}{% endif %} {{ profile.last_name }} </h4>
                             <h5>
-                                <span class="badge badge-success">Verified</span>
+                                {% if profile.verified %}
+                                    <span class="badge badge-success">Verified</span>
+                                {% else %}
+                                    <span class="badge badge-info">Profile complete</span>
+                                {% endif %}
                                 {% if profile.competing %}
                                     <span class="badge badge-info">Competing</span>
                                 {% else %}

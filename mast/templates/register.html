@@ -1,31 +1,69 @@
-{% from "_formhelpers.html" import render_field, render_checkbox, render_submit_button %}
-{% extends "auth_template.html" %}
-{% block form %}
-<form class="form-signin" method="post" enctype="application/x-www-form-urlencoded">
+{% from "_formhelpers.html" import render_text_field, render_checkbox_field, render_submit_button %}
+<html lang="en">
 
-    {{ form.hidden_tag() }}
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark navbar-expand-lg bg-dark shadow fixed-top">
+        <div class="container">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link click_to_scroll smooth-scroll" href="{{url_for('login')}}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link click_to_scroll smooth-scroll" href="{{url_for('login')}}#login">Log
+                            in</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://matfyz-developer-student-club.github.io/websites/"
+                            target="_blank">About
+                            MDSC</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <div class="text-center mb-4">
-        <h1 class="h2 mb-3">
-            Matfyz<br>
-            Activity<br>
-            <span class="primary_header">Sport<br>Tracker</span>
-        </h1>
-        <p>Compete, track and enjoy</p>
-    </div>
-    {{ render_text_field(form.email, autofocus=true, type='email') }}
+    <!-- Full Page Image Header with Vertically Centered Content -->
+    <header class="masthead register">
+        <div class="adjust_height container h-100 move">
+            <div class="row justify-content-center align-middle">
+                <div class="col-5 text-center">
+                    <h1 class="display-1">Mathletics</h1>
+                    {% block form %}
+                    <form class="form-signin" method="post" enctype="application/x-www-form-urlencoded">
 
-    {{ render_text_field(form.password) }}
+                        {{ form.hidden_tag() }}
 
-    {{ render_text_field(form.confirm_password) }}
+                        {{ render_text_field(form.email, autofocus=true, type='email') }}
 
-    <div class="checkbox mb-3">
-        <!-- TODO: Add support for 3-rd party applications. -->
-        <a href="{{ url_for( 'login' ) }}">Already registered?</a>
-    </div>
+                        {{ render_text_field(form.password) }}
 
-    {{ render_submit_button(form.submit) }}
+                        {{ render_text_field(form.confirm_password) }}
 
-</form>
+                        <div class="checkbox mb-3">
+                            <!-- TODO: Add support for 3-rd party applications. -->
+                            <a href="{{ url_for( 'login' ) }}#login">Already registered?</a>
+                        </div>
 
-{% endblock form%}
+                        {{ render_submit_button(form.submit) }}
+
+                    </form>
+
+                    {% endblock form%}
+                </div>
+            </div>
+        </div>
+    </header>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link href="{{ url_for('static', filename='login_register.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</html>

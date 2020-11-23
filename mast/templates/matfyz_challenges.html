@@ -1,5 +1,14 @@
 {% extends "main_layout_template.html" %}
 {% block content_page %}
     <canvas class="my-4 w-100" id="myChart" width="900" height="220"></canvas>
-    <script src="{{ url_for('static', filename='global_contest.js') }}"></script>
+    <script src="{{ url_for('static', filename='global_contest.js', version=2) }}"></script>
+    <div class="d-flex justify-content-between flex-wrap align-items-center pb-2 mb-3 container-fluid">
+        <div class="row">
+            <div class="col col-xl-3 col-lg-2 col-md-1"></div>
+            <div class="col col-xl-6 col-lg-8 col-md-10 col-12">
+                <img src="{{ url_for('static', filename='pics/checkpoints/' + current_checkpoint + '.png') }}" class="rounded img-fluid">
+            </div>
+            <div class="col col-xl-3 col-lg-2 col-md-1"></div>
+        </div>
+    </div>
 {% endblock content_page %}
