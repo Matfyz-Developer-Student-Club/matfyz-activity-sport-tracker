@@ -136,8 +136,7 @@ def home():
 @login_required
 def get_personal_stats():
     db_query = mast.queries.Queries()
-    data = db_query.get_total_distances_by_user_in_last_days(
-        user_id=current_user.id, days=7)
+    data = db_query.get_total_distances_by_user_in_last_days(user_id=current_user.id, days=7)
     labels = [key for key, val in data.items()]
     data = [val for key, val in data.items()]
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
@@ -149,9 +148,16 @@ def matfyz_challenges():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
     db_query = mast.queries.Queries()
+    checkpoints = db_query.get_challenge_parts_to_display()
+    checkpoints_enriched = []
+    order = 1
+    for (dist, place) in checkpoints.items():
+        checkpoints_enriched.append({'order': order, 'dist': dist, 'place': place})
+        order = order + 1
     current_checkpoint = db_query.get_current_challenge_part()
     return render_template("matfyz_challenges.html", title='Matfyz Challenges',
-                           current_checkpoint=current_checkpoint, session_data=session_data)
+                           checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
+                           session_data=session_data)
 
 
 @app.route('/get_global_contest')
@@ -160,8 +166,9 @@ def get_global_contest():
     db_query = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.",
               "Where we gonna make it on foot."]
-    data = [db_query.get_global_total_distance_on_bike(), db_query.get_global_total_distance_on_foot()]
-    checkpoints = db_query.get_challenge_parts()
+    data = [round(db_query.get_global_total_distance_on_bike(), 1),
+            round(db_query.get_global_total_distance_on_foot(), 1)]
+    checkpoints = db_query.get_challenge_parts_to_display()
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
 
 

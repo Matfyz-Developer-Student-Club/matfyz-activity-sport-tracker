@@ -1,12 +1,62 @@
 {% extends "main_layout_template.html" %}
 {% block content_page %}
     <canvas class="my-4 w-100" id="myChart" width="900" height="220"></canvas>
-    <script src="{{ url_for('static', filename='global_contest.js', version=2) }}"></script>
+    <script src="{{ url_for('static', filename='global_contest.js', version=3) }}"></script>
     <div class="d-flex justify-content-between flex-wrap align-items-center pb-2 mb-3 container-fluid">
         <div class="row">
             <div class="col col-xl-3 col-lg-2 col-md-1"></div>
             <div class="col col-xl-6 col-lg-8 col-md-10 col-12">
-                <img src="{{ url_for('static', filename='pics/checkpoints/' + current_checkpoint + '.png') }}" class="rounded img-fluid">
+                <div id="accordion">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    List of checkpoints
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <table class="table table-striped table-sm">
+                                    <tbody>
+                                        {% for checkpoint in checkpoints %}
+                                        <tr>
+                                            <td style="text-align: right">
+                                                {{ checkpoint.order }}.
+                                            </td>
+                                            <td>
+                                                {{ checkpoint.place }}
+                                            </td>
+                                            <td style="text-align: right">
+                                                {{ checkpoint.dist }} km
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                    Timeline
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                                <img src="{{ url_for('static', filename='pics/checkpoints/' + current_checkpoint + '_timeline.png') }}" class="rounded img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <img src="{{ url_for('static', filename='pics/checkpoints/' + current_checkpoint + '_map.png') }}" class="rounded img-fluid">
             </div>
             <div class="col col-xl-3 col-lg-2 col-md-1"></div>
         </div>
