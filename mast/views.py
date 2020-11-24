@@ -61,7 +61,7 @@ def register():
         return redirect(url_for('home'))
     elif request.method == 'GET':
         form = RegisterForm('register_form')
-        return render_template('register.html', form=form)
+        return render_template('register.html', title='Registration', form=form)
     else:
         form = RegisterForm(request.form)
         if form.validate_on_submit():
@@ -72,7 +72,7 @@ def register():
             login_user(user)
             return redirect(url_for('home'))
         else:
-            return render_template('register.html', form=form)
+            return render_template('register.html', title='Registration', form=form)
 
 
 @app.route("/logout")
@@ -167,7 +167,7 @@ def matfyz_challenges():
                                checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
                                session_data=session_data)
     else:
-        return render_template("matfyz_challenges_public.html",
+        return render_template("matfyz_challenges_public.html", title='Matfyz Challenges',
                                checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint)
 
 
@@ -360,4 +360,4 @@ def integrations():
 def statistics():
     db_query = mast.queries.Queries()
     stats = db_query.get_stats()
-    return render_template("statistics.html", stats=stats)
+    return render_template("statistics.html", title='Statistics', stats=stats)
