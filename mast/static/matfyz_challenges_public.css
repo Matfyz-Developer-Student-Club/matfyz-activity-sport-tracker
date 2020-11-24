@@ -1,6 +1,0 @@
-.main::before {
-  display: block;
-  content: " ";
-  height: 65px;
-  visibility: hidden;
-}
