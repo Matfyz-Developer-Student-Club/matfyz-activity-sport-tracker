@@ -127,8 +127,7 @@ def home():
     check_profile_verified(session_data)
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
-                           season=db_query.SEASON, last_activities=last_activities,
-                           session_data=session_data)
+                           season=db_query.SEASON, session_data=session_data)
 
 
 @app.route('/get_personal_stats')
