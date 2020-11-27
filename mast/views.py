@@ -7,6 +7,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
 from mast.models import User, Competition, Sex, Age, Activity, ActivityType
+from mast.json_encoder import MastEncoder
 from mast import bcr, queries, app, session
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.processor import GPXProcessor
@@ -138,6 +139,16 @@ def get_personal_stats():
     labels = [key for key, val in data.items()]
     data = [val for key, val in data.items()]
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
+
+@app.route('/get_personal_activities')
+@login_required
+def get_personal_activities():
+    db_query = mast.queries.Queries()
+    offset = request.args.get('offset')
+    limit = request.args.get('limit')
+    data = db_query.get_user_last_activities(user_id=current_user.id, number=limit, offset=offset)
+    return json.dumps({'total': data[0], 'rows': data[1]}, cls=MastEncoder)
 
 
 @app.route('/matfyz_challenges')

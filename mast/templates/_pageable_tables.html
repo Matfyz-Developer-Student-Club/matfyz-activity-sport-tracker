@@ -1,0 +1,40 @@
+<!-- Render a table with personal activities -->
+{% macro render_personal_activities() %}
+    <div class="pageable-table">
+        <table id="personal_activities"
+               data-toggle="table" data-url="{{ url_for('get_personal_activities') }}"
+               data-side-pagination="server" data-pagination="true" data-page-list="[10]" >
+            <thead>
+                <tr>
+                    <th data-field="datetime">Date</th>
+                    <th data-field="distance">Distance</th>
+                    <th data-field="duration">Duration</th>
+                    <th data-field="type">Type of activity</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+{% endmacro %}
+
+<!-- Render a table with personal activities -->
+{% macro render_personal_activities_old() %}
+    <div class="pageable-table">
+        <table id="personal_activities"
+               data-pagination="true" data-id-field="id" data-page-list="[10]" data-side-pagination="server"
+               data-url="{{ url_for('get_personal_activities') }}">
+        </table>
+        <script>$(function() { initPersonalActivities('personal_activities'); })</script>
+    </div>
+{% endmacro %}
+
+<!-- Render a table with time competitions -->
+{% macro render_time_competition(id, title, columns, params) %}
+    <div class="pageable-table">
+        <h2>{{ title }}</h2>
+        <table id="{{ id }}" onload="initPersonalResults('{{ id }}')"
+               data-pagination="true" data-id-field="id" data-page-list="[10]" data-side-pagination="server"
+               data-url="{{ url_for('get_personal_activities') }}">
+        </table>
+    </div>
+{% endmacro %}
+
