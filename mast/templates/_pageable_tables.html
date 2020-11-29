@@ -43,6 +43,16 @@
     {% endcall %}
 {% endmacro %}
 
+<!-- Render a table with best users with activities for distance -->
+{% macro render_best_users_distace(type) %}
+    {% call render_pageable_table('best_users_distance_' + type,
+                                  url_for('get_best_users_distance', type=type)) %}
+        <th data-field="order">#</th>
+        <th data-field="name">Name</th>
+        <th data-field="distance">Distance</th>
+    {% endcall %}
+{% endmacro %}
+
 <!-- PRIVATE ------------------------------------------------------------------>
 
 <!-- Render errors of form field if present -->

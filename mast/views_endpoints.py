@@ -120,6 +120,32 @@ def get_best_users_time():
     return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
 
 
+@app.route('/get_best_users_distance')
+@login_required
+def get_best_users_distance():
+    db_query = mast.queries.Queries()
+    activity_type = request.args.get('type')
+    offset = int(request.args.get('offset'))
+    limit = int(request.args.get('limit'))
+
+    if activity_type == 'bike':
+        data = db_query.get_top_users_total_distance_on_bike(number=limit, offset=offset)
+    elif activity_type == 'foot':
+        data = db_query.get_top_users_total_distance_on_foot(number=limit, offset=offset)
+    else:
+        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
+
+    enriched_data = []
+    order = offset + 1
+    for item in data[1]:
+        enriched_item = {'order': order,
+                         'name': item.User.display(),
+                         'distance': item.total_distance}
+        enriched_data.append(enriched_item)
+        order = order + 1
+    return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
+
+
 @app.route('/get_global_contest')
 @login_required
 def get_global_contest():

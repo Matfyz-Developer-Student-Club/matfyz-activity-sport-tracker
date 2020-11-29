@@ -1,5 +1,5 @@
 {% extends "main_layout_template.html" %}
-{% from "_pageable_tables.html" import render_personal_activities_distance %}
+{% from "_pageable_tables.html" import render_personal_activities_distance, render_best_users_distace %}
 
 {% block content_page %}
    <div class="container mb-4">
@@ -10,22 +10,7 @@
             </div>
             <div class="col-sm mb-4">
                 <h2>Global Leaders</h2>
-                <table id="personalStats" class="display table table-striped table-sm">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Distance</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in jogging_global %}
-                        <tr>
-                            <td>{{ item[0].display() }}</td>
-                            <td>{{ item[1] }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                {{ render_best_users_distace('foot') }}
             </div>
         </div>
     </div>
