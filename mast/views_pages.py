@@ -149,20 +149,7 @@ def matfyz_challenges():
 def running_5_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
-    db_query = mast.queries.Queries()
-    five_runner_men_under = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Male, Age.Under35, 10)
-    five_runner_men_above = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Male, Age.Over35, 10)
-    five_runner_women_under = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Female, Age.Under35, 10)
-    five_runner_women_above = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Female, Age.Over35, 10)
-
-    return render_template("running_5_km.html", title="Running-5",
-                           five_runner_men_above=five_runner_men_above, five_runner_men_under=five_runner_men_under,
-                           five_runner_women_above=five_runner_women_above,
-                           five_runner_women_under=five_runner_women_under,
+    return render_template("running.html", title="Running-5", distance='5km',
                            session_data=session_data)
 
 
@@ -171,19 +158,7 @@ def running_5_km():
 def running_10_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
-    db_query = mast.queries.Queries()
-    ten_runner_men_under = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Male, Age.Under35, 10)
-    ten_runner_men_above = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Male, Age.Over35, 10)
-    ten_runner_women_under = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Female, Age.Under35, 10)
-    ten_runner_women_above = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Female, Age.Over35, 10)
-
-    return render_template("running_10_km.html", title="Running-10",
-                           ten_runner_men_above=ten_runner_men_above, ten_runner_men_under=ten_runner_men_under,
-                           ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under,
+    return render_template("running.html", title="Running-10", distance='10km',
                            session_data=session_data)
 
 

@@ -73,6 +73,53 @@ def get_personal_activities_distance():
         return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
 
 
+@app.route('/get_best_users_time')
+@login_required
+def get_best_users_time():
+    db_query = mast.queries.Queries()
+    distance = request.args.get('distance')
+    sex = request.args.get('sex')
+    age = request.args.get('age')
+    offset = int(request.args.get('offset'))
+    limit = int(request.args.get('limit'))
+
+    if distance == '5km':
+        competition = Competition.Run5km
+    elif distance == '10km':
+        competition = Competition.Run10km
+    else:
+        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
+
+    if sex == 'male':
+        sex = Sex.Male
+    elif sex == 'female':
+        sex = Sex.Female
+    else:
+        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
+
+    if age == 'under':
+        age = Age.Under35
+    elif age == 'over':
+        age = Age.Over35
+    else:
+        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
+
+    data = db_query.get_top_users_best_run(competition=competition, sex=sex, age=age,
+                                           number=limit, offset=offset)
+    enriched_data = []
+    order = offset + 1
+    for item in data[1]:
+        enriched_item = {'order': order,
+                         'name': item.User.display(),
+                         'datetime': item.Activity.datetime,
+                         'distance': item.Activity.distance,
+                         'duration': item.Activity.duration,
+                         'average_duration_per_km': item.Activity.average_duration_per_km}
+        enriched_data.append(enriched_item)
+        order = order + 1
+    return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
+
+
 @app.route('/get_global_contest')
 @login_required
 def get_global_contest():

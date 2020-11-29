@@ -15,6 +15,8 @@ class MastEncoder(JSONEncoder):
                     'duration': duration or obj.duration,
                     'average_duration_per_km': duration or obj.average_duration_per_km,
                     'type': obj.type.name}
+        elif isinstance(obj, User):
+            return obj.display()
         elif isinstance(obj, datetime):
             return obj.replace(microsecond=0).strftime('%Y-%m-%d %H:%M:%S')
         elif isinstance(obj, time):

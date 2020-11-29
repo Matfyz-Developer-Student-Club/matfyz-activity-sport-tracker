@@ -30,6 +30,19 @@
     {% endcall %}
 {% endmacro %}
 
+<!-- Render a table with best users with activities for time -->
+{% macro render_best_users_time(distance, sex, age) %}
+    {% call render_pageable_table('best_users_time_' + distance + '_' + sex + '_' + age,
+                                  url_for('get_best_users_time', distance=distance, sex=sex, age=age)) %}
+        <th data-field="order">#</th>
+        <th data-field="name">Name</th>
+        <th data-field="datetime">Date</th>
+        <th data-field="distance">Distance</th>
+        <th data-field="duration">Duration</th>
+        <th data-field="average_duration_per_km">Average time</th>
+    {% endcall %}
+{% endmacro %}
+
 <!-- PRIVATE ------------------------------------------------------------------>
 
 <!-- Render errors of form field if present -->
