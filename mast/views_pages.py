@@ -167,16 +167,7 @@ def running_10_km():
 def running_walking():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
-    db_query = mast.queries.Queries()
-    jogging_global = db_query.get_top_users_total_distance_on_foot(10)
-    jogging_personal = db_query.get_user_last_activities_on_foot(
-        current_user.id, 10)
-
-    jogging_personal = jogging_personal if jogging_personal else []
-    jogging_global = jogging_global if jogging_global else []
-
-    return render_template("running_walking.html", title="Jogging", jogging_global=jogging_global,
-                           jogging_personal=jogging_personal,
+    return render_template("running_walking.html", title="Jogging",
                            session_data=session_data)
 
 
@@ -253,15 +244,7 @@ def user_settings():
 def cycling():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
-    db_query = mast.queries.Queries()
-    cyclists_global = db_query.get_top_users_total_distance_on_bike(10)
-    cyclist_personal = db_query.get_user_last_activities_on_bike(
-        current_user.id, 10)
-
-    cyclist_personal = cyclist_personal if cyclist_personal else []
-    cyclists_global = cyclists_global if cyclists_global else []
-    return render_template("cycling.html", title="Cycling", cyclist_personal=cyclist_personal,
-                           cyclists_global=cyclists_global,
+    return render_template("cycling.html", title="Cycling",
                            session_data=session_data)
 
 
