@@ -1,6 +1,6 @@
 from mast.models import User, Competition, Sex, Age, Activity
 from json import JSONEncoder
-from datetime import time
+from datetime import datetime, time
 
 
 class MastEncoder(JSONEncoder):
@@ -10,9 +10,13 @@ class MastEncoder(JSONEncoder):
                 duration = 'Not available'
             else:
                 duration = None
-            return {'datetime': obj.datetime.replace(microsecond=0).strftime('%Y-%m-%d %H:%M:%S'),
+            return {'datetime': obj.datetime,
                     'distance': obj.distance,
-                    'duration': duration or obj.duration.strftime('%H:%M:%S'),
-                    'average_duration_per_km': duration or obj.average_duration_per_km.strftime('%H:%M:%S'),
+                    'duration': duration or obj.duration,
+                    'average_duration_per_km': duration or obj.average_duration_per_km,
                     'type': obj.type.name}
+        elif isinstance(obj, datetime):
+            return obj.replace(microsecond=0).strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, time):
+            return obj.replace(microsecond=0).strftime('%H:%M:%S')
         return JSONEncoder.default(self, obj)

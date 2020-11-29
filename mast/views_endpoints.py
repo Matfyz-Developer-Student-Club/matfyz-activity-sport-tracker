@@ -21,8 +21,8 @@ def get_personal_stats():
 @login_required
 def get_personal_activities():
     db_query = mast.queries.Queries()
-    offset = request.args.get('offset')
-    limit = request.args.get('limit')
+    offset = int(request.args.get('offset'))
+    limit = int(request.args.get('limit'))
     data = db_query.get_user_last_activities(user_id=current_user.id, number=limit, offset=offset)
     return json.dumps({'total': data[0], 'rows': data[1]}, cls=MastEncoder)
 
@@ -31,10 +31,29 @@ def get_personal_activities():
 @login_required
 def get_personal_activities_time():
     db_query = mast.queries.Queries()
-    offset = request.args.get('offset')
-    limit = request.args.get('limit')
-    data = db_query.get_user_last_activities(user_id=current_user.id, number=limit, offset=offset)
-    return json.dumps({'total': data[0], 'rows': data[1]}, cls=MastEncoder)
+    distance = request.args.get('distance')
+    offset = int(request.args.get('offset'))
+    limit = int(request.args.get('limit'))
+    if distance == '5km':
+        competition = Competition.Run5km
+    elif distance == '10km':
+        competition = Competition.Run10km
+    else:
+        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
+
+    data = db_query.get_best_run_activities_by_user(user_id=current_user.id, competition=competition,
+                                                    number=limit, offset=offset)
+    enriched_data = []
+    order = offset + 1
+    for item in data[1]:
+        enriched_item = {'order': order,
+                         'datetime': item.datetime,
+                         'distance': item.distance,
+                         'duration': item.duration,
+                         'average_duration_per_km': item.average_duration_per_km}
+        enriched_data.append(enriched_item)
+        order = order + 1
+    return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
 
 
 @app.route('/get_personal_activities_distance')
@@ -42,8 +61,8 @@ def get_personal_activities_time():
 def get_personal_activities_distance():
     db_query = mast.queries.Queries()
     activity_type = request.args.get('type')
-    offset = request.args.get('offset')
-    limit = request.args.get('limit')
+    offset = int(request.args.get('offset'))
+    limit = int(request.args.get('limit'))
     if activity_type == 'bike':
         data = db_query.get_user_last_activities_on_bike(user_id=current_user.id, number=limit, offset=offset)
         return json.dumps({'total': data[0], 'rows': data[1]}, cls=MastEncoder)

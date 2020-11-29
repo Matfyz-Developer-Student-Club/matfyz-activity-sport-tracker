@@ -12,6 +12,7 @@
 {% macro render_personal_activities_time(distance) %}
     {% call render_pageable_table('personal_activities_time_' + distance,
                                   url_for('get_personal_activities_time', distance=distance)) %}
+        <th data-field="order">#</th>
         <th data-field="datetime">Date</th>
         <th data-field="distance">Distance</th>
         <th data-field="duration">Duration</th>

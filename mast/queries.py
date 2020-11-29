@@ -27,24 +27,20 @@ class Queries(object):
         :param activity_types: Types of activities we want to sum to total distance.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: Total count of activities and ist of last activities.
+        :returns: Total count of activities and list of last activities.
         """
-        count = db.session.query(Activity). \
+        query = db.session.query(Activity). \
             filter(Activity.user_id == user_id,
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_(activity_types)). \
+                   Activity.type.in_(activity_types))
+        count = query. \
             count()
-        list = db.session.query(Activity). \
-            filter(Activity.user_id == user_id,
-                   func.date(Activity.datetime) >= self.SEASON.start_date,
-                   func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_(activity_types)). \
-            order_by(Activity.datetime.desc()). \
+        items = query. \
             limit(number). \
             offset(offset). \
             all()
-        return [count, list]
+        return [count, items]
 
     def get_user_last_activities(self, user_id: int, number: int, offset: int = 0):
         """
@@ -52,7 +48,7 @@ class Queries(object):
         :param user_id: ID of user.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: Total count of activities and ist of last activities.
+        :returns: Total count of activities and list of last activities.
         """
         return self._get_user_last_activities(user_id,
                                               [ActivityType.Run, ActivityType.Walk, ActivityType.Ride],
@@ -64,7 +60,7 @@ class Queries(object):
         :param user_id: ID of user.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: Total count of activities and ist of last activities.
+        :returns: Total count of activities and list of last activities.
         """
         return self._get_user_last_activities(user_id,
                                               [ActivityType.Run, ActivityType.Walk],
@@ -76,7 +72,7 @@ class Queries(object):
         :param user_id: ID of user.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: Total count of activities and ist of last activities.
+        :returns: Total count of activities and list of last activities.
         """
         return self._get_user_last_activities(user_id,
                                               [ActivityType.Ride],
@@ -99,18 +95,22 @@ class Queries(object):
         :param competition: Competition where we want the best run.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: Activity instance for the best run.
+        :returns: Total count of activities and list of best activities.
         """
-        return db.session.query(Activity). \
+        query = db.session.query(Activity). \
             filter(Activity.user_id == user_id,
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type == ActivityType.Run,
                    Activity.distance >= competition.value). \
-            order_by(Activity.average_duration_per_km.asc()). \
+            order_by(Activity.average_duration_per_km.asc())
+        count = query. \
+            count()
+        items = query. \
             limit(number). \
             offset(offset). \
             all()
+        return [count, items]
 
     def _get_total_distance_by_user(self, user_id: int, activity_types: list):
         """

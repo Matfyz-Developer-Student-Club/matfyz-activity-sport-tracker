@@ -150,8 +150,6 @@ def running_5_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
     db_query = mast.queries.Queries()
-    user_five = db_query.get_best_run_activities_by_user(
-        current_user.id, Competition.Run5km, 10)
     five_runner_men_under = db_query.get_top_users_best_run(
         Competition.Run5km, Sex.Male, Age.Under35, 10)
     five_runner_men_above = db_query.get_top_users_best_run(
@@ -161,7 +159,7 @@ def running_5_km():
     five_runner_women_above = db_query.get_top_users_best_run(
         Competition.Run5km, Sex.Female, Age.Over35, 10)
 
-    return render_template("running_5_km.html", title="Running-5", user_five=user_five,
+    return render_template("running_5_km.html", title="Running-5",
                            five_runner_men_above=five_runner_men_above, five_runner_men_under=five_runner_men_under,
                            five_runner_women_above=five_runner_women_above,
                            five_runner_women_under=five_runner_women_under,
@@ -174,8 +172,6 @@ def running_10_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
     db_query = mast.queries.Queries()
-    user_ten = db_query.get_best_run_activities_by_user(
-        current_user.id, Competition.Run10km, 10)
     ten_runner_men_under = db_query.get_top_users_best_run(
         Competition.Run10km, Sex.Male, Age.Under35, 10)
     ten_runner_men_above = db_query.get_top_users_best_run(
@@ -185,7 +181,7 @@ def running_10_km():
     ten_runner_women_above = db_query.get_top_users_best_run(
         Competition.Run10km, Sex.Female, Age.Over35, 10)
 
-    return render_template("running_10_km.html", title="Running-10", user_ten=user_ten,
+    return render_template("running_10_km.html", title="Running-10",
                            ten_runner_men_above=ten_runner_men_above, ten_runner_men_under=ten_runner_men_under,
                            ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under,
                            session_data=session_data)
