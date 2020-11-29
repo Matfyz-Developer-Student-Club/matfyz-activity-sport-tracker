@@ -1,27 +1,12 @@
 {% extends "main_layout_template.html" %}
+{% from "_pageable_tables.html" import render_personal_activities_distance %}
+
 {% block content_page %}
    <div class="container mb-4">
         <div class="row-fluid">
             <div class="col-sm mb-4">
                 <h2>My Last Runs / Walks</h2>
-                <table id="personalStats" class="display table table-striped table-sm">
-                    <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Distance</th>
-                        <th>Time</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in jogging_personal %}
-                        <tr>
-                            <td>{{ item['datetime'] }}</td>
-                            <td>{{ item['distance'] }}</td>
-                            <td>{{ item['duration'] }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                {{ render_personal_activities_distance('foot') }}
             </div>
             <div class="col-sm mb-4">
                 <h2>Global Leaders</h2>
