@@ -1,0 +1,82 @@
+<!-- Render a table with personal activities -->
+{% macro render_personal_activities() %}
+    {% call render_pageable_table('personal_activities', url_for('get_personal_activities')) %}
+        <th data-field="datetime">Date</th>
+        <th data-field="distance">Distance</th>
+        <th data-field="duration">Duration</th>
+        <th data-field="type">Type of activity</th>
+    {% endcall %}
+{% endmacro %}
+
+<!-- Render a table with personal activities for time -->
+{% macro render_personal_activities_time(distance) %}
+    {% call render_pageable_table('personal_activities_time_' + distance,
+                                  url_for('get_personal_activities_time', distance=distance)) %}
+        <th data-field="order">#</th>
+        <th data-field="datetime">Date</th>
+        <th data-field="distance">Distance</th>
+        <th data-field="duration">Duration</th>
+        <th data-field="average_duration_per_km">Average time</th>
+    {% endcall %}
+{% endmacro %}
+
+<!-- Render a table with personal activities for distance -->
+{% macro render_personal_activities_distance(type) %}
+    {% call render_pageable_table('personal_activities_distance_' + type,
+                                  url_for('get_personal_activities_distance', type=type)) %}
+        <th data-field="datetime">Date</th>
+        <th data-field="distance">Distance</th>
+        <th data-field="duration">Duration</th>
+    {% endcall %}
+{% endmacro %}
+
+<!-- Render a table with best users with activities for time -->
+{% macro render_best_users_time(distance, sex, age) %}
+    {% call render_pageable_table('best_users_time_' + distance + '_' + sex + '_' + age,
+                                  url_for('get_best_users_time', distance=distance, sex=sex, age=age)) %}
+        <th data-field="order">#</th>
+        <th data-field="name">Name</th>
+        <th data-field="datetime">Date</th>
+        <th data-field="distance">Distance</th>
+        <th data-field="duration">Duration</th>
+        <th data-field="average_duration_per_km">Average time</th>
+    {% endcall %}
+{% endmacro %}
+
+<!-- Render a table with best users with activities for distance -->
+{% macro render_best_users_distace(type) %}
+    {% call render_pageable_table('best_users_distance_' + type,
+                                  url_for('get_best_users_distance', type=type)) %}
+        <th data-field="order">#</th>
+        <th data-field="name">Name</th>
+        <th data-field="distance">Distance</th>
+    {% endcall %}
+{% endmacro %}
+
+<!-- PRIVATE ------------------------------------------------------------------>
+
+<!-- Render errors of form field if present -->
+{% macro render_pageable_table(id, url) %}
+    <div class="pageable-table">
+        <table id="{{ id }}" class="table table-striped table-sm"
+               data-toggle="table" data-height="400" data-url="{{ url }}"
+               data-side-pagination="server" data-pagination="true" data-page-list="[10]" >
+            <thead>
+                <tr>
+                    {{ caller() }}
+                </tr>
+            </thead>
+        </table>
+
+        <script>
+            $(function() {
+                let table = $('#{{ id }}');
+                table.bootstrapTable();
+
+                table.bootstrapTable('refreshOptions', {
+                    classes: 'table table-striped table-sm'
+                })
+            })
+        </script>
+    </div>
+{% endmacro %}
