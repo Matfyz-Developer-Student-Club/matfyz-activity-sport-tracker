@@ -11,6 +11,12 @@
             <div class="col-sm mb-4">
                 <h2>Leaders</h2>
 
+                {% if position != 'none' %}
+                    <h6>Currently, you are on {{ position }} place in your category.</h6>
+                {% else %}
+                    <h6>You have no activities in this competition.</h6>
+                {% endif %}
+
                 <div id="accordion">
                     <div class="card">
                         <div class="card-header" id="headingOne">
