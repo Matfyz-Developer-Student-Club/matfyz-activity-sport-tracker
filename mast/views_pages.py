@@ -1,8 +1,7 @@
-import json
 import os
 import datetime
 import mast
-from flask import redirect, request, render_template, url_for, jsonify, Blueprint
+from flask import redirect, request, render_template, url_for
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
@@ -87,8 +86,6 @@ def logout():
 def home():
     session_data = mast.session.Session()
     db_query = mast.queries.Queries()
-    last_activities = db_query.get_user_last_activities(current_user.id, 10)
-    last_activities = [] if not last_activities else last_activities
     add_activity_form = AddActivityForm()
     if add_activity_form.validate_on_submit():
         filename = secure_filename(add_activity_form.file.data.filename)
@@ -135,18 +132,7 @@ def home():
     check_profile_verified(session_data)
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
-                           season=db_query.SEASON, last_activities=last_activities,
-                           session_data=session_data)
-
-
-@app.route('/get_personal_stats')
-@login_required
-def get_personal_stats():
-    db_query = mast.queries.Queries()
-    data = db_query.get_total_distances_by_user_in_last_days(user_id=current_user.id, days=7)
-    labels = [key for key, val in data.items()]
-    data = [val for key, val in data.items()]
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+                           season=db_query.SEASON, session_data=session_data)
 
 
 @app.route('/matfyz_challenges')
@@ -171,38 +157,12 @@ def matfyz_challenges():
                                checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint)
 
 
-@app.route('/get_global_contest')
-def get_global_contest():
-    db_query = mast.queries.Queries()
-    labels = ["Where we gonna make it by bike.",
-              "Where we gonna make it on foot."]
-    data = [round(db_query.get_global_total_distance_on_bike(), 1),
-            round(db_query.get_global_total_distance_on_foot(), 1)]
-    checkpoints = db_query.get_challenge_parts_to_display()
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
-
-
 @app.route('/running_5_km')
 @login_required
 def running_5_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
-    db_query = mast.queries.Queries()
-    user_five = db_query.get_best_run_activities_by_user(
-        current_user.id, Competition.Run5km, 10)
-    five_runner_men_under = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Male, Age.Under35, 10)
-    five_runner_men_above = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Male, Age.Over35, 10)
-    five_runner_women_under = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Female, Age.Under35, 10)
-    five_runner_women_above = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Female, Age.Over35, 10)
-
-    return render_template("running_5_km.html", title="Running-5", user_five=user_five,
-                           five_runner_men_above=five_runner_men_above, five_runner_men_under=five_runner_men_under,
-                           five_runner_women_above=five_runner_women_above,
-                           five_runner_women_under=five_runner_women_under,
+    return render_template("running.html", title="Running-5", distance='5km',
                            session_data=session_data)
 
 
@@ -211,21 +171,7 @@ def running_5_km():
 def running_10_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
-    db_query = mast.queries.Queries()
-    user_ten = db_query.get_best_run_activities_by_user(
-        current_user.id, Competition.Run10km, 10)
-    ten_runner_men_under = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Male, Age.Under35, 10)
-    ten_runner_men_above = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Male, Age.Over35, 10)
-    ten_runner_women_under = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Female, Age.Under35, 10)
-    ten_runner_women_above = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Female, Age.Over35, 10)
-
-    return render_template("running_10_km.html", title="Running-10", user_ten=user_ten,
-                           ten_runner_men_above=ten_runner_men_above, ten_runner_men_under=ten_runner_men_under,
-                           ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under,
+    return render_template("running.html", title="Running-10", distance='10km',
                            session_data=session_data)
 
 
@@ -234,16 +180,7 @@ def running_10_km():
 def running_walking():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
-    db_query = mast.queries.Queries()
-    jogging_global = db_query.get_top_users_total_distance_on_foot(10)
-    jogging_personal = db_query.get_user_last_activities_on_foot(
-        current_user.id, 10)
-
-    jogging_personal = jogging_personal if jogging_personal else []
-    jogging_global = jogging_global if jogging_global else []
-
-    return render_template("running_walking.html", title="Jogging", jogging_global=jogging_global,
-                           jogging_personal=jogging_personal,
+    return render_template("running_walking.html", title="Jogging",
                            session_data=session_data)
 
 
@@ -320,15 +257,7 @@ def user_settings():
 def cycling():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
-    db_query = mast.queries.Queries()
-    cyclists_global = db_query.get_top_users_total_distance_on_bike(10)
-    cyclist_personal = db_query.get_user_last_activities_on_bike(
-        current_user.id, 10)
-
-    cyclist_personal = cyclist_personal if cyclist_personal else []
-    cyclists_global = cyclists_global if cyclists_global else []
-    return render_template("cycling.html", title="Cycling", cyclist_personal=cyclist_personal,
-                           cyclists_global=cyclists_global,
+    return render_template("cycling.html", title="Cycling",
                            session_data=session_data)
 
 
