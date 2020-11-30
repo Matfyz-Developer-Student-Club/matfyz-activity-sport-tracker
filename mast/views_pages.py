@@ -157,6 +157,11 @@ def matfyz_challenges():
                                checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint)
 
 
+@app.route('/competitions')
+def competitions():
+    return render_template("competitions_public.html", title="Competitions")
+
+
 @app.route('/running_5_km')
 @login_required
 def running_5_km():
