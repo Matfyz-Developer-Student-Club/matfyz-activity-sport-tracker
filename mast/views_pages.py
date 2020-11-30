@@ -165,8 +165,10 @@ def matfyz_challenges():
 def running_5_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    position = db_query.get_position_best_run(current_user.id, Competition.Run5km)
     return render_template("running.html", title="Running-5", distance='5km',
-                           session_data=session_data)
+                           position=ordinal(position), session_data=session_data)
 
 
 @app.route('/running_10_km')
@@ -174,8 +176,10 @@ def running_5_km():
 def running_10_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    position = db_query.get_position_best_run(current_user.id, Competition.Run10km)
     return render_template("running.html", title="Running-10", distance='10km',
-                           session_data=session_data)
+                           position=ordinal(position), session_data=session_data)
 
 
 @app.route('/running_walking')

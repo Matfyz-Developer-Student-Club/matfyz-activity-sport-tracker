@@ -171,11 +171,13 @@ class Queries(object):
 
         return result
 
-    def _get_top_users_best_run_subquery(self, competition: Competition):
+    def _get_top_users_best_run_query(self, competition: Competition, sex: Sex, age: Age):
         """
-        Returns subquery for top users in the best run activity in a specified competition.
+        Returns query for top users in the best run activity in a specified competition.
         :param competition: Competition where we want top users for the best run.
-        :returns: Subquery returning user_id and id for user´s best run.
+        :param sex: Sex of users for the top users list.
+        :param age: Age category of users for the top users list.
+        :returns: Subquery returning User and Activity for user´s best run.
         """
         best_times = db.session.query(Activity.user_id.label('user_id'),
                                       func.min(Activity.average_duration_per_km).label('best_time')). \
@@ -185,7 +187,7 @@ class Queries(object):
                    Activity.distance >= competition.value). \
             group_by(Activity.user_id). \
             subquery(with_labels=True)
-        return db.session.query(Activity.user_id.label('user_id'),
+        first_best_times = db.session.query(Activity.user_id.label('user_id'),
                                             func.min(Activity.id).label('id')). \
             select_from(Activity). \
             join(best_times, db.and_(Activity.user_id == best_times.c.user_id,
@@ -196,6 +198,16 @@ class Queries(object):
                    Activity.distance >= competition.value). \
             group_by(Activity.user_id). \
             subquery(with_labels=True)
+        return db.session.query(User, Activity). \
+            select_from(User). \
+            join(first_best_times, User.id == first_best_times.c.user_id). \
+            join(Activity, db.and_(Activity.user_id == first_best_times.c.user_id,
+                                   Activity.id == first_best_times.c.id)). \
+            filter(User.sex == sex,
+                   User.age == age,
+                   User.competing,
+                   User.verified). \
+            order_by(Activity.average_duration_per_km.asc())
 
     def get_top_users_best_run(self, competition: Competition, sex: Sex, age: Age, number: int, offset: int = 0):
         """
@@ -207,17 +219,7 @@ class Queries(object):
         :param offset: Offset of returned activities - default: 0.
         :returns: Total count of users and list of top users and their best run activity.
         """
-        best_times = self._get_top_users_best_run_subquery(competition)
-        query = db.session.query(User, Activity). \
-            select_from(User). \
-            join(best_times, User.id == best_times.c.user_id). \
-            join(Activity, db.and_(Activity.user_id == best_times.c.user_id,
-                                   Activity.id == best_times.c.id)). \
-            filter(User.sex == sex,
-                   User.age == age,
-                   User.competing,
-                   User.verified). \
-            order_by(Activity.average_duration_per_km.asc())
+        query = self._get_top_users_best_run_query(competition, sex, age)
         count = query. \
             count()
         items = query. \
@@ -225,6 +227,23 @@ class Queries(object):
             offset(offset). \
             all()
         return [count, items]
+
+    def get_position_best_run(self, user_id: int, competition: Competition):
+        """
+        Returns position of the current user in the best run in specified competition.
+        :param user_id: ID of user.
+        :param competition: Competition where we want the position for the best run.
+        :returns: Position of user or -1.
+        """
+        user = db.session.query(User).get(user_id)
+        all_users = self._get_top_users_best_run_query(competition, user.sex, user.age).all()
+
+        order = 0
+        for user in all_users:
+            order = order + 1
+            if user.User.id == user_id:
+                return order
+        return -1
 
     def _get_top_users_total_distance_query(self, activity_types: list):
         """
