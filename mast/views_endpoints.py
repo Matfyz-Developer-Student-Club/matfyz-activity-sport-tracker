@@ -147,7 +147,6 @@ def get_best_users_distance():
 
 
 @app.route('/get_global_contest')
-@login_required
 def get_global_contest():
     db_query = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.",
