@@ -10,6 +10,11 @@
             </div>
             <div class="col-sm mb-4">
                 <h2>Global Leaders</h2>
+                {% if position != 'none' %}
+                    <h6>With your total distance of {{ total_distance }} km, you are on {{ position }} place.</h6>
+                {% else %}
+                    <h6>You have no activities in this competition.</h6>
+                {% endif %}
                 {{ render_best_users_distace('bike') }}
             </div>
         </div>

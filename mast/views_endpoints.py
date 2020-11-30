@@ -140,7 +140,7 @@ def get_best_users_distance():
     for item in data[1]:
         enriched_item = {'order': order,
                          'name': item.User.display(),
-                         'distance': item.total_distance}
+                         'distance': round(item.total_distance, 1)}
         enriched_data.append(enriched_item)
         order = order + 1
     return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
