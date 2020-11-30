@@ -24,6 +24,22 @@ def check_profile_verified(session_data: session.Session):
                              'Your activities will be considered only after your profile is verified.')
 
 
+def ordinal(number):
+    if number <= 0:
+        return 'none'
+    tmp = number % 100
+    if tmp >= 20:
+        tmp = tmp % 10
+    if tmp == 1:
+        return str(number) + 'st'
+    elif tmp == 2:
+        return str(number) + 'nd'
+    elif tmp == 3:
+        return str(number) + 'rd'
+    else:
+        return str(number) + 'th'
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -167,7 +183,11 @@ def running_10_km():
 def running_walking():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    total_distance = db_query.get_total_distance_by_user_on_foot(current_user.id)
+    position = db_query.get_position_total_distance_on_foot(current_user.id)
     return render_template("running_walking.html", title="Jogging",
+                           total_distance=total_distance, position=ordinal(position),
                            session_data=session_data)
 
 
@@ -244,7 +264,11 @@ def user_settings():
 def cycling():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
+    db_query = mast.queries.Queries()
+    total_distance = db_query.get_total_distance_by_user_on_bike(current_user.id)
+    position = db_query.get_position_total_distance_on_bike(current_user.id)
     return render_template("cycling.html", title="Cycling",
+                           total_distance=total_distance, position=ordinal(position),
                            session_data=session_data)
 
 

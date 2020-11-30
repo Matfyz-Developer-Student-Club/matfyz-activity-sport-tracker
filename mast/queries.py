@@ -226,19 +226,25 @@ class Queries(object):
             all()
         return [count, items]
 
-    def _get_top_users_total_distance_subquery(self, activity_types: list):
+    def _get_top_users_total_distance_query(self, activity_types: list):
         """
-        Returns subquery for top users in the total distance in specified activity types.
+        Returns query for top users in the total distance in specified activity types.
         :param activity_types: Types of activities we want to sum to total distance.
-        :returns: Subquery returning user_id and total distance.
+        :returns: Query returning User and total distance.
         """
-        return db.session.query(Activity.user_id.label('user_id'),
-                                    func.sum(Activity.distance).label('total_distance')). \
+        total_distances = db.session.query(Activity.user_id.label('user_id'),
+                                           func.sum(Activity.distance).label('total_distance')). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type.in_(activity_types)). \
             group_by(Activity.user_id). \
             subquery(with_labels=True)
+        return db.session.query(User, total_distances.c.total_distance). \
+            select_from(User). \
+            join(total_distances, User.id == total_distances.c.user_id). \
+            filter(User.competing,
+                   User.verified). \
+            order_by(total_distances.c.total_distance.desc())
 
     def _get_top_users_total_distance(self, activity_types: list, number: int, offset: int = 0):
         """
@@ -248,13 +254,7 @@ class Queries(object):
         :param offset: Offset of returned activities - default: 0.
         :returns: Total count of users and list of top users and their total distance.
         """
-        total_distances = self._get_top_users_total_distance_subquery(activity_types)
-        query = db.session.query(User, total_distances.c.total_distance). \
-            select_from(User). \
-            join(total_distances, User.id == total_distances.c.user_id). \
-            filter(User.competing,
-                   User.verified). \
-            order_by(total_distances.c.total_distance.desc())
+        query = self._get_top_users_total_distance_query(activity_types)
         count = query. \
             count()
         items = query. \
@@ -280,6 +280,38 @@ class Queries(object):
         :returns: Total count of users and list of top users and their total distance.
         """
         return self._get_top_users_total_distance([ActivityType.Ride], number, offset)
+
+    def _get_position_total_distance(self, user_id: int, activity_types: list):
+        """
+        Returns position of the current user in the total distance competition in specified activity types.
+        :param user_id: ID of user.
+        :param activity_types: Types of activities we want to sum to total distance.
+        :returns: Position of user or -1.
+        """
+        all_users = self._get_top_users_total_distance_query(activity_types).all()
+
+        order = 0
+        for user in all_users:
+            order = order + 1
+            if user.User.id == user_id:
+                return order
+        return -1
+
+    def get_position_total_distance_on_foot(self, user_id: int):
+        """
+        Returns position of the current user in the total run/walk distance competition.
+        :param user_id: ID of user.
+        :returns: Position of user or -1.
+        """
+        return self._get_position_total_distance(user_id, [ActivityType.Run, ActivityType.Walk])
+
+    def get_position_total_distance_on_bike(self, user_id: int):
+        """
+        Returns position of the current user in the total ride distance competition.
+        :param user_id: ID of user.
+        :returns: Position of user or -1.
+        """
+        return self._get_position_total_distance(user_id, [ActivityType.Ride])
 
     def _get_global_total_distance(self, activity_types: list):
         """
