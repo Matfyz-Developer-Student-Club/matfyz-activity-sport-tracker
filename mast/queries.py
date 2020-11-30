@@ -427,7 +427,7 @@ class Queries(object):
             'total': db.session.query(User).\
                 count(),
             'unverified': db.session.query(User).\
-                filter(not User.verified).\
+                filter(db.not_(User.verified)).\
                 count(),
             'male students': db.session.query(User).\
                 filter(User.sex == Sex.Male,

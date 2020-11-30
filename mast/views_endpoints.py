@@ -2,7 +2,7 @@ import json
 import mast
 from flask import request, jsonify
 from flask_login import current_user, login_required
-from mast.models import User, Competition, Sex, Age, Activity, ActivityType
+from mast.models import Competition, Sex, Age
 from mast.json_encoder import MastEncoder
 from mast import queries, app
 
@@ -74,7 +74,6 @@ def get_personal_activities_distance():
 
 
 @app.route('/get_best_users_time')
-@login_required
 def get_best_users_time():
     db_query = mast.queries.Queries()
     distance = request.args.get('distance')
@@ -121,7 +120,6 @@ def get_best_users_time():
 
 
 @app.route('/get_best_users_distance')
-@login_required
 def get_best_users_distance():
     db_query = mast.queries.Queries()
     activity_type = request.args.get('type')
@@ -147,7 +145,6 @@ def get_best_users_distance():
 
 
 @app.route('/get_global_contest')
-@login_required
 def get_global_contest():
     db_query = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.",

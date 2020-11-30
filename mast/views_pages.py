@@ -41,6 +41,16 @@ def ordinal(number):
 
 
 @app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/welcome')
+def welcome():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    else:
+        form = LoginForm()
+        return render_template('welcome.html', form=form)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -67,7 +77,7 @@ def register():
         return redirect(url_for('home'))
     elif request.method == 'GET':
         form = RegisterForm('register_form')
-        return render_template('register.html', form=form)
+        return render_template('register.html', title='Registration', form=form)
     else:
         form = RegisterForm(request.form)
         if form.validate_on_submit():
@@ -78,7 +88,7 @@ def register():
             login_user(user)
             return redirect(url_for('home'))
         else:
-            return render_template('register.html', form=form)
+            return render_template('register.html', title='Registration', form=form)
 
 
 @app.route("/logout")
@@ -143,10 +153,7 @@ def home():
 
 
 @app.route('/matfyz_challenges')
-@login_required
 def matfyz_challenges():
-    session_data = mast.session.Session()
-    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     checkpoints = db_query.get_challenge_parts_to_display()
     checkpoints_enriched = []
@@ -155,9 +162,21 @@ def matfyz_challenges():
         checkpoints_enriched.append({'order': order, 'dist': dist, 'place': place})
         order = order + 1
     current_checkpoint = db_query.get_current_challenge_part()
-    return render_template("matfyz_challenges.html", title='Matfyz Challenges',
-                           checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
-                           session_data=session_data)
+
+    if current_user.is_authenticated:
+        session_data = mast.session.Session()
+        check_profile_verified(session_data)
+        return render_template("matfyz_challenges.html", title='Matfyz Challenges',
+                               checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
+                               session_data=session_data)
+    else:
+        return render_template("matfyz_challenges_public.html", title='Matfyz Challenges',
+                               checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint)
+
+
+@app.route('/competitions')
+def competitions():
+    return render_template("competitions_public.html", title="Competitions")
 
 
 @app.route('/running_5_km')
@@ -304,4 +323,4 @@ def integrations():
 def statistics():
     db_query = mast.queries.Queries()
     stats = db_query.get_stats()
-    return render_template("statistics.html", stats=stats)
+    return render_template("statistics.html", title='Statistics', stats=stats)
