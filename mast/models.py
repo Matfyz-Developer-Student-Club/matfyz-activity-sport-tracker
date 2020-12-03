@@ -168,6 +168,15 @@ class Activity(db.Model):
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"
 
+    def change_type(self, new_type: ActivityType):
+        self.type = new_type
+        db.session.add(self)
+        db.session.commit()
+
+    def remove(self):
+        db.session.delete(self)
+        db.session.commit()
+
 
 class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
