@@ -2,9 +2,10 @@ import json
 import mast
 from flask import request, jsonify
 from flask_login import current_user, login_required
-from mast.models import Competition, Sex, Age
+from mast.models import Activity, ActivityType, Competition, Sex, Age
 from mast.json_encoder import MastEncoder
 from mast import queries, app
+from datetime import time
 
 
 @app.route('/get_personal_stats')
@@ -15,6 +16,39 @@ def get_personal_stats():
     labels = [key for key, val in data.items()]
     data = [val for key, val in data.items()]
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+
+
+@app.route('/update_activity')
+@login_required
+def update_activity():
+    activity_id = int(request.args.get('id'))
+    activity_type = request.args.get('type')
+    activity = Activity.query.get(activity_id)
+    if activity.user_id != current_user.id:
+        return 'Activity can be updated by owner only', 403
+    if activity_type == ActivityType.Walk.name:
+        activity.change_type(ActivityType.Walk)
+    elif activity_type == ActivityType.Run.name:
+        if activity.duration > time(0):
+            activity.change_type(ActivityType.Run)
+        else:
+            return 'Activity without duration cannot be run', 403
+    elif activity_type == ActivityType.Ride.name:
+        activity.change_type(ActivityType.Ride)
+    else:
+        return 'Unsupported activity type', 400
+    return 'Updated'
+
+
+@app.route('/delete_activity')
+@login_required
+def delete_activity():
+    activity_id = int(request.args.get('id'))
+    activity = Activity.query.get(activity_id)
+    if activity.user_id != current_user.id:
+        return 'Activity can be deleted by owner only', 403
+    activity.remove()
+    return 'Deleted'
 
 
 @app.route('/get_personal_activities')
