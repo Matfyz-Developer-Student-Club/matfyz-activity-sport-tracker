@@ -161,7 +161,8 @@ def matfyz_challenges():
     for (dist, place) in checkpoints.items():
         checkpoints_enriched.append({'order': order, 'dist': dist, 'place': place})
         order = order + 1
-    current_checkpoint = db_query.get_current_challenge_part()
+    # current_checkpoint = db_query.get_current_challenge_part()
+    current_checkpoint = 30
 
     if current_user.is_authenticated:
         session_data = mast.session.Session()
