@@ -5,7 +5,7 @@ from flask import redirect, request, render_template, url_for
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
-from mast.models import User, Competition, Sex, Age, Activity, ActivityType
+from mast.models import User, Competition, UserType, Sex, Age, Activity, ActivityType
 from mast import bcr, queries, app, session
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.processor import GPXProcessor
@@ -147,8 +147,14 @@ def home():
         return redirect(url_for('home'))
 
     check_profile_verified(session_data)
+    total_foot = db_query.get_total_distance_by_user_on_foot(current_user.id) or 0
+    total_bike = db_query.get_total_distance_by_user_on_bike(current_user.id) or 0
+    total_credit = None
+    if current_user.type == UserType.Student:
+        total_credit = total_foot + total_bike / 2
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
+                           total_foot=total_foot, total_bike=total_bike, total_credit=total_credit,
                            season=db_query.SEASON, session_data=session_data)
 
 
