@@ -485,13 +485,13 @@ class Queries(object):
 
         result = []
         for row in data:
-            on_foot = round(row.on_foot, 1) or 0
-            on_bike = round(row.on_bike, 1) or 0
+            on_foot = row.on_foot or 0
+            on_bike = row.on_bike or 0
             item = {
                 'name': row.User.first_name + ' ' + row.User.last_name,
                 'uk id': row.User.uk_id,
-                'on foot': on_foot,
-                'on bike': on_bike,
+                'on foot': round(on_foot, 1),
+                'on bike': round(on_bike, 1),
                 'points': round(on_foot + on_bike / 2, 2)
             }
             result.append(item)
