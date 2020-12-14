@@ -99,3 +99,8 @@ class AddActivityForm(LoggingFlaskForm):
             raise ValidationError("Provided file has invalid filename.")
         if Path(filename).suffix.lower() not in ['.gpx', '.xml']:
             raise ValidationError("Forbidden extension. Allowed extensions: '.gpx', '.xml'")
+
+
+class CreditsForm(LoggingFlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Display')
