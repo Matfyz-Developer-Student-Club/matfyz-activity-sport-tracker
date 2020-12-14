@@ -4,7 +4,7 @@ import mast
 from flask import redirect, request, render_template, url_for
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
-from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm, CreditsForm
 from mast.models import User, Competition, UserType, Sex, Age, Activity, ActivityType
 from mast import bcr, queries, app, session
 from mast.tools.sis_authentication import authenticate_via_sis
@@ -330,3 +330,22 @@ def statistics():
     db_query = mast.queries.Queries()
     stats = db_query.get_stats()
     return render_template("statistics.html", title='Statistics', stats=stats)
+
+
+@app.route("/credits", methods=['GET', 'POST'])
+def display_credits():
+    if request.method == 'GET':
+        form = CreditsForm('credits_form')
+        return render_template('credits.html', title='Credits', authorized=False, form=form)
+    else:
+        form = CreditsForm(request.form)
+        if form.validate_on_submit():
+            if form.password.data == 'KTV2020':
+                db_query = mast.queries.Queries()
+                students = db_query.get_students()
+                return render_template('credits.html', title='Credits', authorized=True, students=students)
+            else:
+                form.password.errors.append('Specified password is invalid!')
+                return render_template('credits.html', title='Credits', authorized=False, form=form)
+        else:
+            return render_template('credits.html', title='Credits', authorized=False, form=form)
