@@ -52,5 +52,11 @@
     <script src="{{ url_for('static', filename='personal_dashboard.js', version=1) }}"></script>
     <h2>Achievements</h2>
     <h6>Only activities between {{ season['start_date'].strftime('%B %d, %Y') }} and {{ season['end_date'].strftime('%B %d, %Y') }} are considered for competitions and challenges.</h6>
+    <h6>
+        You have made {{ total_foot }} km on foot and {{ total_bike }} km on bike.
+        {% if total_credit != None %}
+            That makes {{ total_credit }} points for Optional Physical Education.
+        {% endif %}
+    </h6>
     {{ render_personal_activities() }}
 {% endblock content_page %}

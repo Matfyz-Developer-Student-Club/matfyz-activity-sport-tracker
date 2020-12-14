@@ -456,3 +456,43 @@ class Queries(object):
         }
 
         return result
+
+    def get_students(self):
+        """
+        Returns the list of students and points for credits.
+        :returns: List of students.
+        """
+        dist_on_foot = db.session.query(Activity.user_id.label('user_id'),
+                                        func.sum(Activity.distance).label('on_foot')).\
+            filter(func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type.in_([ActivityType.Run, ActivityType.Walk])).\
+            group_by(Activity.user_id).\
+            subquery(with_labels=True)
+        dist_on_bike = db.session.query(Activity.user_id.label('user_id'),
+                                        func.sum(Activity.distance).label('on_bike')).\
+            filter(func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type.in_([ActivityType.Ride])).\
+            group_by(Activity.user_id).\
+            subquery(with_labels=True)
+        data = db.session.query(User, dist_on_foot.c.on_foot, dist_on_bike.c.on_bike).\
+            select_from(User).\
+            outerjoin(dist_on_foot, User.id == dist_on_foot.c.user_id).\
+            outerjoin(dist_on_bike, User.id == dist_on_bike.c.user_id).\
+            filter(User.type == UserType.Student). \
+            order_by(User.last_name.asc(), User.first_name.asc())
+
+        result = []
+        for row in data:
+            on_foot = row.on_foot or 0
+            on_bike = row.on_bike or 0
+            item = {
+                'name': row.User.first_name + ' ' + row.User.last_name,
+                'uk id': row.User.uk_id,
+                'on foot': on_foot,
+                'on bike': on_bike,
+                'points': on_foot + on_bike / 2
+            }
+            result.append(item)
+        return result
