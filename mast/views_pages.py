@@ -147,11 +147,11 @@ def home():
         return redirect(url_for('home'))
 
     check_profile_verified(session_data)
-    total_foot = db_query.get_total_distance_by_user_on_foot(current_user.id) or 0
-    total_bike = db_query.get_total_distance_by_user_on_bike(current_user.id) or 0
+    total_foot = round(db_query.get_total_distance_by_user_on_foot(current_user.id), 1) or 0
+    total_bike = round(db_query.get_total_distance_by_user_on_bike(current_user.id), 1) or 0
     total_credit = None
     if current_user.type == UserType.Student:
-        total_credit = total_foot + total_bike / 2
+        total_credit = round(total_foot + total_bike / 2, 2)
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
                            total_foot=total_foot, total_bike=total_bike, total_credit=total_credit,
