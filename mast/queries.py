@@ -6,19 +6,32 @@ import datetime as dt
 
 class Queries(object):
     SEASON: Season
+    SEASON_COMPETITION: Season
+    SEASON_CREDIT: Season
 
-    def __init__(self):
-        self.SEASON = db.session.query(Season). \
+    def __init__(self, credit: bool = False):
+        self.SEASON_COMPETITION = db.session.query(Season). \
             filter(Season.start_date <= dt.date.today(),
                    Season.end_date >= dt.date.today()). \
             first()
-        if self.SEASON is None:
-            self.SEASON = db.session.query(Season). \
+        if self.SEASON_COMPETITION is None:
+            self.SEASON_COMPETITION = db.session.query(Season). \
                 filter(Season.start_date > dt.date.today()). \
                 order_by(Season.start_date.asc()). \
                 first()
-        if self.SEASON is None:
-            self.SEASON = Season(title='', start_date=dt.date.today(), end_date=dt.date.today())
+        if self.SEASON_COMPETITION is None:
+            self.SEASON_COMPETITION = db.session.query(Season). \
+                filter(Season.end_date < dt.date.today()). \
+                order_by(Season.start_date.desc()). \
+                first()
+        if self.SEASON_COMPETITION is None:
+            self.SEASON_COMPETITION = Season(title='', start_date=dt.date.today(), end_date=dt.date.today())
+        self.SEASON_CREDIT = Season(title='',
+                                    start_date=self.SEASON_COMPETITION.start_date, end_date=dt.date(2021, 1, 10))
+        if credit:
+            self.SEASON = self.SEASON_CREDIT
+        else:
+            self.SEASON = self.SEASON_COMPETITION
 
     def _get_user_last_activities(self, user_id: int, activity_types: list, number: int, offset: int = 0):
         """
@@ -37,6 +50,7 @@ class Queries(object):
         count = query. \
             count()
         items = query. \
+            order_by(Activity.datetime.desc()). \
             limit(number). \
             offset(offset). \
             all()
