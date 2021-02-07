@@ -47,14 +47,14 @@
 
 <body class="h-100">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="{{ url_for('home') }}">Mathletics</a>
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="{{ url_for('main.home') }}">Mathletics</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
             data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-            <a class="nav-link" href="{{ url_for('logout') }}">Sign out</a>
+            <a class="nav-link" href="{{ url_for('users.logout') }}">Sign out</a>
         </li>
     </ul>
 </nav>
@@ -67,7 +67,7 @@
                     <li class="nav-item">
                         <a {% if title == 'Home' %} class="nav-link activity-wrap active" {% else %}
                                                     class="nav-link activity-wrap" {% endif %}
-                                                    href="{{ url_for( 'home') }}">
+                                                    href="{{ url_for( 'main.home') }}">
                             <img src="{{ url_for('static', filename='pics/user.svg') }}" alt="User Statistics"
                                  width="16" height="16">
                             Personal Dashboard <span class="sr-only"></span>
@@ -76,7 +76,7 @@
                     <li class="nav-item">
                         <a {% if title == 'Matfyz Challenges' %} class="nav-link activity-wrap active" {% else %}
                                                                 class="nav-link activity-wrap" {% endif %}
-                                                                href="{{ url_for( 'matfyz_challenges') }}">
+                                                                href="{{ url_for( 'activities.matfyz_challenges') }}">
                             <img src="{{ url_for('static', filename='pics/bar-chart-2.svg') }}"
                                  alt="Global Statistics" width="16" height="16">
                             Matfyz Challenges
@@ -85,7 +85,7 @@
                     <li class="nav-item">
                         <a {% if title == 'User Settings' %} class="nav-link activity-wrap active" {% else %}
                                                              class="nav-link activity-wrap" {% endif %}
-                                                             href="{{ url_for('user_settings') }}">
+                                                             href="{{ url_for('users.user_settings') }}">
                             <img src="{{ url_for('static', filename='pics/settings.svg') }}" alt="Settings"
                                  width="16" height="16">
                             Settings
@@ -94,7 +94,7 @@
                     <li class="nav-item">
                         <a {% if title == 'Integrations' %} class="nav-link activity-wrap active" {% else %}
                                                             class="nav-link activity-wrap" {% endif %}
-                                                            href="{{ url_for( 'integrations') }}">
+                                                            href="{{ url_for( 'main.integrations') }}">
                             <img src="{{ url_for('static', filename='pics/layers.svg') }}" alt="Integration"
                                  width="16" height="16">
                             Integrations
@@ -103,7 +103,7 @@
                     <li class="nav-item">
                         <a {% if title == 'Frequently Asked Questions' %} class="nav-link activity-wrap active" {% else %}
                                                                           class="nav-link activity-wrap" {% endif %}
-                                                                          href="{{ url_for( 'faq') }}">
+                                                                          href="{{ url_for( 'main.faq') }}">
                             <img src="{{ url_for('static', filename='pics/question.svg') }}" alt="Frequently Asked Questions"
                                  width="16" height="16">
                             Frequently Asked Questions
@@ -119,7 +119,7 @@
                     <li class="nav-item">
                         <a {% if title == 'About Competitions' %} class="nav-link activity-wrap active" {% else %}
                                                                   class="nav-link activity-wrap" {% endif %}
-                                                                  href="{{ url_for( 'about_competitions') }}">
+                                                                  href="{{ url_for( 'main.about_competitions') }}">
                             <img src="{{ url_for('static', filename='pics/trophy.svg') }}" alt="About Competitions"
                                  width="16" height="16">
                             About Competitions
@@ -128,7 +128,7 @@
                     <li class="nav-item">
                         <a {% if title == 'Running-5' %} class="nav-link activity-wrap active" {% else %}
                                                          class="nav-link activity-wrap" {% endif %}
-                                                         href="{{ url_for( 'running_5_km') }}">
+                                                         href="{{ url_for( 'activities.running_5_km') }}">
                             <img src="{{ url_for('static', filename='pics/run.svg') }}" alt="Running-5"
                                  width="16" height="16"> Running - 5 km
                             <span class="sr-only"></span>
@@ -137,7 +137,7 @@
                     <li class="nav-item">
                         <a {% if title == 'Running-10' %} class="nav-link activity-wrap active" {% else %}
                                                           class="nav-link activity-wrap" {% endif %}
-                                                          href="{{ url_for( 'running_10_km') }}">
+                                                          href="{{ url_for( 'activities.running_10_km') }}">
                             <img class="activity" src="{{ url_for('static', filename='pics/run.svg') }}"
                                  alt="Running-5" width="16" height="16">
                             Running - 10 km
@@ -147,7 +147,7 @@
                     <li class="nav-item">
                         <a {% if title == 'Jogging' %} class="nav-link activity-wrap active" {% else %}
                                                        class="nav-link activity-wrap" {% endif %}
-                                                       href="{{ url_for( 'running_walking') }}">
+                                                       href="{{ url_for( 'activities.running_walking') }}">
                             <img class="activity" src="{{ url_for('static', filename='pics/jogging.svg') }}"
                                  alt="Jogging" width="16" height="16">
                             Running / Walking
@@ -157,7 +157,7 @@
                     <li class="nav-item">
                         <a {% if title == 'Cycling' %} class="nav-link activity-wrap active" {% else %}
                                                        class="nav-link activity-wrap" {% endif %}
-                                                       href="{{ url_for( 'cycling') }}">
+                                                       href="{{ url_for( 'activities.cycling') }}">
                             <img class="activity" src="{{ url_for('static', filename='pics/bike.svg') }}"
                                  alt="Cyclist" width="16" height="16">
                             Cycling

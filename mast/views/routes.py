@@ -1,13 +1,15 @@
 import json
 import mast
-from flask import request, jsonify
+from flask import request, jsonify, Blueprint
 from flask_login import current_user, login_required
 from mast.models import Competition, Sex, Age
 from mast.json_encoder import MastEncoder
-from mast import queries, app
+from mast import queries
+
+views = Blueprint('views', __name__)
 
 
-@app.route('/get_personal_stats')
+@views.route('/get_personal_stats')
 @login_required
 def get_personal_stats():
     db_query = mast.queries.Queries()
@@ -17,7 +19,7 @@ def get_personal_stats():
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 
-@app.route('/get_personal_activities')
+@views.route('/get_personal_activities')
 @login_required
 def get_personal_activities():
     db_query = mast.queries.Queries()
@@ -27,7 +29,7 @@ def get_personal_activities():
     return json.dumps({'total': data[0], 'rows': data[1]}, cls=MastEncoder)
 
 
-@app.route('/get_personal_activities_time')
+@views.route('/get_personal_activities_time')
 @login_required
 def get_personal_activities_time():
     db_query = mast.queries.Queries()
@@ -56,7 +58,7 @@ def get_personal_activities_time():
     return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
 
 
-@app.route('/get_personal_activities_distance')
+@views.route('/get_personal_activities_distance')
 @login_required
 def get_personal_activities_distance():
     db_query = mast.queries.Queries()
@@ -73,7 +75,7 @@ def get_personal_activities_distance():
         return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
 
 
-@app.route('/get_best_users_time')
+@views.route('/get_best_users_time')
 def get_best_users_time():
     db_query = mast.queries.Queries()
     distance = request.args.get('distance')
@@ -119,7 +121,7 @@ def get_best_users_time():
     return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
 
 
-@app.route('/get_best_users_distance')
+@views.route('/get_best_users_distance')
 def get_best_users_distance():
     db_query = mast.queries.Queries()
     activity_type = request.args.get('type')
@@ -144,7 +146,7 @@ def get_best_users_distance():
     return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
 
 
-@app.route('/get_global_contest')
+@views.route('/get_global_contest')
 def get_global_contest():
     db_query = mast.queries.Queries()
     labels = ["Where we gonna make it by bike.",
