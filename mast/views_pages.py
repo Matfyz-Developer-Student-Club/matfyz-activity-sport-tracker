@@ -1,12 +1,11 @@
-import json
 import os
 import datetime
 import mast
-from flask import redirect, request, render_template, url_for, jsonify, Blueprint
+from flask import redirect, request, render_template, url_for
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
-from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm
-from mast.models import User, Competition, Sex, Age, Activity, ActivityType
+from mast.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm, AddActivityForm, CreditsForm
+from mast.models import User, Competition, UserType, Sex, Age, Activity, ActivityType
 from mast import bcr, queries, app, session
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.processor import GPXProcessor
@@ -25,7 +24,33 @@ def check_profile_verified(session_data: session.Session):
                              'Your activities will be considered only after your profile is verified.')
 
 
+def ordinal(number):
+    if number <= 0:
+        return 'none'
+    tmp = number % 100
+    if tmp >= 20:
+        tmp = tmp % 10
+    if tmp == 1:
+        return str(number) + 'st'
+    elif tmp == 2:
+        return str(number) + 'nd'
+    elif tmp == 3:
+        return str(number) + 'rd'
+    else:
+        return str(number) + 'th'
+
+
 @app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/welcome')
+def welcome():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    else:
+        form = LoginForm()
+        return render_template('welcome.html', form=form)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -52,7 +77,7 @@ def register():
         return redirect(url_for('home'))
     elif request.method == 'GET':
         form = RegisterForm('register_form')
-        return render_template('register.html', form=form)
+        return render_template('register.html', title='Registration', form=form)
     else:
         form = RegisterForm(request.form)
         if form.validate_on_submit():
@@ -63,7 +88,7 @@ def register():
             login_user(user)
             return redirect(url_for('home'))
         else:
-            return render_template('register.html', form=form)
+            return render_template('register.html', title='Registration', form=form)
 
 
 @app.route("/logout")
@@ -78,8 +103,6 @@ def logout():
 def home():
     session_data = mast.session.Session()
     db_query = mast.queries.Queries()
-    last_activities = db_query.get_user_last_activities(current_user.id, 10)
-    last_activities = [] if not last_activities else last_activities
     add_activity_form = AddActivityForm()
     if add_activity_form.validate_on_submit():
         filename = secure_filename(add_activity_form.file.data.filename)
@@ -124,27 +147,19 @@ def home():
         return redirect(url_for('home'))
 
     check_profile_verified(session_data)
+    total_foot = db_query.get_total_distance_by_user_on_foot(current_user.id) or 0
+    total_bike = db_query.get_total_distance_by_user_on_bike(current_user.id) or 0
+    total_credit = None
+    if current_user.type == UserType.Student:
+        total_credit = round(total_foot + total_bike / 2, 2)
 
     return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
-                           season=db_query.SEASON, last_activities=last_activities,
-                           session_data=session_data)
-
-
-@app.route('/get_personal_stats')
-@login_required
-def get_personal_stats():
-    db_query = mast.queries.Queries()
-    data = db_query.get_total_distances_by_user_in_last_days(user_id=current_user.id, days=7)
-    labels = [key for key, val in data.items()]
-    data = [val for key, val in data.items()]
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
+                           total_foot=total_foot, total_bike=total_bike, total_credit=total_credit,
+                           season=db_query.SEASON, session_data=session_data)
 
 
 @app.route('/matfyz_challenges')
-@login_required
 def matfyz_challenges():
-    session_data = mast.session.Session()
-    check_profile_verified(session_data)
     db_query = mast.queries.Queries()
     checkpoints = db_query.get_challenge_parts_to_display()
     checkpoints_enriched = []
@@ -153,21 +168,21 @@ def matfyz_challenges():
         checkpoints_enriched.append({'order': order, 'dist': dist, 'place': place})
         order = order + 1
     current_checkpoint = db_query.get_current_challenge_part()
-    return render_template("matfyz_challenges.html", title='Matfyz Challenges',
-                           checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
-                           session_data=session_data)
+
+    if current_user.is_authenticated:
+        session_data = mast.session.Session()
+        check_profile_verified(session_data)
+        return render_template("matfyz_challenges.html", title='Matfyz Challenges',
+                               checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
+                               session_data=session_data)
+    else:
+        return render_template("matfyz_challenges_public.html", title='Matfyz Challenges',
+                               checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint)
 
 
-@app.route('/get_global_contest')
-@login_required
-def get_global_contest():
-    db_query = mast.queries.Queries()
-    labels = ["Where we gonna make it by bike.",
-              "Where we gonna make it on foot."]
-    data = [round(db_query.get_global_total_distance_on_bike(), 1),
-            round(db_query.get_global_total_distance_on_foot(), 1)]
-    checkpoints = db_query.get_challenge_parts_to_display()
-    return jsonify({'payload': json.dumps({'data': data, 'labels': labels, 'checkpoints': checkpoints})})
+@app.route('/competitions')
+def competitions():
+    return render_template("competitions_public.html", title="Competitions")
 
 
 @app.route('/running_5_km')
@@ -176,22 +191,9 @@ def running_5_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
     db_query = mast.queries.Queries()
-    user_five = db_query.get_best_run_activities_by_user(
-        current_user.id, Competition.Run5km, 10)
-    five_runner_men_under = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Male, Age.Under35, 10)
-    five_runner_men_above = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Male, Age.Over35, 10)
-    five_runner_women_under = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Female, Age.Under35, 10)
-    five_runner_women_above = db_query.get_top_users_best_run(
-        Competition.Run5km, Sex.Female, Age.Over35, 10)
-
-    return render_template("running_5_km.html", title="Running-5", user_five=user_five,
-                           five_runner_men_above=five_runner_men_above, five_runner_men_under=five_runner_men_under,
-                           five_runner_women_above=five_runner_women_above,
-                           five_runner_women_under=five_runner_women_under,
-                           session_data=session_data)
+    position = db_query.get_position_best_run(current_user.id, Competition.Run5km)
+    return render_template("running.html", title="Running-5", distance='5km',
+                           position=ordinal(position), session_data=session_data)
 
 
 @app.route('/running_10_km')
@@ -200,21 +202,9 @@ def running_10_km():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
     db_query = mast.queries.Queries()
-    user_ten = db_query.get_best_run_activities_by_user(
-        current_user.id, Competition.Run10km, 10)
-    ten_runner_men_under = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Male, Age.Under35, 10)
-    ten_runner_men_above = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Male, Age.Over35, 10)
-    ten_runner_women_under = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Female, Age.Under35, 10)
-    ten_runner_women_above = db_query.get_top_users_best_run(
-        Competition.Run10km, Sex.Female, Age.Over35, 10)
-
-    return render_template("running_10_km.html", title="Running-10", user_ten=user_ten,
-                           ten_runner_men_above=ten_runner_men_above, ten_runner_men_under=ten_runner_men_under,
-                           ten_runner_women_above=ten_runner_women_above, ten_runner_women_under=ten_runner_women_under,
-                           session_data=session_data)
+    position = db_query.get_position_best_run(current_user.id, Competition.Run10km)
+    return render_template("running.html", title="Running-10", distance='10km',
+                           position=ordinal(position), session_data=session_data)
 
 
 @app.route('/running_walking')
@@ -223,15 +213,10 @@ def running_walking():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
     db_query = mast.queries.Queries()
-    jogging_global = db_query.get_top_users_total_distance_on_foot(10)
-    jogging_personal = db_query.get_user_last_activities_on_foot(
-        current_user.id, 10)
-
-    jogging_personal = jogging_personal if jogging_personal else []
-    jogging_global = jogging_global if jogging_global else []
-
-    return render_template("running_walking.html", title="Jogging", jogging_global=jogging_global,
-                           jogging_personal=jogging_personal,
+    total_distance = db_query.get_total_distance_by_user_on_foot(current_user.id)
+    position = db_query.get_position_total_distance_on_foot(current_user.id)
+    return render_template("running_walking.html", title="Jogging",
+                           total_distance=total_distance, position=ordinal(position),
                            session_data=session_data)
 
 
@@ -309,14 +294,10 @@ def cycling():
     session_data = mast.session.Session()
     check_profile_verified(session_data)
     db_query = mast.queries.Queries()
-    cyclists_global = db_query.get_top_users_total_distance_on_bike(10)
-    cyclist_personal = db_query.get_user_last_activities_on_bike(
-        current_user.id, 10)
-
-    cyclist_personal = cyclist_personal if cyclist_personal else []
-    cyclists_global = cyclists_global if cyclists_global else []
-    return render_template("cycling.html", title="Cycling", cyclist_personal=cyclist_personal,
-                           cyclists_global=cyclists_global,
+    total_distance = db_query.get_total_distance_by_user_on_bike(current_user.id)
+    position = db_query.get_position_total_distance_on_bike(current_user.id)
+    return render_template("cycling.html", title="Cycling",
+                           total_distance=total_distance, position=ordinal(position),
                            session_data=session_data)
 
 
@@ -348,4 +329,23 @@ def integrations():
 def statistics():
     db_query = mast.queries.Queries()
     stats = db_query.get_stats()
-    return render_template("statistics.html", stats=stats)
+    return render_template("statistics.html", title='Statistics', stats=stats)
+
+
+@app.route("/credits", methods=['GET', 'POST'])
+def display_credits():
+    if request.method == 'GET':
+        form = CreditsForm('credits_form')
+        return render_template('credits.html', title='Credits', authorized=False, form=form)
+    else:
+        form = CreditsForm(request.form)
+        if form.validate_on_submit():
+            if form.password.data == 'KTV2020':
+                db_query = mast.queries.Queries()
+                students = db_query.get_students()
+                return render_template('credits.html', title='Credits', authorized=True, students=students)
+            else:
+                form.password.errors.append('Specified password is invalid!')
+                return render_template('credits.html', title='Credits', authorized=False, form=form)
+        else:
+            return render_template('credits.html', title='Credits', authorized=False, form=form)

@@ -177,7 +177,7 @@ class Season(db.Model):
     challenge_parts = db.relationship('ChallengePart', order_by='ChallengePart.order', backref='season', lazy=True)
 
     def __repr__(self):
-        return f"Activity({self.title}: {self.start_date} - {self.end_date})"
+        return f"Season({self.title}: {self.start_date} - {self.end_date})"
 
 
 class ChallengePart(db.Model):

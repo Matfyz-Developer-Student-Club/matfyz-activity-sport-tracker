@@ -27,17 +27,20 @@ class Queries(object):
         :param activity_types: Types of activities we want to sum to total distance.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: List of last activities.
+        :returns: Total count of activities and list of last activities.
         """
-        return db.session.query(Activity). \
+        query = db.session.query(Activity). \
             filter(Activity.user_id == user_id,
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_(activity_types)). \
-            order_by(Activity.datetime.desc()). \
+                   Activity.type.in_(activity_types))
+        count = query. \
+            count()
+        items = query. \
             limit(number). \
             offset(offset). \
             all()
+        return [count, items]
 
     def get_user_last_activities(self, user_id: int, number: int, offset: int = 0):
         """
@@ -45,7 +48,7 @@ class Queries(object):
         :param user_id: ID of user.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: List of last activities.
+        :returns: Total count of activities and list of last activities.
         """
         return self._get_user_last_activities(user_id,
                                               [ActivityType.Run, ActivityType.Walk, ActivityType.Ride],
@@ -57,7 +60,7 @@ class Queries(object):
         :param user_id: ID of user.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: List of last activities.
+        :returns: Total count of activities and list of last activities.
         """
         return self._get_user_last_activities(user_id,
                                               [ActivityType.Run, ActivityType.Walk],
@@ -69,7 +72,7 @@ class Queries(object):
         :param user_id: ID of user.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: List of last activities.
+        :returns: Total count of activities and list of last activities.
         """
         return self._get_user_last_activities(user_id,
                                               [ActivityType.Ride],
@@ -92,18 +95,22 @@ class Queries(object):
         :param competition: Competition where we want the best run.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
-        :returns: Activity instance for the best run.
+        :returns: Total count of activities and list of best activities.
         """
-        return db.session.query(Activity). \
+        query = db.session.query(Activity). \
             filter(Activity.user_id == user_id,
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type == ActivityType.Run,
                    Activity.distance >= competition.value). \
-            order_by(Activity.average_duration_per_km.asc()). \
+            order_by(Activity.average_duration_per_km.asc())
+        count = query. \
+            count()
+        items = query. \
             limit(number). \
             offset(offset). \
             all()
+        return [count, items]
 
     def _get_total_distance_by_user(self, user_id: int, activity_types: list):
         """
@@ -164,18 +171,27 @@ class Queries(object):
 
         return result
 
-    def get_top_users_best_run(self, competition: Competition, sex: Sex, age: Age, number: int, offset: int = 0):
+    def _get_top_users_best_run_query(self, competition: Competition, sex: Sex, age: Age):
         """
-        Returns top users in the best run activity in a specified competition, sex and age category.
+        Returns query for top users in the best run activity in a specified competition.
         :param competition: Competition where we want top users for the best run.
         :param sex: Sex of users for the top users list.
         :param age: Age category of users for the top users list.
-        :param number: Number of users in the top users list
-        :param offset: Offset of returned activities - default: 0.
-        :returns: List of top users and their best run activity.
+        :returns: Subquery returning User and Activity for user´s best run.
         """
-        subquery = db.session.query(Activity.user_id.label('user_id'),
-                                    func.min(Activity.average_duration_per_km).label('best_time')). \
+        best_times = db.session.query(Activity.user_id.label('user_id'),
+                                      func.min(Activity.average_duration_per_km).label('best_time')). \
+            filter(func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type == ActivityType.Run,
+                   Activity.distance >= competition.value). \
+            group_by(Activity.user_id). \
+            subquery(with_labels=True)
+        first_best_times = db.session.query(Activity.user_id.label('user_id'),
+                                            func.min(Activity.id).label('id')). \
+            select_from(Activity). \
+            join(best_times, db.and_(Activity.user_id == best_times.c.user_id,
+                                     Activity.average_duration_per_km == best_times.c.best_time)). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type == ActivityType.Run,
@@ -184,17 +200,70 @@ class Queries(object):
             subquery(with_labels=True)
         return db.session.query(User, Activity). \
             select_from(User). \
-            join(subquery, User.id == subquery.c.user_id). \
-            join(Activity, db.and_(Activity.user_id == subquery.c.user_id,
-                                   Activity.average_duration_per_km == subquery.c.best_time)). \
+            join(first_best_times, User.id == first_best_times.c.user_id). \
+            join(Activity, db.and_(Activity.user_id == first_best_times.c.user_id,
+                                   Activity.id == first_best_times.c.id)). \
             filter(User.sex == sex,
                    User.age == age,
                    User.competing,
                    User.verified). \
-            order_by(Activity.average_duration_per_km.asc()). \
+            order_by(Activity.average_duration_per_km.asc())
+
+    def get_top_users_best_run(self, competition: Competition, sex: Sex, age: Age, number: int, offset: int = 0):
+        """
+        Returns top users in the best run activity in a specified competition, sex and age category.
+        :param competition: Competition where we want top users for the best run.
+        :param sex: Sex of users for the top users list.
+        :param age: Age category of users for the top users list.
+        :param number: Number of users in the top users list
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of users and list of top users and their best run activity.
+        """
+        query = self._get_top_users_best_run_query(competition, sex, age)
+        count = query. \
+            count()
+        items = query. \
             limit(number). \
             offset(offset). \
             all()
+        return [count, items]
+
+    def get_position_best_run(self, user_id: int, competition: Competition):
+        """
+        Returns position of the current user in the best run in specified competition.
+        :param user_id: ID of user.
+        :param competition: Competition where we want the position for the best run.
+        :returns: Position of user or -1.
+        """
+        user = db.session.query(User).get(user_id)
+        all_users = self._get_top_users_best_run_query(competition, user.sex, user.age).all()
+
+        order = 0
+        for user in all_users:
+            order = order + 1
+            if user.User.id == user_id:
+                return order
+        return -1
+
+    def _get_top_users_total_distance_query(self, activity_types: list):
+        """
+        Returns query for top users in the total distance in specified activity types.
+        :param activity_types: Types of activities we want to sum to total distance.
+        :returns: Query returning User and total distance.
+        """
+        total_distances = db.session.query(Activity.user_id.label('user_id'),
+                                           func.sum(Activity.distance).label('total_distance')). \
+            filter(func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type.in_(activity_types)). \
+            group_by(Activity.user_id). \
+            subquery(with_labels=True)
+        return db.session.query(User, total_distances.c.total_distance). \
+            select_from(User). \
+            join(total_distances, User.id == total_distances.c.user_id). \
+            filter(User.competing,
+                   User.verified). \
+            order_by(total_distances.c.total_distance.desc())
 
     def _get_top_users_total_distance(self, activity_types: list, number: int, offset: int = 0):
         """
@@ -202,31 +271,23 @@ class Queries(object):
         :param activity_types: Types of activities we want to sum to total distance.
         :param number: Number of users in the top users list.
         :param offset: Offset of returned activities - default: 0.
-        :returns: List of top users and their total distance.
+        :returns: Total count of users and list of top users and their total distance.
         """
-        subquery = db.session.query(Activity.user_id.label('user_id'),
-                                    func.sum(Activity.distance).label('total_distance')). \
-            filter(func.date(Activity.datetime) >= self.SEASON.start_date,
-                   func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_(activity_types)). \
-            group_by(Activity.user_id). \
-            subquery(with_labels=True)
-        return db.session.query(User, subquery.c.total_distance). \
-            select_from(User). \
-            join(subquery, User.id == subquery.c.user_id). \
-            filter(User.competing,
-                   User.verified). \
-            order_by(subquery.c.total_distance.desc()). \
+        query = self._get_top_users_total_distance_query(activity_types)
+        count = query. \
+            count()
+        items = query. \
             limit(number). \
             offset(offset). \
             all()
+        return [count, items]
 
     def get_top_users_total_distance_on_foot(self, number: int, offset: int = 0):
         """
         Returns top users in the total run/walk distance.
         :param number: Number of users in the top users list.
         :param offset: Offset of returned activities - default: 0.
-        :returns: List of top users and their total distance.
+        :returns: Total count of users and list of top users and their total distance.
         """
         return self._get_top_users_total_distance([ActivityType.Run, ActivityType.Walk], number, offset)
 
@@ -235,9 +296,41 @@ class Queries(object):
         Returns top users in the total ride distance.
         :param number: Number of users in the top users list.
         :param offset: Offset of returned activities - default: 0.
-        :returns: List of top users and their total distance.
+        :returns: Total count of users and list of top users and their total distance.
         """
         return self._get_top_users_total_distance([ActivityType.Ride], number, offset)
+
+    def _get_position_total_distance(self, user_id: int, activity_types: list):
+        """
+        Returns position of the current user in the total distance competition in specified activity types.
+        :param user_id: ID of user.
+        :param activity_types: Types of activities we want to sum to total distance.
+        :returns: Position of user or -1.
+        """
+        all_users = self._get_top_users_total_distance_query(activity_types).all()
+
+        order = 0
+        for user in all_users:
+            order = order + 1
+            if user.User.id == user_id:
+                return order
+        return -1
+
+    def get_position_total_distance_on_foot(self, user_id: int):
+        """
+        Returns position of the current user in the total run/walk distance competition.
+        :param user_id: ID of user.
+        :returns: Position of user or -1.
+        """
+        return self._get_position_total_distance(user_id, [ActivityType.Run, ActivityType.Walk])
+
+    def get_position_total_distance_on_bike(self, user_id: int):
+        """
+        Returns position of the current user in the total ride distance competition.
+        :param user_id: ID of user.
+        :returns: Position of user or -1.
+        """
+        return self._get_position_total_distance(user_id, [ActivityType.Ride])
 
     def _get_global_total_distance(self, activity_types: list):
         """
@@ -334,7 +427,7 @@ class Queries(object):
             'total': db.session.query(User).\
                 count(),
             'unverified': db.session.query(User).\
-                filter(not User.verified).\
+                filter(db.not_(User.verified)).\
                 count(),
             'male students': db.session.query(User).\
                 filter(User.sex == Sex.Male,
@@ -362,4 +455,44 @@ class Queries(object):
                 count()
         }
 
+        return result
+
+    def get_students(self):
+        """
+        Returns the list of students and points for credits.
+        :returns: List of students.
+        """
+        dist_on_foot = db.session.query(Activity.user_id.label('user_id'),
+                                        func.sum(Activity.distance).label('on_foot')).\
+            filter(func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type.in_([ActivityType.Run, ActivityType.Walk])).\
+            group_by(Activity.user_id).\
+            subquery(with_labels=True)
+        dist_on_bike = db.session.query(Activity.user_id.label('user_id'),
+                                        func.sum(Activity.distance).label('on_bike')).\
+            filter(func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type.in_([ActivityType.Ride])).\
+            group_by(Activity.user_id).\
+            subquery(with_labels=True)
+        data = db.session.query(User, dist_on_foot.c.on_foot, dist_on_bike.c.on_bike).\
+            select_from(User).\
+            outerjoin(dist_on_foot, User.id == dist_on_foot.c.user_id).\
+            outerjoin(dist_on_bike, User.id == dist_on_bike.c.user_id).\
+            filter(User.type == UserType.Student). \
+            order_by(User.last_name.asc(), User.first_name.asc())
+
+        result = []
+        for row in data:
+            on_foot = row.on_foot or 0
+            on_bike = row.on_bike or 0
+            item = {
+                'name': row.User.first_name + ' ' + row.User.last_name,
+                'uk id': row.User.uk_id,
+                'on foot': round(on_foot, 1),
+                'on bike': round(on_bike, 1),
+                'points': round(on_foot + on_bike / 2, 2)
+            }
+            result.append(item)
         return result
