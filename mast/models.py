@@ -79,7 +79,7 @@ class User(db.Model, UserMixin):
     uk_id = db.Column(db.String(10))
     verified = db.Column(db.Boolean, nullable=False, default=False)
     shirt_size = db.Column(db.String(100))
-    competing = db.Column(db.Boolean, nullable=False, default=True)
+    anonymous = db.Column(db.Boolean, nullable=False, default=True)
     activities = db.relationship('Activity', backref='user', lazy=True)
 
     def __repr__(self):
@@ -112,15 +112,15 @@ class User(db.Model, UserMixin):
         else:
             return self.first_name + ' ' + self.last_name
 
-    def complete_profile(self, first_name, last_name, age, sex, shirt_size, user_type, ukco, anonymous,
+    def complete_profile(self, first_name, last_name, age, sex, shirt_size, type, uk_id, anonymous,
                          display_name=None):
         assert (first_name is not None and
                 last_name is not None and
                 age is not None and
                 sex is not None and
                 shirt_size is not None and
-                user_type is not None and
-                ukco is not None)
+                type is not None and
+                uk_id is not None)
         self.first_name = first_name
         self.last_name = last_name
         if age == '<=35':
@@ -132,13 +132,13 @@ class User(db.Model, UserMixin):
         else:
             self.sex = Sex.Female
         self.shirt_size = shirt_size
-        if user_type == 'student':
+        if type == 'student':
             self.type = UserType.Student
-        elif user_type == 'employee':
+        elif type == 'employee':
             self.type = UserType.Employee
         else:
             self.type = UserType.Alumni
-        self.uk_id = ukco
+        self.uk_id = uk_id
         self.anonymous = anonymous
         self.display_name = display_name
         db.session.add(self)

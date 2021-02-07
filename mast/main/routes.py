@@ -1,13 +1,13 @@
 import os
 import datetime
-import mast
 from flask import redirect, request, render_template, url_for, Blueprint
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from mast.main.forms import CreditsForm, AddActivityForm
 from mast.models import UserType, Activity, ActivityType
-from mast import queries, session
 from mast.tools.utils import check_profile_verified
+from mast.session import Session
+from mast.queries import Queries
 
 main = Blueprint('main', __name__)
 
@@ -15,7 +15,7 @@ main = Blueprint('main', __name__)
 @main.route('/faq')
 @login_required
 def faq():
-    session_data = mast.session.Session()
+    session_data = Session()
     check_profile_verified(session_data)
     return render_template("faq.html", title='Frequently Asked Questions', session_data=session_data)
 
@@ -23,7 +23,7 @@ def faq():
 @main.route('/about_competitions')
 @login_required
 def about_competitions():
-    session_data = mast.session.Session()
+    session_data = Session()
     check_profile_verified(session_data)
     return render_template("about_competitions.html", title='About Competitions', session_data=session_data)
 
@@ -31,14 +31,14 @@ def about_competitions():
 @main.route('/integrations')
 @login_required
 def integrations():
-    session_data = mast.session.Session()
+    session_data = Session()
     check_profile_verified(session_data)
     return render_template("integrations.html", title='Integrations', session_data=session_data)
 
 
 @main.route("/statistics")
 def statistics():
-    db_query = mast.queries.Queries()
+    db_query = Queries()
     stats = db_query.get_stats()
     return render_template("statistics.html", title='Statistics', stats=stats)
 
@@ -51,8 +51,8 @@ def display_credits():
     else:
         form = CreditsForm(request.form)
         if form.validate_on_submit():
-            if form.password.data == 'KTV2020':
-                db_query = mast.queries.Queries()
+            if form.password.data == 'KTV2020': #TODO: Obsoleted
+                db_query = Queries()
                 students = db_query.get_students()
                 return render_template('credits.html', title='Credits', authorized=True, students=students)
             else:
@@ -66,8 +66,8 @@ def display_credits():
 @main.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-    session_data = mast.session.Session()
-    db_query = mast.queries.Queries()
+    session_data = Session()
+    db_query = Queries()
     add_activity_form = AddActivityForm()
     if add_activity_form.validate_on_submit():
         filename = secure_filename(add_activity_form.file.data.filename)

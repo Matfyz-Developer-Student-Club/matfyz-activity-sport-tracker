@@ -3,9 +3,10 @@ from flask import redirect, request, render_template, url_for, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from mast.users.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
 from mast.models import User
-from mast import bcr, session
+from mast import bcr
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.tools.utils import check_profile_verified
+from mast.session import Session
 
 users = Blueprint('users', __name__)
 
@@ -70,7 +71,7 @@ def logout():
 @users.route('/user_settings', methods=['GET', 'POST'])
 @login_required
 def user_settings():
-    session_data = mast.session.Session()
+    session_data = Session()
     update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
     change_password_form = ChangePasswordForm(name='chp')
@@ -84,13 +85,13 @@ def user_settings():
                                               age=update_profile_form.age.data,
                                               sex=update_profile_form.sex.data,
                                               shirt_size=update_profile_form.shirt_size.data,
-                                              user_type=update_profile_form.user_type.data,
-                                              ukco=update_profile_form.ukco.data.strip(),
+                                              type=update_profile_form.type.data,
+                                              uk_id=update_profile_form.uk_id.data.strip(),
                                               display_name=update_profile_form.display_name.data.strip(),
-                                              anonymous=update_profile_form.competing.data)
+                                              anonymous=update_profile_form.anonymous.data)
 
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
-                                        ukco=current_user.uk_id, is_employee=current_user.type.value):
+                                        uk_id=current_user.uk_id, is_employee=current_user.type.value):
                     current_user.verify()
                     session_data.info('Your profile has been been verified.')
                     return redirect(url_for('users.user_settings'))
@@ -116,15 +117,9 @@ def user_settings():
     # For GET and after POST method
     check_profile_verified(session_data)
 
-    update_profile_form.first_name.data = current_user.first_name or ''
-    update_profile_form.last_name.data = current_user.last_name or ''
-    update_profile_form.display_name.data = current_user.display_name or ''
-    update_profile_form.ukco.data = current_user.uk_id or ''
-    update_profile_form.age.data = current_user.age.value if current_user.age else None
-    update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
-    update_profile_form.shirt_size.data = current_user.shirt_size or None
-    update_profile_form.user_type.data = current_user.type.value if current_user.type else None
-    update_profile_form.competing.data = current_user.anonymous or None
+    for key, data in update_profile_form.data.items():
+        if key not in ['submit', 'csrf_token']:
+            update_profile_form[key].data = current_user.__getattr__(key) or ''
 
     return render_template("user_settings.html", title='User Settings',
                            profile=current_user,

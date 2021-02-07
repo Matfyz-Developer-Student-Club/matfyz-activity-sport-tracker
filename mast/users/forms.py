@@ -1,14 +1,10 @@
-from pathlib import Path
 from typing import Dict, Any, Callable
 
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileRequired
-from werkzeug.utils import secure_filename
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 import logging
 from mast.models import User
-from flask_login import current_user
 
 ## Logging setup
 form_logger = logging.getLogger('form_submission')
@@ -69,14 +65,14 @@ class UpdateProfileForm(LoggingFlaskForm):
     display_name = StringField('Display name', validators=[Length(0, 50)],
                                render_kw={**min_length_attribute(2), **max_length_attribute(50)},
                                description='Optional name to show on the scoreboards.')
-    ukco = StringField('UKČO', validators=[DataRequired(), Length(min=8, max=8)],
+    uk_id = StringField('UKČO', validators=[DataRequired(), Length(min=8, max=8)],
                        render_kw={**min_length_attribute(8), **max_length_attribute(8)})
     age = RadioField('Age', validators=[DataRequired()], choices=['<=35', '>35'])
     sex = RadioField('Sex', validators=[DataRequired()], choices=['male', 'female'])
     shirt_size = RadioField('Shirt size', validators=[DataRequired()], choices=['S', 'M', 'L', 'XL', 'XXL'])
-    user_type = RadioField('I am', validators=[DataRequired()],
+    type = RadioField('I am', validators=[DataRequired()],
                            choices=['student', 'employee', 'alumni'])
-    competing = BooleanField('I want to compete anonymously',
+    anonymous = BooleanField('I want to compete anonymously',
                              description='Results will be on the public scoreboards without name.')
     submit = SubmitField('Update profile')
 
