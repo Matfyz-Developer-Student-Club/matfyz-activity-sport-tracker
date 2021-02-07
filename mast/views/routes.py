@@ -3,7 +3,7 @@ import mast
 from flask import request, jsonify, Blueprint
 from flask_login import current_user, login_required
 from mast.models import Competition, Sex, Age
-from mast.json_encoder import MastEncoder
+from mast.tools.json_encoder import MastEncoder
 from mast import queries
 
 views = Blueprint('views', __name__)

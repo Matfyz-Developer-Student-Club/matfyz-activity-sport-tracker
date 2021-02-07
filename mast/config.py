@@ -1,5 +1,5 @@
 import os
-from mast.processor import GPXProcessor
+from mast.tools.processor import GPXProcessor
 
 
 class Config:

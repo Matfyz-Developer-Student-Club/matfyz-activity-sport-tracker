@@ -1,13 +1,8 @@
-import os
-import datetime
 import mast
-from flask import redirect, request, render_template, url_for, Blueprint
-from flask_login import login_user, current_user, logout_user, login_required
-from werkzeug.utils import secure_filename
-from mast.models import User, Competition, UserType, Sex, Age, Activity, ActivityType
-from mast import bcr, queries, session
-from mast.tools.sis_authentication import authenticate_via_sis
-from mast.processor import GPXProcessor
+from flask import render_template, Blueprint
+from flask_login import current_user, login_required
+from mast.models import Competition
+from mast import queries, session
 from mast.activities.utils import ordinal
 from mast.tools.utils import check_profile_verified
 

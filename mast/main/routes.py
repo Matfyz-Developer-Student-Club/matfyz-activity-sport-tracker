@@ -2,14 +2,12 @@ import os
 import datetime
 import mast
 from flask import redirect, request, render_template, url_for, Blueprint
-from flask_login import login_user, current_user, logout_user, login_required
+from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from mast.main.forms import CreditsForm, AddActivityForm
-from mast.models import User, Competition, UserType, Sex, Age, Activity, ActivityType
-from mast import bcr, queries, session
-from mast.tools.sis_authentication import authenticate_via_sis
+from mast.models import UserType, Activity, ActivityType
+from mast import queries, session
 from mast.tools.utils import check_profile_verified
-from mast.processor import GPXProcessor
 
 main = Blueprint('main', __name__)
 
