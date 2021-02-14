@@ -71,7 +71,7 @@ def logout():
 @users.route('/user_settings', methods=['GET', 'POST'])
 @login_required
 def user_settings():
-    session_data = Session()
+    session_data = mast.session.Session()
     update_profile_form = UpdateProfileForm(name='up')
     display_update_profile_form = 'none'
     change_password_form = ChangePasswordForm(name='chp')
@@ -85,10 +85,10 @@ def user_settings():
                                               age=update_profile_form.age.data,
                                               sex=update_profile_form.sex.data,
                                               shirt_size=update_profile_form.shirt_size.data,
-                                              type=update_profile_form.type.data,
-                                              uk_id=update_profile_form.uk_id.data.strip(),
+                                              user_type=update_profile_form.user_type.data,
+                                              ukco=update_profile_form.ukco.data.strip(),
                                               display_name=update_profile_form.display_name.data.strip(),
-                                              anonymous=update_profile_form.anonymous.data)
+                                              anonymous=update_profile_form.competing.data)
 
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
                                         uk_id=current_user.uk_id, is_employee=current_user.type.value):
