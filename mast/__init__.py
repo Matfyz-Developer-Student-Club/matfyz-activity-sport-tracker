@@ -5,10 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 import logging
 from mast.config import Config
+import os
 
 db = SQLAlchemy()
 bcr = Bcrypt()
 csrf = CSRFProtect()
+logger = logging.Logger()
 login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
@@ -17,6 +19,13 @@ login_manager.login_message_category = 'info'
 def create_app(configuration=Config):
     app = Flask(__name__)
     app.config.from_object(configuration)
+
+    try:
+        if not os.path.exists('landing'):
+            logger.log(logging.DEBUG, "Creating landing directory")
+            os.mkdir('landing')
+    except IOError:
+        logger.error("Error when creating the landing directory")
 
     db.init_app(app)
     bcr.init_app(app)
