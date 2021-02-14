@@ -10,7 +10,6 @@ import os
 db = SQLAlchemy()
 bcr = Bcrypt()
 csrf = CSRFProtect()
-logger = logging.Logger()
 login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
@@ -21,11 +20,11 @@ def create_app(configuration=Config):
     app.config.from_object(configuration)
 
     try:
-        if not os.path.exists('landing'):
-            logger.log(logging.DEBUG, "Creating landing directory")
-            os.mkdir('landing')
+        if not os.path.exists(app.config['LANDING_DIR']):
+            logging.info("Creating landing directory")
+            os.mkdir(app.config['LANDING_DIR'])
     except IOError:
-        logger.error("Error when creating the landing directory")
+        logging.error("Error when creating the landing directory")
 
     db.init_app(app)
     bcr.init_app(app)

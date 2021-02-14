@@ -9,3 +9,4 @@ class Config:
         'SQLALCHEMY_DATABASE_URI') else 'sqlite:///site.db'
     UPLOAD_FILE_DIR = '../landing'
     PROCESSOR = GPXProcessor()
+    LANDING_DIR = 'landing'
