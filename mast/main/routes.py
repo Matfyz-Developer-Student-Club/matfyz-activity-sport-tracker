@@ -1,6 +1,6 @@
 import os
 import datetime
-from flask import redirect, request, render_template, url_for, Blueprint
+from flask import redirect, request, render_template, url_for, Blueprint, current_app
 from flask_login import current_user, login_required
 from werkzeug.utils import secure_filename
 from mast.main.forms import CreditsForm, AddActivityForm
@@ -73,7 +73,7 @@ def home():
         filename = secure_filename(add_activity_form.file.data.filename)
         path = os.path.join(__file__, os.pardir)
         add_activity_form.file.data.save(os.path.join(
-            os.path.abspath(path), app.config['UPLOAD_FILE_DIR'], filename))
+            os.path.abspath(path), current_app.config['UPLOAD_FILE_DIR'], filename))
 
         if add_activity_form.activity.data == ActivityType.Ride.name:
             a_type = ActivityType.Ride
@@ -82,8 +82,8 @@ def home():
         else:
             a_type = ActivityType.Walk
 
-        activity = app.config['PROCESSOR'].process_input_data(filename)
-        app.config['PROCESSOR'].landing_cleanup(filename)
+        activity = current_app.config['PROCESSOR'].process_input_data(filename)
+        current_app.config['PROCESSOR'].landing_cleanup(filename)
         distance = activity[0]
         seconds = activity[1].total_seconds()
         start_time = activity[2]

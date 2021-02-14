@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from wtforms import PasswordField, SubmitField, RadioField, FileField
 from wtforms.validators import DataRequired, ValidationError
 from mast.users.forms import LoggingFlaskForm
+from pathlib import Path
 
 
 # TODO: Add logging on file load

@@ -57,7 +57,7 @@
 
                     {{ render_text_field(update_profile_form.display_name) }}
 
-                    {{ render_text_field(update_profile_form.uk_id) }}
+                    {{ render_text_field(update_profile_form.ukco) }}
 
                     {{ render_inline_radio_field(update_profile_form.age) }}
 
@@ -65,9 +65,9 @@
 
                     {{ render_inline_radio_field(update_profile_form.shirt_size) }}
 
-                    {{ render_checkbox_field(update_profile_form.anonymous) }}
+                    {{ render_checkbox_field(update_profile_form.competing) }}
 
-                    {{ render_inline_radio_field(update_profile_form.type) }}
+                    {{ render_inline_radio_field(update_profile_form.user_type) }}
 
                     {{ render_submit_button(update_profile_form.submit) }}
                 </form>

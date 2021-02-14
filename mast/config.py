@@ -7,5 +7,5 @@ class Config:
     CSRF_ENABLED = True
     SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI') if os.getenv(
         'SQLALCHEMY_DATABASE_URI') else 'sqlite:///site.db'
-    UPLOAD_FILE_DIR = 'landing'
+    UPLOAD_FILE_DIR = '../landing'
     PROCESSOR = GPXProcessor()

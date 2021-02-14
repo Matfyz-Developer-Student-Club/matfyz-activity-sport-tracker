@@ -118,8 +118,15 @@ def user_settings():
     check_profile_verified(session_data)
 
     for key, data in update_profile_form.data.items():
-        if key not in ['submit', 'csrf_token']:
+        if key in ["first_name", "last_name", "display_name"]:
             update_profile_form[key].data = current_user.__getattr__(key) or ''
+
+    update_profile_form.ukco.data = current_user.uk_id or ''
+    update_profile_form.age.data = current_user.age.value if current_user.age else None
+    update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
+    update_profile_form.shirt_size.data = current_user.shirt_size or None
+    update_profile_form.user_type.data = current_user.type.value if current_user.type else None
+    update_profile_form.competing.data = current_user.anonymous or None
 
     return render_template("user_settings.html", title='User Settings',
                            profile=current_user,
