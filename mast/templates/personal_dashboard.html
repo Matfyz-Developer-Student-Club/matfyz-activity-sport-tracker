@@ -51,7 +51,12 @@
     <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
     <script src="{{ url_for('static', filename='personal_dashboard.js', version=1) }}"></script>
     <h2>Achievements</h2>
-    <h6>Only activities between {{ season['start_date'].strftime('%B %d, %Y') }} and {{ season['end_date'].strftime('%B %d, %Y') }} are considered for competitions and challenges.</h6>
+    <h6>
+        Only activities between {{ season['start_date'].strftime('%B %d, %Y') }} and {{ season['end_date'].strftime('%B %d, %Y') }} are considered for competitions and challenges.
+    </h6>
+    <h6>
+        For points for Optional Physical Education, we count all activities till the end of semester, i.e. {{ season_credit['end_date'].strftime('%B %d, %Y') }}.
+    </h6>
     <h6>
         You have made {{ total_foot }} km on foot and {{ total_bike }} km on bike.
         {% if total_credit != None %}
