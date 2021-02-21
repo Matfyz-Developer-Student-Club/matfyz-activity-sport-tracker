@@ -52,7 +52,7 @@ def display_credits():
         form = CreditsForm(request.form)
         if form.validate_on_submit():
             if form.password.data == 'KTV2020': #TODO: Obsoleted
-                db_query = Queries()
+                db_query = Queries(credit=True)
                 students = db_query.get_students()
                 return render_template('credits.html', title='Credits', authorized=True, students=students)
             else:
