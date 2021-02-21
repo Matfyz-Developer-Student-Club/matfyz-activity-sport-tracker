@@ -11,7 +11,7 @@ views = Blueprint('views', __name__)
 @views.route('/get_personal_stats')
 @login_required
 def get_personal_stats():
-    db_query = Queries()
+    db_query = Queries(credit=True)
     data = db_query.get_total_distances_by_user_in_last_days(user_id=current_user.id, days=7)
     labels = [key for key, val in data.items()]
     data = [val for key, val in data.items()]
@@ -21,7 +21,7 @@ def get_personal_stats():
 @views.route('/get_personal_activities')
 @login_required
 def get_personal_activities():
-    db_query = Queries()
+    db_query = Queries(credit=True)
     offset = int(request.args.get('offset'))
     limit = int(request.args.get('limit'))
     data = db_query.get_user_last_activities(user_id=current_user.id, number=limit, offset=offset)
