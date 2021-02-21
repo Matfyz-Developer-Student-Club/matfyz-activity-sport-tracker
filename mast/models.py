@@ -81,6 +81,9 @@ class User(db.Model, UserMixin):
     shirt_size = db.Column(db.String(100))
     competing = db.Column(db.Boolean, nullable=False, default=True)
     activities = db.relationship('Activity', backref='user', lazy=True)
+    #strava_id = db.Column(db.String(20))
+    #strava_access_token = db.Column(db.String(40))
+    #strava_refresh_token = db.Column(db.String(40))
 
     def __repr__(self):
         return f"User('{self.email}')"
@@ -155,6 +158,22 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def strava_init(self, id, access_token, refresh_token):
+        assert(id is not None and
+               acccess_token is not None and
+               refresh_token is not None)
+        self.strava_id = id
+        self.strava_access_token = access_token
+        self.strava_refresh_token = refresh_token
+        db.session.add(self)
+        db.session.commit()
+
+    def strava_update_access_token(self, access_token):
+        assert(self.strava_refresh_token is not None)
+        assert(access_token is not None)
+        self.strava_access_token = access_token
+        db.session.add(self)
+        db.session.commit()
 
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

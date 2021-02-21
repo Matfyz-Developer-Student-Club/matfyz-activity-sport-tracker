@@ -4,5 +4,8 @@
             <div class="alert alert-primary mt-2 w-100 text-center" role="alert">
                 We working on it.. Stay tuned!
             </div>
+            <form action="{{ url_for( 'users.strava' ) }}">
+                <input class="btn btn-outline-dark" type="submit" value="STRAVA" />
+            </form>
     </div>
 {% endblock content_page %}
