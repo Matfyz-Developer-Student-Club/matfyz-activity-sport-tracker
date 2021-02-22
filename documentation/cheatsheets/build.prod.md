@@ -3,7 +3,7 @@
 1. Go to the project root
 2. Create the storage for environment variables on development environment with following structure
 ```shell
-FLASK_APP=roco/__init__.py
+FLASK_APP=mast/__init__.py
 FLASK_ENV=production
 DATABASE_URL=postgresql://<username>:<password>@db:5432/mast_db_prod
 SQL_HOST=db
