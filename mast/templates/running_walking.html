@@ -1,46 +1,21 @@
 {% extends "main_layout_template.html" %}
+{% from "_pageable_tables.html" import render_personal_activities_distance, render_best_users_distace %}
+
 {% block content_page %}
    <div class="container mb-4">
         <div class="row-fluid">
             <div class="col-sm mb-4">
                 <h2>My Last Runs / Walks</h2>
-                <table id="personalStats" class="display table table-striped table-sm">
-                    <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Distance</th>
-                        <th>Time</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in jogging_personal %}
-                        <tr>
-                            <td>{{ item['datetime'] }}</td>
-                            <td>{{ item['distance'] }}</td>
-                            <td>{{ item['duration'] }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                {{ render_personal_activities_distance('foot') }}
             </div>
             <div class="col-sm mb-4">
                 <h2>Global Leaders</h2>
-                <table id="personalStats" class="display table table-striped table-sm">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Distance</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for item in jogging_global %}
-                        <tr>
-                            <td>{{ item[0].display() }}</td>
-                            <td>{{ item[1] }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                {% if position != 'none' %}
+                    <h6>With your total distance of {{ total_distance }} km, you are on {{ position }} place.</h6>
+                {% else %}
+                    <h6>You have no activities in this competition.</h6>
+                {% endif %}
+                {{ render_best_users_distace('foot') }}
             </div>
         </div>
     </div>

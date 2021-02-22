@@ -1,0 +1,19 @@
+{% extends "public_layout_template.html" %}
+{% from "_formhelpers.html" import render_text_field, render_checkbox_field, render_submit_button %}
+
+{% block content_page %}
+    <!-- Full Page Image Header with Vertically Centered Content -->
+    <header class="masthead welcome">
+        <div class="main container h-100">
+            <div class="row h-50 align-items-center">
+                <div class="col-12 text-center">
+                    <h1 class="display-1">Mathletics</h1>
+                    <p class="lead">Compete, track and enjoy</p>
+                    <form action="{{ url_for( 'users.register' ) }}">
+                        <input class="btn btn-outline-dark" type="submit" value="Join Us" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock content_page %}

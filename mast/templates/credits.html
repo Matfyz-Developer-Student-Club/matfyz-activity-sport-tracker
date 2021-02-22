@@ -1,0 +1,53 @@
+{% extends "public_layout_template.html" %}
+{% from "_formhelpers.html" import render_text_field, render_submit_button %}
+
+{% block content_page %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-xl-3 col-lg-2 col-md-1"></div>
+            <main role="main" class="col col-xl-6 col-lg-8 col-md-10 col-12 main">
+                <h1>List of points for Optional Physical Education</h1>
+
+                {% if authorized %}
+
+                    <table class="table text-center table-striped">
+                        <tr>
+                            <th scope="col">Student</th>
+                            <th scope="col">UK ID</th>
+                            <th scope="col">On foot</th>
+                            <th scope="col">On bike</th>
+                            <th scope="col">Points</th>
+                        </tr>
+
+                        {% for student in students %}
+                            <tr>
+                                <td>{{ student['name'] }}</td>
+                                <td>{{ student['uk id'] }}</td>
+                                <td>{{ student['on foot'] }}</td>
+                                <td>{{ student['on bike'] }}</td>
+                                <td>{{ student['points'] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+
+                {% else %}
+
+                    {% block form %}
+                    <form class="form-signin" method="post" enctype="application/x-www-form-urlencoded">
+
+                        {{ form.hidden_tag() }}
+
+                        {{ render_text_field(form.password) }}
+
+                        {{ render_submit_button(form.submit) }}
+
+                    </form>
+
+                    {% endblock form %}
+
+                {% endif %}
+            </main>
+            <div class="col col-xl-3 col-lg-2 col-md-1"></div>
+        </div>
+    </div>
+{% endblock content_page %}
