@@ -57,7 +57,7 @@
 {# ********** Request Reset form ********** #}
 
 {# ********** Reset Password form ********** #}
-{% macro create_reset_password_formcreate_login_form(form) %}
+{% macro create_reset_password_form(form) %}
   {{ form.hidden_tag() }}
 
   {{ render_text_field(form.password) }}
