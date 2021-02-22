@@ -85,7 +85,7 @@ class ChangePasswordForm(LoggingFlaskForm):
 
 
 class RequestResetForm(FlaskForm):
-    email = EmailField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Request Password Reset')
 
     def validate_email(self, email):

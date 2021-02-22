@@ -1,0 +1,69 @@
+{% from "_formhelpers.html" import render_text_field, render_submit_button, render_checkbox_field with context %}
+
+{# ********** Registration form ********** #}
+{% macro create_registration_form(form) %}
+    {{ form.hidden_tag() }}
+
+    {{ render_text_field(form.email, autofocus=true, type='email') }}
+
+    {{ render_text_field(form.password) }}
+
+    {{ render_text_field(form.confirm_password) }}
+
+    <div class="checkbox mb-3">
+        <!-- TODO: Add support for 3-rd party applications. -->
+<a href="{{ url_for( 'users.login' ) }}">Already registered?</a>
+</div>
+
+{{ render_submit_button(form.submit) }}
+{% endmacro %}
+{# ********** Registration form ********** #}
+
+{# ********** Login form ********** #}
+{% macro create_login_form(form) %}
+  {{ form.hidden_tag() }}
+
+  {{ render_text_field(form.email, type='email') }}
+
+  {{ render_text_field(form.password) }}
+
+  <div class="checkbox mb-3">
+    {{ render_checkbox_field(form.remember) }}
+    <br>
+    <a href="{{ url_for( 'users.register' ) }}">Create a new account.</a>
+  </div>
+
+  <div class="checkbox mb-3">
+    <a href="{{ url_for( 'users.reset_request' ) }}">Forgot Password?</a>
+  </div>
+
+  {{ render_submit_button(form.submit) }}
+{% endmacro %}
+
+{# ********** Login form ********** #}
+
+{# ********** Request Reset form ********** #}
+{% macro create_request_reset_form(form) %}
+  {{ form.hidden_tag() }}
+
+  {{ render_text_field(form.email, type='email') }}
+
+  <div class="checkbox mb-3">
+    <a href="{{ url_for( 'users.login' ) }}">Sign-In</a>
+  </div>
+
+  {{ render_submit_button(form.submit) }}
+{% endmacro %}
+{# ********** Request Reset form ********** #}
+
+{# ********** Reset Password form ********** #}
+{% macro create_reset_password_formcreate_login_form(form) %}
+  {{ form.hidden_tag() }}
+
+  {{ render_text_field(form.password) }}
+
+  {{ render_text_field(form.confirm_password) }}
+
+  {{ render_submit_button(form.submit) }}
+{% endmacro %}
+{# ********** Reset Password form ********** #}

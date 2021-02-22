@@ -1,7 +1,9 @@
 import mast
-from flask import redirect, request, render_template, url_for, Blueprint
+from flask import redirect, request, render_template, url_for, Blueprint, flash
 from flask_login import login_user, current_user, logout_user, login_required
-from mast.users.forms import LoginForm, RegisterForm, UpdateProfileForm, ChangePasswordForm
+from mast.users.forms import (LoginForm, RegisterForm,
+                              UpdateProfileForm, ChangePasswordForm,
+                              RequestResetForm, ResetPasswordForm)
 from mast.models import User
 from mast import bcr
 from mast.tools.sis_authentication import authenticate_via_sis
@@ -138,7 +140,7 @@ def user_settings():
                            session_data=session_data)
 
 
-@users.route("reset_password", methods=['GET', 'POST'])
+@users.route("/reset_password", methods=['GET', 'POST'])
 def reset_request():
     if current_user.is_authenticated:
         return redirect(url_for('main.home'))
@@ -152,8 +154,7 @@ def reset_request():
 
         return redirect(url_for('users.login'))
 
-    #TODO: Add new template
-    return render_template('', title='Reset Password', form=form)
+    return render_template('request_reset.html', title='Reset Password', form=form)
 
 
 @users.route("/reset_password/<token>", methods=['GET', 'POST'])
@@ -173,5 +174,4 @@ def reset_token(token):
         db.session.commit()
         flash(f'Your password has been updated!', 'success')
         return redirect(url_for('main.home', _external=True))
-    #TODO: Add new template
-    return render_template('', title='Reset Password', form=form)
+    return render_template('reset_password.html', title='Reset Password', form=form)

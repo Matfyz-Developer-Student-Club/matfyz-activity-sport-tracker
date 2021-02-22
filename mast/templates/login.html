@@ -1,5 +1,5 @@
 {% extends "public_layout_template.html" %}
-{% from "_formhelpers.html" import render_text_field, render_checkbox_field, render_submit_button %}
+{% from "macros/form_macros.html" import create_login_form with context %}
 
 {% block content_page %}
     <!-- login part of the page -->
@@ -8,31 +8,20 @@
             <div class="row justify-content-center align-middle">
                 <div class="col-5 text-center">
                     <h1 class="display-1">Mathletics</h1>
-                    {% block form %}
-                    <form class="form-group" method="post">
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-success" role="alert">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <form class="form-group" method="POST">
 
-                        {{ form.hidden_tag() }}
-
-                        {{ render_text_field(form.email, type='email') }}
-
-                        {{ render_text_field(form.password) }}
-
-                        <div class="checkbox mb-3">
-                            {{ render_checkbox_field(form.remember) }}
-                            <br>
-                            <a href="{{ url_for( 'users.register' ) }}">Create a new account.</a>
-                        </div>
-
-                        <div class="checkbox mb-3">
-                            {{ render_checkbox_field(form.remember) }}
-                            <br>
-                            <a href="{{ url_for( 'users.register' ) }}">Forgot Password?</a>
-                        </div>
-
-                        {{ render_submit_button(form.submit) }}
+                        {{ create_login_form(form) }}
 
                     </form>
-                    {% endblock form%}
                 </div>
             </div>
         </div>
