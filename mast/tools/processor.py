@@ -11,7 +11,7 @@ import datetime
 
 class GPXProcessor(object):
     EARTH_RADIUS = 6378
-    LANDING_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'landing')
+    LANDING_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../landing')
     __ALLOWED_EXTENSIONS = ['.gpx', '.xml']
     __TRKSEG_ELM = 'trkseg'
     __TRKPT_ELM = 'trkpt'

@@ -3,15 +3,15 @@ from bs4 import BeautifulSoup
 import re
 
 
-def authenticate_via_sis(name, surname, login=None, ukco=None, is_employee='student'):
+def authenticate_via_sis(name, surname, login=None, uk_id=None, is_employee='student'):
     """
     Simple authentication via sis.
     Employee must submit: name, surname
-    Student must submit: name, surname, (login or ukco)
+    Student must submit: name, surname, (login or uk_id)
     :param name: name of the person - obligatory:
     :param surname: surname of the person - obligatory:
     :param login: login for students
-    :param ukco: UKCO for students
+    :param uk_id: uk_id for students
     :param is_employee: bool if the person is employee
     :return: True if such person exists, False otherwise
     """
@@ -26,23 +26,23 @@ def authenticate_via_sis(name, surname, login=None, ukco=None, is_employee='stud
             # expecting both name and surname
             print('Expected both name and surname\nName = {}\nSurname = {}'.format(name, surname))
             return False
-        if not login and not ukco:
-            # expecting at least one of the following login, ukco
-            print('Expected at least one of login, ukco\nLogin = {}\nUKCO = {}'.format(login, ukco))
+        if not login and not uk_id:
+            # expecting at least one of the following login, uk_id
+            print('Expected at least one of login, uk_id\nLogin = {}\nuk_id = {}'.format(login, uk_id))
             return False
-        return __authenticate_student(name=name, surname=surname, login=login, ukco=ukco)
+        return __authenticate_student(name=name, surname=surname, login=login, uk_id=uk_id)
 
 
-def __authenticate_student(name, surname, login=None, ukco=None):
+def __authenticate_student(name, surname, login=None, uk_id=None):
     """
     Checks if such student exits when asked at is.cuni.cz/studium/kdojekdo
     :param name: name
     :param surname: surname
     :param login: login
-    :param ukco: UKČO
+    :param uk_id: UKČO
     :return: True if such person exists, False otherwise
     """
-    url = __build_url(is_employee=False, name=name, surname=surname, login=login, ukco=ukco)
+    url = __build_url(is_employee=False, name=name, surname=surname, login=login, uk_id=uk_id)
     page = requests.get(url)
     nubmer_of_results = __get_number_of_students(page=page)
 
@@ -107,7 +107,7 @@ def __get_number(text):
     return int(re.search(r'\d+', text).group())
 
 
-def __build_url(is_employee, name=None, surname=None, login=None, ukco=None):
+def __build_url(is_employee, name=None, surname=None, login=None, uk_id=None):
     # dummy inicialization
     url = ''
 
@@ -123,7 +123,7 @@ def __build_url(is_employee, name=None, surname=None, login=None, ukco=None):
         url += 'prijmeni={}&'.format(surname)
         url += 'jmeno={}&'.format(name)
         url += 'login={}&'.format(login) if login is not None else 'login=&'
-        url += 'sidos={}&'.format(ukco) if ukco is not None else 'sidos=&'
+        url += 'sidos={}&'.format(uk_id) if uk_id is not None else 'sidos=&'
         url += 'sdruh=&svyjazyk=&r_zacatek=Z&pocet=50&vyhledej=Vyhledej'
 
     return url

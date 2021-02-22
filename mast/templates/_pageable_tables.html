@@ -1,6 +1,6 @@
 <!-- Render a table with personal activities -->
 {% macro render_personal_activities() %}
-    {% call render_pageable_table('personal_activities', url_for('get_personal_activities')) %}
+    {% call render_pageable_table('personal_activities', url_for('views.get_personal_activities')) %}
         <th data-field="datetime">Date</th>
         <th data-field="distance">Distance</th>
         <th data-field="duration">Duration</th>
@@ -11,7 +11,7 @@
 <!-- Render a table with personal activities for time -->
 {% macro render_personal_activities_time(distance) %}
     {% call render_pageable_table('personal_activities_time_' + distance,
-                                  url_for('get_personal_activities_time', distance=distance)) %}
+                                  url_for('views.get_personal_activities_time', distance=distance)) %}
         <th data-field="order">#</th>
         <th data-field="datetime">Date</th>
         <th data-field="distance">Distance</th>
@@ -23,7 +23,7 @@
 <!-- Render a table with personal activities for distance -->
 {% macro render_personal_activities_distance(type) %}
     {% call render_pageable_table('personal_activities_distance_' + type,
-                                  url_for('get_personal_activities_distance', type=type)) %}
+                                  url_for('views.get_personal_activities_distance', type=type)) %}
         <th data-field="datetime">Date</th>
         <th data-field="distance">Distance</th>
         <th data-field="duration">Duration</th>
@@ -33,7 +33,7 @@
 <!-- Render a table with best users with activities for time -->
 {% macro render_best_users_time(distance, sex, age) %}
     {% call render_pageable_table('best_users_time_' + distance + '_' + sex + '_' + age,
-                                  url_for('get_best_users_time', distance=distance, sex=sex, age=age)) %}
+                                  url_for('views.get_best_users_time', distance=distance, sex=sex, age=age)) %}
         <th data-field="order">#</th>
         <th data-field="name">Name</th>
         <th data-field="datetime">Date</th>
@@ -46,7 +46,7 @@
 <!-- Render a table with best users with activities for distance -->
 {% macro render_best_users_distace(type) %}
     {% call render_pageable_table('best_users_distance_' + type,
-                                  url_for('get_best_users_distance', type=type)) %}
+                                  url_for('views.get_best_users_distance', type=type)) %}
         <th data-field="order">#</th>
         <th data-field="name">Name</th>
         <th data-field="distance">Distance</th>
