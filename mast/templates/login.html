@@ -23,6 +23,12 @@
                             <a href="{{ url_for( 'users.register' ) }}">Create a new account.</a>
                         </div>
 
+                        <div class="checkbox mb-3">
+                            {{ render_checkbox_field(form.remember) }}
+                            <br>
+                            <a href="{{ url_for( 'users.register' ) }}">Forgot Password?</a>
+                        </div>
+
                         {{ render_submit_button(form.submit) }}
 
                     </form>
