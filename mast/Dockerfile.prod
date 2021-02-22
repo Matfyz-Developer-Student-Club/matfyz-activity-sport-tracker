@@ -1,0 +1,74 @@
+###########
+# BUILDER #
+###########
+
+# Use the Python3.8.1 image
+FROM python:3.8.1-slim-buster as builder
+
+# Set the working directory to /usr/src/app
+WORKDIR /usr/src/app
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc
+
+# Lint
+RUN pip install --upgrade pip
+RUN pip install flake8
+
+# Copy the current directory contents into the container at /usr/src/roco
+COPY . /usr/src/app
+RUN flake8 --ignore=E501,F401,W293,F541 ./roco
+
+# Install Python dependencies
+COPY ../requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+
+
+###########
+#  FINAL  #
+###########
+
+# Use the Python3.8.1 image
+FROM python:3.8.1-slim-buster
+
+# Create a directory for app user
+RUN mkdir -p /home/app
+
+# Create the mast user
+RUN addgroup --system app
+RUN adduser --system --group app
+
+# Create the appropriate directories
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/mast
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
+
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends netcat
+COPY --from=builder /usr/src/app/wheels /wheels
+COPY --from=builder /usr/src/app/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
+
+# Copy entrypoint-prod.sh
+COPY ./entrypoint.sh $APP_HOME
+
+# Copy the entire project
+COPY . $APP_HOME
+
+# Chown all the files to the app user
+RUN chown -R app:app $APP_HOME
+
+#Change to the app user
+USER app
+
+# Run entrypoint.sh
+ENTRYPOINT ["/home/app/mast/entrypoint.sh"]
+
