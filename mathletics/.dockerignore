@@ -1,0 +1,8 @@
+venv
+.github
+.idea
+.dockerignore
+mast/.gitignore
+docker-compose.dev.yml
+docker-compose.prod.yml
+README.md

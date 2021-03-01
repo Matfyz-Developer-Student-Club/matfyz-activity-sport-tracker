@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+  mathletics:
+    build:
+      context: ./mathletics
+      dockerfile: Dockerfile.dev
+    container_name: mathletics
+    command: python manage.py run -h 0.0.0.0 # Flask default redirection
+    volumes:
+    - ./mathletics/:/usr/src/mathletics/
+    ports:
+    - 5000:5000
+    env_file:
+      - ./.env.dev
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+    - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=mast
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=mast_dev_db
+
+volumes:
+  postgres_data:

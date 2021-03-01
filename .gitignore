@@ -104,7 +104,7 @@ celerybeat.pid
 .env
 .venv
 env/
-venv/
+mathletics/venv/
 ENV/
 env.bak/
 venv.bak/
@@ -135,3 +135,7 @@ landing
 
 # DB
 *.db
+
+.env.dev
+.env.prod
+.env.prod.db
