@@ -10,3 +10,8 @@ class Config:
     UPLOAD_FILE_DIR = '../landing'
     PROCESSOR = GPXProcessor()
     LANDING_DIR = 'landing'
+    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.getenv('EMAIL_USER')
+    MAIL_PASSWORD = os.getenv('EMAIL_PASS')
