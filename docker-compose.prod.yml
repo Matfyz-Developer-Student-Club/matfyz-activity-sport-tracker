@@ -3,7 +3,7 @@ version: "3.7"
 services:
   mathletics:
     build:
-      context: ./mast
+      context: ./mathletics
       dockerfile: Dockerfile.prod
     command: gunicorn --bind 0.0.0.0:5000 manage:app
     expose:

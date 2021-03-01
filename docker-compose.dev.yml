@@ -2,18 +2,15 @@ version: "3.7"
 
 services:
   mathletics:
-    build: ./mast
+    build:
+      context: ./mathletics
+      dockerfile: Dockerfile.dev
     container_name: mathletics
-#    restart: always
-#    environment:
-#      - APP_NAME=mast
     command: python manage.py run -h 0.0.0.0 # Flask default redirection
     volumes:
-    - ./mast/:/usr/src/mast/
+    - ./mathletics/:/usr/src/mathletics/
     ports:
     - 5000:5000
-#    expose:
-    #      - 8080
     env_file:
       - ./.env.dev
 

@@ -29,8 +29,6 @@ $ docker-compose down -v
 $ docker-compose -f docker-compose.prod.yml up -d --build 
 # Creates the new database
 $ docker-compose -f docker-compose.prod.yml exec mathletics python manage.py create_db 
-# Creates a new database
-$ docker-compose -f docker-compose.prod.yml exec mathletics python manage.py create_db 
 # Creates an admin user
 $ docker-compose -f docker-compose.prod.yml exec mathletics python manage.py seed_db
 ```

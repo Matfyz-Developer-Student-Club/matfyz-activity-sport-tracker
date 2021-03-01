@@ -17,16 +17,17 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc
 
+# TODO: Future work - Good luck
 # Lint
-RUN pip install --upgrade pip
-RUN pip install flake8
+#RUN pip install --upgrade pip
+#RUN pip install flake8
 
-# Copy the current directory contents into the container at /usr/src/roco
-COPY . /usr/src/app
-RUN flake8 --ignore=E501,F401,W293,F541 ./roco
+# Copy the current directory contents into the container at /usr/src/mast
+#COPY . /usr/src/app
+#RUN flake8 --ignore=E501,F401,W293,F541 .
 
 # Install Python dependencies
-COPY ../requirements.txt .
+COPY ./requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
 
 
