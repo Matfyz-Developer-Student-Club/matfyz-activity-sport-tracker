@@ -24,15 +24,15 @@ POSTGRES_DB=
 4. Run the following commands
 ```shell
 # Stops and removes previously initiated compose
-$ docker-compose down -w
+$ docker-compose down -v
 # Builds and starts the containers from compose in detached mode, hence in the background
-$ docker-compose -f docker-compose.dev.yml up -d --build 
+$ docker-compose -f docker-compose.prod.yml up -d --build 
 # Creates the new database
-$ docker-compose -f docker-compose.dev.yml exec mathletics python manage.py create_db 
+$ docker-compose -f docker-compose.prod.yml exec mathletics python manage.py create_db 
 # Creates a new database
-$ docker-compose -f docker-compose.dev.yml exec mathletics python manage.py create_db 
+$ docker-compose -f docker-compose.prod.yml exec mathletics python manage.py create_db 
 # Creates an admin user
-$ docker-compose -f docker-compose.dev.yml exec mathletics python manage.py seed_db
+$ docker-compose -f docker-compose.prod.yml exec mathletics python manage.py seed_db
 ```
 
 4. Follow the link: https://localhost:1337
