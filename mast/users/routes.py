@@ -5,7 +5,7 @@ from mast.users.forms import (LoginForm, RegisterForm,
                               UpdateProfileForm, ChangePasswordForm,
                               RequestResetForm, ResetPasswordForm)
 from mast.models import User
-from mast import bcr
+from mast import bcr, db
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.tools.utils import check_profile_verified
 from mast.session import Session
