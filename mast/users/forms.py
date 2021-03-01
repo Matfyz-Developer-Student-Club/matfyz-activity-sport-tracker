@@ -15,6 +15,8 @@ form_logger = logging.getLogger('form_submission')
 min_length_attribute: Callable[[int], Dict[str, Any]] = lambda n: {'minlength': n.__str__()}
 max_length_attribute: Callable[[int], Dict[str, Any]] = lambda n: {'maxlength': n.__str__()}
 
+PASSWORD_MIN_LEN = 8
+PASSWORD_MAX_LEN = 50
 
 def log_form_submit(form):
     form_logger.info(f'Received {type(form)}')
@@ -38,8 +40,10 @@ class LoggingFlaskForm(FlaskForm):
 
 class RegisterForm(LoggingFlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=50)],
-                             render_kw={**min_length_attribute(8), **max_length_attribute(50)})
+    password = PasswordField('Password',
+                             validators=[DataRequired(), Length(min=PASSWORD_MIN_LEN, max=PASSWORD_MAX_LEN)],
+                             render_kw={**min_length_attribute(PASSWORD_MIN_LEN),
+                                        **max_length_attribute(PASSWORD_MAX_LEN)})
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Create an account')
 
@@ -95,7 +99,10 @@ class RequestResetForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password',
+                             validators=[DataRequired(), Length(min=PASSWORD_MIN_LEN, max=PASSWORD_MAX_LEN)],
+                             render_kw={**min_length_attribute(PASSWORD_MIN_LEN),
+                                        **max_length_attribute(PASSWORD_MAX_LEN)})
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset password')
