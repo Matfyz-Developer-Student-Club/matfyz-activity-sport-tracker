@@ -24,7 +24,9 @@ POSTGRES_DB=
 4. Run the following commands
 ```shell
 # Stops and removes previously initiated compose
-$ docker-compose down -w
+$ docker-compose -f docker-compose.dev.yml down -v
+# Make entrypoint executable
+$ chmod +x mathletics/entrypoint.sh
 # Builds and starts the containers from compose in detached mode, hence in the background
 $ docker-compose -f docker-compose.dev.yml up -d --build 
 # Creates the new database
@@ -34,3 +36,7 @@ $ docker-compose -f docker-compose.dev.yml exec mathletics python manage.py seed
 ```
 
 4. Follow the link: https://localhost:5000
+
+### WSL2 note
+There is a known issue with WSL2 where the mathletics container end with `Error: cannot import __init__.py`.
+Known workaround is to use windows powershell with the exact same docker commands.
