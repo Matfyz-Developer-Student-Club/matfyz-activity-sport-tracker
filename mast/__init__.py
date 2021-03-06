@@ -38,10 +38,12 @@ def create_app(configuration=Config):
     from mast.activities.routes import activities
     from mast.main.routes import main
     from mast.views.routes import views
+    from mast.integrations.routes import integrations
 
     app.register_blueprint(users)
     app.register_blueprint(activities)
     app.register_blueprint(main)
     app.register_blueprint(views)
+    app.register_blueprint(integrations)
 
     return app

@@ -6,12 +6,12 @@ import requests
 
 STRAVA_CLIENT_ID = 61623
 STRAVA_CLIENT_SECRET = '71af3bcd89c9a583607db1a383e36f8c1cf6790a' 
-requested_scopes = ["activity:read", "read_all"]
+REQUESTED_SCOPES = ["activity:read", "read_all"]
 
 
 def check_strava_permissions(scope):
     given_scopes = scope.split(',')
-    for requested in requested_scopes:
+    for requested in REQUESTED_SCOPES:
         if requested not in given_scopes:
             return False 
     return True
