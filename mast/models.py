@@ -83,9 +83,9 @@ class User(db.Model, UserMixin):
     shirt_size = db.Column(db.String(100))
     competing = db.Column(db.Boolean, nullable=False, default=True)
     activities = db.relationship('Activity', backref='user', lazy=True)
-    #strava_id = db.Column(db.String(20))
-    #strava_access_token = db.Column(db.String(40))
-    #strava_refresh_token = db.Column(db.String(40))
+    strava_id = db.Column(db.String(20))
+    strava_access_token = db.Column(db.String(40))
+    strava_refresh_token = db.Column(db.String(40))
 
     def get_reset_token(self, expires_sec=1800):
         serializer = Serializer(current_app.config['SECRET_KEY'], expires_sec)
