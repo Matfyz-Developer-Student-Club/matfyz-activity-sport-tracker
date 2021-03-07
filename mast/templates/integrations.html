@@ -1,9 +1,12 @@
 {% extends "main_layout_template.html" %}
+{% from "macros/_flash.html" import render_flash %}
+
 {% block content_page %}
     <div class="container">
             <div class="alert alert-primary mt-2 w-100 text-center" role="alert">
                 We working on it.. Stay tuned!
             </div>
+            {{ render_flash() }}
             <form action="{{ url_for( 'integrations.strava_init' ) }}">
                 <input class="btn btn-outline-dark" type="submit" value="STRAVA" />
             </form>
