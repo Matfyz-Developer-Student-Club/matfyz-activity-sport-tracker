@@ -8,7 +8,7 @@ services:
     container_name: mathletics
     command: python manage.py run -h 0.0.0.0 # Flask default redirection
     volumes:
-    - ./mathletics/:/usr/src/mathletics/
+    - ./mathletics/:/usr/src/mast/
     ports:
     - 5000:5000
     env_file:
