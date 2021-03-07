@@ -35,7 +35,7 @@
                     {% block form %}
                     <form class="form-signin" method="post" enctype="application/x-www-form-urlencoded">
 
-                        {{ form.hidden_tag() }}
+                        {{ form.csrf_token() }}
 
                         {{ render_text_field(form.password) }}
 
