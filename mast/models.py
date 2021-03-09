@@ -178,7 +178,7 @@ class User(db.Model, UserMixin):
 
     def strava_init(self, id, access_token, refresh_token):
         assert(id is not None and
-               acccess_token is not None and
+               access_token is not None and
                refresh_token is not None)
         self.strava_id = id
         self.strava_access_token = access_token
