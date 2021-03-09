@@ -87,6 +87,7 @@ class User(db.Model, UserMixin):
     strava_access_token = db.Column(db.String(40))
     strava_refresh_token = db.Column(db.String(40))
     strava_expires_at = db.Column(db.Integer)
+    avatar = db.Column(db.String(255), default='static/pics/default_avatar.svg')
 
     def get_reset_token(self, expires_sec=1800):
         serializer = Serializer(current_app.config['SECRET_KEY'], expires_sec)

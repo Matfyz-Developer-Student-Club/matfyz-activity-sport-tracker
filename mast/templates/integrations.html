@@ -3,12 +3,29 @@
 
 {% block content_page %}
     <div class="container">
-            <div class="alert alert-primary mt-2 w-100 text-center" role="alert">
-                We working on it.. Stay tuned!
+        <div class="alert alert-primary mt-2 w-100 text-center" role="alert">
+            We working on it.. Stay tuned!
+        </div>
+        {{ render_flash() }}
+        <form action="{{ url_for( 'integrations.strava_init' ) }}">
+            <input class="btn btn-outline-dark" type="submit" value="STRAVA"/>
+        </form>
+
+        <div class="row justify-content-left mt-5">
+            <div id="user_card" class="col-md-3 align-self-center">
+                <div class="card border-info mb-3">
+                    <img class="card-img-top mt-4" src="static/pics/default_avatar.svg" alt="Avatar image" width="200"
+                         height="200">
+                    {#                <img class="card-img-top" src="{{ current_user.avatar }}" alt="Avatar image" width="256"#}
+                    {#                     height="256">#}
+                    <div class="card-body">
+                        <h6 class="card-text">{{ current_user.username }}</h6>
+                    </div>
+                </div>
             </div>
-            {{ render_flash() }}
-            <form action="{{ url_for( 'integrations.strava_init' ) }}">
-                <input class="btn btn-outline-dark" type="submit" value="STRAVA" />
-            </form>
+            <div id="update_profile_div" style="display: block;" class="col-4">
+                <p>Hello</p>
+            </div>
+        </div>
     </div>
 {% endblock content_page %}
