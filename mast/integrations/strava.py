@@ -1,6 +1,7 @@
 import json
 import requests
 from flask_login import current_user
+from datetime import time
 
 # TODO: remove
 import logging
@@ -130,22 +131,56 @@ def get_athlete(access_token):
     strava_logger.info(json.dumps(json_data, indent=4))
 
 
-def get_activity(access_token, activity_id):
+def get_athlete_activities(access_token, after:int=1614556800, before:int = None, per_page:int = 100, page:int = 1):
     '''
-    $ http GET "https://www.strava.com/api/v3/activities/{id}?include_all_efforts=" "Authorization: Bearer [[token]]"
+    Returns list of user activities after 3.1.2021
+    :param access_token: acces token of currentuser
+    :param after: UNIX epoch timestamp - will list activities after given time - default 3.1.2021 00:00
+    :param before: UNIX epoch timestamp - will list activities before given time
+    :param per_page: activities per page - default 100
+    :param page: pages - default 1
+    :return: JSON of list of activities
+    '''
+    url = f'https://www.strava.com/api/v3/athlete/activities?before={before if not None else ""}&after={after}&page={page}&per_page={per_page}"'
 
-    Returns:
-        some JSON
-    '''
-    url='https://www.strava.com/api/v3/athlete/activities'
     header = {
         'Authorization': f'Bearer {access_token}'
     }
     data = {
         'include_all_efforts': False
     }
-    
+
     response = requests.request('GET', url, headers=header, data=data)
     json_data = json.loads(response.text)
-    strava_logger.info(json.dumps(json_data, indent=4))
+    #strava_logger.info(json.dumps(json_data, indent=4))
 
+    return json_data
+
+
+def get_activity_info(activity:json):
+    '''
+    Parses json of STRAVA SummaryActivity.
+    :param activity: json of an activity
+    :return: (name:str, distance:float, total_time:time, elevation:float, pace:time, strava_type:str)
+    '''
+    distance = activity['distance']
+    time_in_secs = activity['moving_time']
+    total_time = get_time(time_in_secs)
+    elevation = activity['total_elevation_gain'] if not None else 0
+    strava_type = activity['type']
+    name = activity['name'][:30] if not None else ''
+    pace = get_time(round(time_in_secs / distance * 1000))
+
+    return (name, distance, total_time, elevation, pace, strava_type)
+
+
+def get_time(in_time):
+    '''
+    Gets time from seconds
+    :param in_time: time in seconds
+    :return: datetime.time instance
+    '''
+    hours = (in_time) // 3600     # 3600 secs in hour
+    minutes = ((in_time) % 3600) // 60    # take off hours and 60 sec in minute
+    seconds = ((in_time) % 3600) % 60     # take off hours, take off
+    return time(hours, minutes, seconds)

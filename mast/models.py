@@ -201,6 +201,8 @@ class Activity(db.Model):
     average_duration_per_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(30), nullable=False, default='activity')
+    elevation = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"
