@@ -2,6 +2,7 @@ import json
 import requests
 from flask_login import current_user
 from datetime import time
+from mast.queries import Queries
 
 # TODO: remove
 import logging
@@ -131,6 +132,22 @@ def get_athlete(access_token):
     strava_logger.info(json.dumps(json_data, indent=4))
 
 
+def get_activity(access_token, activity_id):
+    url = f'https://www.strava.com/api/v3/activities/{activity_id}'
+    header = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    data = {
+        'include_all_efforts': False
+    }
+
+    response = requests.request('GET', url, headers=header, data=data)
+    json_data = json.loads(response.text)
+    #strava_logger.info(json.dumps(json_data, indent=4))
+
+    return json_data
+
+
 def get_athlete_activities(access_token, after:int=1614556800, before:int = None, per_page:int = 100, page:int = 1):
     '''
     Returns list of user activities after 3.1.2021
@@ -141,13 +158,16 @@ def get_athlete_activities(access_token, after:int=1614556800, before:int = None
     :param page: pages - default 1
     :return: JSON of list of activities
     '''
-    url = f'https://www.strava.com/api/v3/athlete/activities?before={before if not None else ""}&after={after}&page={page}&per_page={per_page}"'
+    url = f'https://www.strava.com/api/v3/athlete/activities'
 
     header = {
         'Authorization': f'Bearer {access_token}'
     }
     data = {
-        'include_all_efforts': False
+        'before': before if not None else '',
+        'after': after,
+        'page': page,
+        'per_page': per_page
     }
 
     response = requests.request('GET', url, headers=header, data=data)
@@ -167,12 +187,24 @@ def get_activity_info(activity:json):
     time_in_secs = activity['moving_time']
     total_time = get_time(time_in_secs)
     elevation = activity['total_elevation_gain'] if not None else 0
-    strava_type = activity['type']
+    strava_type = activity['type']  # https://developers.strava.com/docs/reference/#api-models-ActivityType
     name = activity['name'][:30] if not None else ''
     pace = get_time(round(time_in_secs / distance * 1000))
 
     return (name, distance, total_time, elevation, pace, strava_type)
 
+
+def get_activity_from_webhook(data:json):
+    if data['aspect_type'] != 'create':
+        return None
+    db_query = Queries(credit=True)
+    db_res = db_query.get_user_access_token(data['owner_id'])
+    if (db_res[0] != 1):
+        return None
+    access_token = db_res[1][0] # get first access_token form list at index 1
+    activity_id = data['object_id']
+
+    return get_activity(access_token, activity_id)
 
 def get_time(in_time):
     '''

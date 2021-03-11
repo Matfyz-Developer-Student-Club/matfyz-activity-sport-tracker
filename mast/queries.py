@@ -510,3 +510,18 @@ class Queries(object):
             }
             result.append(item)
         return result
+
+    def get_user_access_token(self, strava_id):
+        '''
+        Gets list of access tokens for strava of user with strava_id
+        :param strava_id: strava id of a user
+        :return: number of results and list of strava access tokens (result should always be only 1)
+        '''
+        query = db.session.query(User). \
+            filter(User.strava_id == strava_id)
+        count = query. \
+            count()
+        res = []
+        for instance in query:
+            res.append(instance.strava_access_token)
+        return [count, res]
