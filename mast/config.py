@@ -15,3 +15,4 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.getenv('EMAIL_USER')
     MAIL_PASSWORD = os.getenv('EMAIL_PASS')
+    SERVER_NAME = 'mathletics-test.ks.matfyz.cz'

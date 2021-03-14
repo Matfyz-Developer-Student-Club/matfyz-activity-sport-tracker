@@ -26,6 +26,12 @@
             <div id="update_profile_div" style="display: block;" class="col-4">
                 <p>Hello</p>
             </div>
+
         </div>
+        {{ render_flash() }}
+        <form action="{{ url_for( 'integrations.strava_init' ) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+            <input class="btn btn-outline-dark" type="submit" value="STRAVA"/>
+        </form>
     </div>
 {% endblock content_page %}

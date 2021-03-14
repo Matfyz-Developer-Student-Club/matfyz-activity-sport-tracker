@@ -1,15 +1,17 @@
 import mast
 import requests
-from flask import redirect, request, render_template, url_for, Blueprint, flash
+from flask import Response, redirect, request, render_template, url_for, Blueprint, flash, jsonify
 from flask_login import current_user, login_required
 from mast.session import Session
 from mast.integrations.strava import *
 from mast.session import Session
+import logging
+from mast import csrf
 
 integrations = Blueprint('integrations', __name__)
 
 # TODO: investigate why https does not work
-BASE_URL = 'http://localhost:5000'
+BASE_URL = 'http://mathletics-test.ks.matfyz.cz'
 
 
 @integrations.route('/strava/init', methods=['GET'])
@@ -17,6 +19,7 @@ BASE_URL = 'http://localhost:5000'
 def strava_init():
     scope = ','.join(STRAVA_SCOPE)
     redirect_uri = BASE_URL + url_for('integrations.strava_auth')
+    logging.info(f"******** REDIRECT URI {redirect_uri} *******")
     return redirect(f"http://www.strava.com/oauth/authorize?client_id={STRAVA_CLIENT_ID}&response_type=code&redirect_uri={redirect_uri}&approval_prompt=force&scope={scope}")
 
 
@@ -38,9 +41,18 @@ def strava_auth():
     return render_template("integrations.html", title='Integrations')
 
 
-@integrations.route('/strava/webhook', methods=['POST'])
+@integrations.route('/strava/webhook/endpoint', methods=['GET', 'POST'])
+@csrf.exempt
 def strava_webhook():
     """
         https://developers.strava.com/docs/webhooks
     """
-    pass
+    #data = request.args.get('hub.challenge')
+    logging.info(request.get_json())
+    #return jsonify({'hub.challenge': data})
+    
+    return Response(status=200)
+    
+    #request_data = request.args.get('hub.challenge')
+    #return Response({'hub.challenge': request_data}, status=200, mimetype='application/json')
+

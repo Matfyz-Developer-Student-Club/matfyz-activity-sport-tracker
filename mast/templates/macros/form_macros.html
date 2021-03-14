@@ -2,7 +2,7 @@
 
 {# ********** Registration form ********** #}
 {% macro create_registration_form(form) %}
-    {{ form.hidden_tag() }}
+    {{ form.csrf_token() }}
 
     {{ render_text_field(form.email, autofocus=true, type='email') }}
 
@@ -21,7 +21,7 @@
 
 {# ********** Login form ********** #}
 {% macro create_login_form(form) %}
-  {{ form.hidden_tag() }}
+  {{ form.csrf_token() }}
 
   {{ render_text_field(form.email, type='email') }}
 
@@ -44,7 +44,7 @@
 
 {# ********** Request Reset form ********** #}
 {% macro create_request_reset_form(form) %}
-  {{ form.hidden_tag() }}
+  {{ form.csrf_token() }}
 
   {{ render_text_field(form.email, type='email') }}
 
@@ -58,7 +58,7 @@
 
 {# ********** Reset Password form ********** #}
 {% macro create_reset_password_form(form) %}
-  {{ form.hidden_tag() }}
+  {{ form.csrf_token() }}
 
   {{ render_text_field(form.password) }}
 
