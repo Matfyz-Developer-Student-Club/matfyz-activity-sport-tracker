@@ -205,6 +205,7 @@ class Activity(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(30), nullable=False, default='activity')
     elevation = db.Column(db.Float, nullable=False, default=0.0)
+    strava_id = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"

@@ -1,8 +1,9 @@
 import json
 import requests
 from flask_login import current_user
-from datetime import time
+from datetime import time, datetime
 from mast.queries import Queries
+from mast.models import  Activity, ActivityType
 
 # TODO: remove
 import logging
@@ -180,7 +181,7 @@ def get_athlete_activities(access_token, after: int = 1614556800, before: int = 
     return json_data
 
 
-def get_activity_info(activity: dict) -> tuple:
+def get_activity_info(activity: dict, user_id) -> Activity:
     '''
     Parses json of STRAVA SummaryActivity.
     :param activity: json of an activity
@@ -190,28 +191,57 @@ def get_activity_info(activity: dict) -> tuple:
     time_in_secs = activity['moving_time']
     total_time = get_time(time_in_secs)
     elevation = activity['total_elevation_gain'] if not None else 0
-    strava_type = activity['type']  # https://developers.strava.com/docs/reference/#api-models-ActivityType
+    type = get_activity_type(activity['type'])  # https://developers.strava.com/docs/reference/#api-models-ActivityType
     name = activity['name'][:30] if not None else ''
     pace = get_time(round(time_in_secs / distance * 1000))
+    activity_date = datetime.strptime(activity['start_date'],'%Y-%m-%dT%H:%M:%SZ')
 
-    return name, distance, total_time, elevation, pace, strava_type
-
-
-def get_activity_from_webhook(data: json):
-    # TODO: Add support for Delete event
-
-    # TODO: Add if statement for omitting the 'athlete' object
-
-    if data['aspect_type'] != 'create':
+    if type is None: #unsupported ActivityType
         return None
-    db_query = Queries(credit=True)
-    db_res = db_query.get_user_access_token(data['owner_id'])
-    if db_res[0] != 1:
-        return None
-    access_token = db_res[1][0]  # get first access_token form list at index 1
-    activity_id = data['object_id']
 
-    return get_activity(access_token, activity_id)
+    new_activity = Activity()
+    new_activity.datetime = activity_date
+    new_activity.distance = distance
+    new_activity.duration = total_time
+    new_activity.average_duration_per_km = pace
+    new_activity.type = type
+    new_activity.user_id = user_id
+    new_activity.name = name
+    new_activity.elevation = elevation
+
+    return new_activity
+
+
+def get_activity_from_webhook(data: dict):
+    if data['object_type'] == 'athlete':
+        strava_logger.info('Webhook sent info about athlete')
+        return None
+
+    if data['aspect_type'] == 'create':
+        strava_logger.info('Webhook sent info about activity creation')
+        db_query = Queries(credit=True)
+        db_res = db_query.get_user_access_token(data['owner_id'])
+        if db_res[0] != 1:
+            return None
+        access_token = db_res[1][0]  # get first access_token form list at index 1
+        activity_id = data['object_id']
+
+        return get_activity(access_token, activity_id)
+
+    elif data['aspect_type'] == 'delete':
+        strava_logger.info('Webhook sent info about activity delete')
+        # TODO: Add support for Delete event
+        pass
+    else:   # data['aspect_type'] == 'update'
+        strava_logger.info('Webhook sent info about activity update')
+        return None
+
+
+def get_activity_type(strava_activity:str) -> bool:
+    for a in ActivityType:
+        if str(a) == strava_activity:
+            return a
+    return None
 
 
 def get_time(in_time):
