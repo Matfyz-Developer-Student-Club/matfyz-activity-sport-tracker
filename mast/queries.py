@@ -511,7 +511,7 @@ class Queries(object):
             result.append(item)
         return result
 
-    def get_user_access_token(self, strava_id):
+    def get_user_by_strava_id(self, strava_id):
         '''
         Gets list of access tokens for strava of user with strava_id
         :param strava_id: strava id of a user
@@ -519,9 +519,15 @@ class Queries(object):
         '''
         query = db.session.query(User). \
             filter(User.strava_id == strava_id)
-        count = query. \
-            count()
-        res = []
-        for instance in query:
-            res.append(instance.strava_access_token)
-        return [count, res]
+
+        return query.all()
+
+    def delete_activity_by_strava_id(self, strava_id):
+        db.session.query(Activity). \
+            filter(Activity.strava_id == strava_id) \
+            .delete()
+
+    def update_activity_info(self, strava_id:int, info_to_update:dict):
+        db.session.query(Activity). \
+            filter(Activity.strava_id == strava_id). \
+            update(info_to_update, synchronize_session=False)

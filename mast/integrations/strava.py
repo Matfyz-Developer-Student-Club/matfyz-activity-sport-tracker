@@ -135,8 +135,8 @@ def get_athlete(access_token):
     strava_logger.info(json.dumps(json_data, indent=4))
 
 
-def get_activity(access_token, activity_id):
-    url = f'https://www.strava.com/api/v3/activities/{activity_id}'
+def get_activity(access_token, strava_activity_id):
+    url = f'https://www.strava.com/api/v3/activities/{strava_activity_id}'
     header = {
         'Authorization': f'Bearer {access_token}'
     }
@@ -181,7 +181,7 @@ def get_athlete_activities(access_token, after: int = 1614556800, before: int = 
     return json_data
 
 
-def get_activity_info(activity: dict, user_id) -> Activity:
+def create_activity_from_strava_json(activity: dict, user_id: int, strava_activity_id: int) -> Activity:
     '''
     Parses json of STRAVA SummaryActivity.
     :param activity: json of an activity
@@ -189,11 +189,11 @@ def get_activity_info(activity: dict, user_id) -> Activity:
     '''
     distance = activity['distance']
     time_in_secs = activity['moving_time']
-    total_time = get_time(time_in_secs)
+    total_time = _get_time(time_in_secs)
     elevation = activity['total_elevation_gain'] if not None else 0
-    type = get_activity_type(activity['type'])  # https://developers.strava.com/docs/reference/#api-models-ActivityType
+    type = _get_activity_type(activity['type'])  # https://developers.strava.com/docs/reference/#api-models-ActivityType
     name = activity['name'][:30] if not None else ''
-    pace = get_time(round(time_in_secs / distance * 1000))
+    pace = _get_time(round(time_in_secs / distance * 1000))
     activity_date = datetime.strptime(activity['start_date'],'%Y-%m-%dT%H:%M:%SZ')
 
     if type is None: #unsupported ActivityType
@@ -208,43 +208,106 @@ def get_activity_info(activity: dict, user_id) -> Activity:
     new_activity.user_id = user_id
     new_activity.name = name
     new_activity.elevation = elevation
+    new_activity.strava_id = strava_activity_id
 
     return new_activity
 
 
 def get_activity_from_webhook(data: dict):
+    """
+
+    :param data: dictionary of data from webhook
+    :return: On Create: Activity; On Delete: None; On Update: None
+    """
     if data['object_type'] == 'athlete':
         strava_logger.info('Webhook sent info about athlete')
         return None
 
     if data['aspect_type'] == 'create':
         strava_logger.info('Webhook sent info about activity creation')
-        db_query = Queries(credit=True)
-        db_res = db_query.get_user_access_token(data['owner_id'])
-        if db_res[0] != 1:
-            return None
-        access_token = db_res[1][0]  # get first access_token form list at index 1
-        activity_id = data['object_id']
+        user = _get_user(data)
 
-        return get_activity(access_token, activity_id)
+        if user is None:
+            strava_logger.info(f'TIME: {data["event_time"]}\tUser with strava_id:{data["owner_id"]} was not found, but create webhook was recieved')
+            return None
+
+        strava_activity_id = data['object_id']
+        activity_data = get_activity(user.strava_access_token, strava_activity_id)
+        return create_activity_from_strava_json(activity_data, user.id, strava_activity_id)
 
     elif data['aspect_type'] == 'delete':
         strava_logger.info('Webhook sent info about activity delete')
-        # TODO: Add support for Delete event
-        pass
-    else:   # data['aspect_type'] == 'update'
+        user = _get_user(data)
+
+        if user is None:
+            strava_logger.info(f'TIME: {data["event_time"]}\t User with strava_id:{data["owner_id"]} was not found, but delete webhook was recieved')
+            return None
+
+        strava_activity_id = data['object_id']
+
+        db_query = Queries(credit=True)
+        db_query.delete_activity_by_strava_id(strava_activity_id)
+
+        return None
+
+    elif data['aspect_type'] == 'update':
         strava_logger.info('Webhook sent info about activity update')
+
+        user = _get_user(data)
+
+        # check if user is in our database
+        if user is None:
+            strava_logger.info(f'TIME: {data["event_time"]}\tUser with strava_id:{data["owner_id"]} was not found, but update webhook was recieved')
+            return None
+
+        strava_activity_id = data['object_id']
+
+        # parse data to update
+        new_title = data['updates']['title'] if 'title' in data['updates'].keys() else None
+        new_type = data['updates']['type'] if 'type' in data['updates'].keys() else None
+        is_private = data['updates']['private'] if 'private' in data['updates'].keys() else False
+
+        # changed to private -> delete activity
+        if is_private:
+            db_query = Queries(credit=True)
+            db_query.delete_activity_by_strava_id(strava_activity_id)
+            return None
+
+        # create dict for update query
+        data_to_update = dict()
+        if new_title:
+            data_to_update['name'] = new_title
+        if new_type:
+            data_to_update['type'] = _get_activity_type(new_type)
+
+        # update database
+        db_query = Queries(credit=True)
+        db_query.update_activity_info(strava_activity_id, data_to_update)
+
+        return None
+
+    else:
+        strava_logger.info(f'Webhook with unknown aspect_type: {data["aspect_type"]} recieved: ')
+        strava_logger.info(data)
         return None
 
 
-def get_activity_type(strava_activity:str) -> bool:
+def _get_user(data):
+    db_query = Queries(credit=True)
+    db_res = db_query.get_user_by_strava_id(data['owner_id'])
+    if len(db_res) != 1:
+        return None
+    return db_res[0]
+
+
+def _get_activity_type(strava_activity:str) -> bool:
     for a in ActivityType:
         if str(a) == strava_activity:
             return a
     return None
 
 
-def get_time(in_time):
+def _get_time(in_time):
     '''
     Gets time from seconds
     :param in_time: time in seconds
