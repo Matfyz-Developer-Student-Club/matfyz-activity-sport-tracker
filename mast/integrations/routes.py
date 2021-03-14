@@ -3,7 +3,7 @@ import requests
 from flask import Response, redirect, request, render_template, url_for, Blueprint, flash, jsonify
 from flask_login import current_user, login_required
 from mast.session import Session
-from mast.integrations.strava import *
+from mast.integrations.utils import *
 from mast.session import Session
 import logging
 from mast import csrf
@@ -50,7 +50,16 @@ def strava_webhook():
     #data = request.args.get('hub.challenge')
     logging.info(request.get_json())
     #return jsonify({'hub.challenge': data})
-    
+    data = request.get_json()
+
+    # process webhook
+    activity = process_strava_webhook(data)
+
+    # if new activity was created -> save it to database
+    if activity is Activity:
+        db_query = Queries(credit=True)
+        db_query.save_new_user_activities(activity.user_id, activity)
+
     return Response(status=200)
     
     #request_data = request.args.get('hub.challenge')

@@ -213,7 +213,7 @@ def create_activity_from_strava_json(activity: dict, user_id: int, strava_activi
     return new_activity
 
 
-def get_activity_from_webhook(data: dict):
+def process_strava_webhook(data: dict):
     """
 
     :param data: dictionary of data from webhook
