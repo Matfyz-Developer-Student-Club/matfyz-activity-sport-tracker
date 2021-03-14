@@ -6,15 +6,16 @@ from mast.queries import Queries
 
 # TODO: remove
 import logging
+
 strava_logger = logging.getLogger('STRAVA')
 
 # TODO: change these in the production since they are already public
 STRAVA_CLIENT_ID = 61623
-STRAVA_CLIENT_SECRET = '71af3bcd89c9a583607db1a383e36f8c1cf6790a' 
+STRAVA_CLIENT_SECRET = '71af3bcd89c9a583607db1a383e36f8c1cf6790a'
 STRAVA_SCOPE = ['activity:read']
 
 
-class ExpiredAccessToken(Exception) :
+class ExpiredAccessToken(Exception):
     pass
 
 
@@ -22,22 +23,23 @@ def check_strava_permissions(scope):
     given_scopes = scope.split(',')
     for requested in STRAVA_SCOPE:
         if requested not in given_scopes:
-            return False 
+            return False
     return True
 
 
 def save_strava_tokens(auth_code):
-    url = 'https://www.strava.com/oauth/token'    
+    url = 'https://www.strava.com/oauth/token'
     data = {
         'client_id': STRAVA_CLIENT_ID,
-	    'client_secret': STRAVA_CLIENT_SECRET,
-	    'code': auth_code,
-	    'grant_type': 'authorization_code'
+        'client_secret': STRAVA_CLIENT_SECRET,
+        'code': auth_code,
+        'grant_type': 'authorization_code'
     }
     response = requests.post(url, data=data)
     response_data = json.loads(response.text)
 
-    strava_logger.info(json.dumps(response_data, indent=4)) # this is JSON containing access and refresh token as well as athlete info
+    strava_logger.info(
+        json.dumps(response_data, indent=4))  # this is JSON containing access and refresh token as well as athlete info
     '''
     INFO:root:{
         "token_type": "Bearer",
@@ -96,9 +98,9 @@ def refresh_access_token():
     url = 'https://www.strava.com/api/v3/oauth/token'
     data = {
         'client_id': STRAVA_CLIENT_ID,
-	    'client_secret': STRAVA_CLIENT_SECRET,
-	    'grant_type': 'refresh_token',
-	    'refresh_token': current_user.strava_refresh_token
+        'client_secret': STRAVA_CLIENT_SECRET,
+        'grant_type': 'refresh_token',
+        'refresh_token': current_user.strava_refresh_token
     }
     response = requests.post(url, data=data)
     response_data = json.loads(response.text)
@@ -122,11 +124,11 @@ def get_athlete(access_token):
     Errors:
         may need refresh
     '''
-    url="https://www.strava.com/api/v3/athlete"
+    url = "https://www.strava.com/api/v3/athlete"
     header = {
         "Authorization": f"Bearer {access_token}"
     }
-    
+
     response = requests.request('GET', url, headers=header)
     json_data = json.loads(response.text)
     strava_logger.info(json.dumps(json_data, indent=4))
@@ -143,12 +145,13 @@ def get_activity(access_token, activity_id):
 
     response = requests.request('GET', url, headers=header, data=data)
     json_data = json.loads(response.text)
-    #strava_logger.info(json.dumps(json_data, indent=4))
+    # strava_logger.info(json.dumps(json_data, indent=4))
 
     return json_data
 
 
-def get_athlete_activities(access_token, after:int=1614556800, before:int = None, per_page:int = 100, page:int = 1):
+def get_athlete_activities(access_token, after: int = 1614556800, before: int = None, per_page: int = 100,
+                           page: int = 1):
     '''
     Returns list of user activities after 3.1.2021
     :param access_token: acces token of currentuser
@@ -172,12 +175,12 @@ def get_athlete_activities(access_token, after:int=1614556800, before:int = None
 
     response = requests.request('GET', url, headers=header, data=data)
     json_data = json.loads(response.text)
-    #strava_logger.info(json.dumps(json_data, indent=4))
+    # strava_logger.info(json.dumps(json_data, indent=4))
 
     return json_data
 
 
-def get_activity_info(activity:json):
+def get_activity_info(activity: dict) -> tuple:
     '''
     Parses json of STRAVA SummaryActivity.
     :param activity: json of an activity
@@ -191,20 +194,25 @@ def get_activity_info(activity:json):
     name = activity['name'][:30] if not None else ''
     pace = get_time(round(time_in_secs / distance * 1000))
 
-    return (name, distance, total_time, elevation, pace, strava_type)
+    return name, distance, total_time, elevation, pace, strava_type
 
 
-def get_activity_from_webhook(data:json):
+def get_activity_from_webhook(data: json):
+    # TODO: Add support for Delete event
+
+    # TODO: Add if statement for omitting the 'athlete' object
+
     if data['aspect_type'] != 'create':
         return None
     db_query = Queries(credit=True)
     db_res = db_query.get_user_access_token(data['owner_id'])
-    if (db_res[0] != 1):
+    if db_res[0] != 1:
         return None
-    access_token = db_res[1][0] # get first access_token form list at index 1
+    access_token = db_res[1][0]  # get first access_token form list at index 1
     activity_id = data['object_id']
 
     return get_activity(access_token, activity_id)
+
 
 def get_time(in_time):
     '''
@@ -212,7 +220,7 @@ def get_time(in_time):
     :param in_time: time in seconds
     :return: datetime.time instance
     '''
-    hours = (in_time) // 3600     # 3600 secs in hour
-    minutes = ((in_time) % 3600) // 60    # take off hours and 60 sec in minute
-    seconds = ((in_time) % 3600) % 60     # take off hours, take off
+    hours = in_time // 3600  # 3600 secs in hour
+    minutes = (in_time % 3600) // 60  # take off hours and 60 sec in minute
+    seconds = (in_time % 3600) % 60  # take off hours, take off
     return time(hours, minutes, seconds)

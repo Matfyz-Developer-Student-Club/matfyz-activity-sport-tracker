@@ -119,11 +119,11 @@ class User(db.Model, UserMixin):
         return self.display()
 
     def is_completed(self):
-        return self.first_name is not None and\
-               self.last_name is not None and\
-               self.sex is not None and\
-               self.age is not None and\
-               self.type is not None and\
+        return self.first_name is not None and \
+               self.last_name is not None and \
+               self.sex is not None and \
+               self.age is not None and \
+               self.type is not None and \
                self.uk_id is not None
 
     def display(self):
@@ -178,9 +178,9 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
     def strava_init(self, id, access_token, refresh_token):
-        assert(id is not None and
-               access_token is not None and
-               refresh_token is not None)
+        assert (id is not None and
+                access_token is not None and
+                refresh_token is not None)
         self.strava_id = id
         self.strava_access_token = access_token
         self.strava_refresh_token = refresh_token
@@ -188,11 +188,12 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
     def strava_update_access_token(self, access_token):
-        assert(self.strava_refresh_token is not None)
-        assert(access_token is not None)
+        assert (self.strava_refresh_token is not None)
+        assert (access_token is not None)
         self.strava_access_token = access_token
         db.session.add(self)
         db.session.commit()
+
 
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
