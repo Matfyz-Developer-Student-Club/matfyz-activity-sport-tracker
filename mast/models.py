@@ -179,7 +179,7 @@ class User(db.Model, UserMixin):
 
     def strava_init(self, id, access_token, refresh_token):
         assert(id is not None and
-               acccess_token is not None and
+               access_token is not None and
                refresh_token is not None)
         self.strava_id = id
         self.strava_access_token = access_token
@@ -202,6 +202,8 @@ class Activity(db.Model):
     average_duration_per_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(30), nullable=False, default='activity')
+    elevation = db.Column(db.Float, nullable=False, default=0.0)
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"

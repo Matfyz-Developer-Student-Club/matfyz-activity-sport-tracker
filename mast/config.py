@@ -15,4 +15,5 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.getenv('EMAIL_USER')
     MAIL_PASSWORD = os.getenv('EMAIL_PASS')
+    #TODO: not working on local with this field
     SERVER_NAME = 'mathletics-test.ks.matfyz.cz'
