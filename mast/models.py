@@ -54,12 +54,12 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50), nullable=False, default='')
     display_name = db.Column(db.String(50))
     sex = db.Column(db.Enum(Sex))
-    age = db.Column(db.Enum(Age))
     anonymous = db.Column(db.Boolean, nullable=False, default=False)
     type = db.Column(db.Enum(UserType))
     uk_id = db.Column(db.String(10))
     verified = db.Column(db.Boolean, nullable=False, default=False)
     shirt_size = db.Column(db.String(100))
+    avatar_url = db.Column(db.String(255))
     activities = db.relationship('Activity', backref='user', lazy=True)
 
     def get_reset_token(self, expires_sec=1800):

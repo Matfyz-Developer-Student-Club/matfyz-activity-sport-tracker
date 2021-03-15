@@ -204,6 +204,7 @@ class Queries(object):
 
         return result
 
+    # TODO: Sex is apparently redundant :(
     def _get_top_users_best_run_query(self, sex: Sex):
         """
         Returns query for top users in the best run activity in a specified competition.
