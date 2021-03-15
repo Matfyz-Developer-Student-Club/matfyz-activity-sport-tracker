@@ -21,17 +21,6 @@ class Sex(Enum):
         return self.name
 
 
-class Age(Enum):
-    Under35 = '<=35'
-    Over35 = '>35'
-
-    def __repr__(self):
-        return self.name
-
-    def __str__(self):
-        return self.name
-
-
 class UserType(Enum):
     Student = 'student'
     Employee = 'employee'
@@ -48,17 +37,7 @@ class ActivityType(Enum):
     Walk = 1
     Run = 2
     Ride = 3
-
-    def __repr__(self):
-        return self.name
-
-    def __str__(self):
-        return self.name
-
-
-class Competition(Enum):
-    Run5km = 5
-    Run10km = 10
+    Inline = 4
 
     def __repr__(self):
         return self.name
@@ -81,7 +60,6 @@ class User(db.Model, UserMixin):
     uk_id = db.Column(db.String(10))
     verified = db.Column(db.Boolean, nullable=False, default=False)
     shirt_size = db.Column(db.String(100))
-    competing = db.Column(db.Boolean, nullable=False, default=True)
     activities = db.relationship('Activity', backref='user', lazy=True)
 
     def get_reset_token(self, expires_sec=1800):
@@ -140,10 +118,6 @@ class User(db.Model, UserMixin):
                 ukco is not None)
         self.first_name = first_name
         self.last_name = last_name
-        if age == '<=35':
-            self.age = Age.Under35
-        else:
-            self.age = Age.Over35
         if sex == 'male':
             self.sex = Sex.Male
         else:

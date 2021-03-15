@@ -83,24 +83,10 @@ def get_best_users_time():
     offset = int(request.args.get('offset'))
     limit = int(request.args.get('limit'))
 
-    if distance == '5km':
-        competition = Competition.Run5km
-    elif distance == '10km':
-        competition = Competition.Run10km
-    else:
-        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
-
     if sex == 'male':
         sex = Sex.Male
     elif sex == 'female':
         sex = Sex.Female
-    else:
-        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
-
-    if age == 'under':
-        age = Age.Under35
-    elif age == 'over':
-        age = Age.Over35
     else:
         return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
 
