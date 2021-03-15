@@ -73,6 +73,7 @@ class User(db.Model, UserMixin):
     verified = db.Column(db.Boolean, nullable=False, default=False)
     field_of_study = db.Column(db.Enum(StudyField))
     shirt_size = db.Column(db.String(100))
+    avatar_url = db.Column(db.String(255))
     activities = db.relationship('Activity', backref='user', lazy=True)
     strava_id = db.Column(db.String(20))
     strava_access_token = db.Column(db.String(40))
