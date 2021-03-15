@@ -35,10 +35,10 @@ def strava_auth():
 
     if not check_strava_permissions(scope):
         flash('You have not provided all required permissions. Try again and agree with all permissions.', 'danger')
-        return render_template("integrations.html", title='Integrations')
+        return redirect(url_for('main.integrations'))
 
     save_strava_tokens(auth_code)
-    return render_template("integrations.html", title='Integrations')
+    return redirect(url_for('main.integrations'))
 
 
 @integrations.route('/strava/webhook/endpoint', methods=['GET', 'POST'])

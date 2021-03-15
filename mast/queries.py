@@ -2,6 +2,7 @@ from mast import db
 from mast.models import User, Sex, Age, UserType, Activity, ActivityType, Competition, Season, ChallengePart
 from sqlalchemy.sql import asc, func
 import datetime as dt
+from typing import Optional
 
 
 class Queries(object):
@@ -438,34 +439,34 @@ class Queries(object):
         """
         result = {
             'datetime': dt.datetime.now().strftime('%d.%m.%Y %H:%M:%S'),
-            'total': db.session.query(User).\
+            'total': db.session.query(User). \
                 count(),
-            'unverified': db.session.query(User).\
-                filter(db.not_(User.verified)).\
+            'unverified': db.session.query(User). \
+                filter(db.not_(User.verified)). \
                 count(),
-            'male students': db.session.query(User).\
+            'male students': db.session.query(User). \
                 filter(User.sex == Sex.Male,
-                       User.type == UserType.Student).\
+                       User.type == UserType.Student). \
                 count(),
-            'male employees': db.session.query(User).\
+            'male employees': db.session.query(User). \
                 filter(User.sex == Sex.Male,
-                       User.type == UserType.Employee).\
+                       User.type == UserType.Employee). \
                 count(),
-            'male alumni': db.session.query(User).\
+            'male alumni': db.session.query(User). \
                 filter(User.sex == Sex.Male,
-                       User.type == UserType.Alumni).\
+                       User.type == UserType.Alumni). \
                 count(),
-            'female students': db.session.query(User).\
+            'female students': db.session.query(User). \
                 filter(User.sex == Sex.Female,
-                       User.type == UserType.Student).\
+                       User.type == UserType.Student). \
                 count(),
-            'female employees': db.session.query(User).\
+            'female employees': db.session.query(User). \
                 filter(User.sex == Sex.Female,
-                       User.type == UserType.Employee).\
+                       User.type == UserType.Employee). \
                 count(),
-            'female alumni': db.session.query(User).\
+            'female alumni': db.session.query(User). \
                 filter(User.sex == Sex.Female,
-                       User.type == UserType.Alumni).\
+                       User.type == UserType.Alumni). \
                 count()
         }
 
@@ -477,23 +478,23 @@ class Queries(object):
         :returns: List of students.
         """
         dist_on_foot = db.session.query(Activity.user_id.label('user_id'),
-                                        func.sum(Activity.distance).label('on_foot')).\
+                                        func.sum(Activity.distance).label('on_foot')). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_([ActivityType.Run, ActivityType.Walk])).\
-            group_by(Activity.user_id).\
+                   Activity.type.in_([ActivityType.Run, ActivityType.Walk])). \
+            group_by(Activity.user_id). \
             subquery(with_labels=True)
         dist_on_bike = db.session.query(Activity.user_id.label('user_id'),
-                                        func.sum(Activity.distance).label('on_bike')).\
+                                        func.sum(Activity.distance).label('on_bike')). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_([ActivityType.Ride])).\
-            group_by(Activity.user_id).\
+                   Activity.type.in_([ActivityType.Ride])). \
+            group_by(Activity.user_id). \
             subquery(with_labels=True)
-        data = db.session.query(User, dist_on_foot.c.on_foot, dist_on_bike.c.on_bike).\
-            select_from(User).\
-            outerjoin(dist_on_foot, User.id == dist_on_foot.c.user_id).\
-            outerjoin(dist_on_bike, User.id == dist_on_bike.c.user_id).\
+        data = db.session.query(User, dist_on_foot.c.on_foot, dist_on_bike.c.on_bike). \
+            select_from(User). \
+            outerjoin(dist_on_foot, User.id == dist_on_foot.c.user_id). \
+            outerjoin(dist_on_bike, User.id == dist_on_bike.c.user_id). \
             filter(User.type == UserType.Student). \
             order_by(User.last_name.asc(), User.first_name.asc())
 
@@ -512,11 +513,11 @@ class Queries(object):
         return result
 
     def get_user_by_strava_id(self, strava_id):
-        '''
+        """
         Gets list of access tokens for strava of user with strava_id
         :param strava_id: strava id of a user
         :return: number of results and list of strava access tokens (result should always be only 1)
-        '''
+        """
         query = db.session.query(User). \
             filter(User.strava_id == strava_id)
 
@@ -527,7 +528,24 @@ class Queries(object):
             filter(Activity.strava_id == strava_id) \
             .delete()
 
-    def update_activity_info(self, strava_id:int, info_to_update:dict):
+    def update_activity_info(self, strava_id: int, info_to_update: dict):
         db.session.query(Activity). \
             filter(Activity.strava_id == strava_id). \
             update(info_to_update, synchronize_session=False)
+
+    def get_user_favorite_activity(self, user_id: int) -> Optional[str]:
+        """
+            This method aims to provide list of user favorite activities, based
+            on the count of the activity recurrence.
+        :param user_id: Current user id
+        :return: List of most performed activity types performed by the user
+        """
+        activity_counts = Activity.query.filter(Activity.user_id == user_id).with_entities(Activity.type, func.count(
+            Activity.type)).group_by(Activity.type).all()
+
+        if activity_counts:
+            sorted(activity_counts, key=lambda x: x[1])
+            local_max = max(([x[1] for x in activity_counts]))
+
+            return ", ".join([str(act[0]) for act in activity_counts if act[1] == local_max])
+        return None
