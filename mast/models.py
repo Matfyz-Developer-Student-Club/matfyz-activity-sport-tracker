@@ -1,6 +1,8 @@
 from mast import db, login_manager
 from flask_login import UserMixin
+from flask import current_app
 from enum import Enum
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 @login_manager.user_loader
@@ -81,6 +83,21 @@ class User(db.Model, UserMixin):
     shirt_size = db.Column(db.String(100))
     competing = db.Column(db.Boolean, nullable=False, default=True)
     activities = db.relationship('Activity', backref='user', lazy=True)
+
+    def get_reset_token(self, expires_sec=1800):
+        serializer = Serializer(current_app.config['SECRET_KEY'], expires_sec)
+        return serializer.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        serializer = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            user_id = serializer.loads(token)['user_id']
+            # TODO: Add specific exception object
+        except Exception:
+            return None
+
+        return User.query.get(user_id)
 
     def __repr__(self):
         return f"User('{self.email}')"
