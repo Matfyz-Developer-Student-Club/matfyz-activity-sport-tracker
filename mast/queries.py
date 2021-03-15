@@ -67,8 +67,7 @@ class Queries(object):
         """
         return self._get_user_last_activities(user_id,
                                               [ActivityType.Run, ActivityType.Walk, ActivityType.Ride,
-                                               ActivityType.InlineSkate],
-                                              number, offset)
+                                               ActivityType.InlineSkate], number, offset)
 
     def get_user_last_activities_on_foot(self, user_id: int, number: int, offset: int = 0):
         """
