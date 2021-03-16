@@ -1,7 +1,6 @@
 import json
 from flask import request, jsonify, Blueprint
 from flask_login import current_user, login_required
-from mast.models import Competition, Sex, Age
 from mast.tools.json_encoder import MastEncoder
 from mast.queries import Queries
 
@@ -32,17 +31,11 @@ def get_personal_activities():
 @login_required
 def get_personal_activities_time():
     db_query = Queries()
-    distance = request.args.get('distance')
     offset = int(request.args.get('offset'))
     limit = int(request.args.get('limit'))
-    if distance == '5km':
-        competition = Competition.Run5km
-    elif distance == '10km':
-        competition = Competition.Run10km
-    else:
-        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
 
-    data = db_query.get_best_run_activities_by_user(user_id=current_user.id, competition=competition,
+    # TODO: Obsolete, replace by generalized function
+    data = db_query.get_best_run_activities_by_user(user_id=current_user.id,
                                                     number=limit, offset=offset)
     enriched_data = []
     order = offset + 1
@@ -77,28 +70,16 @@ def get_personal_activities_distance():
 @views.route('/get_best_users_time')
 def get_best_users_time():
     db_query = Queries()
-    distance = request.args.get('distance')
-    sex = request.args.get('sex')
-    age = request.args.get('age')
     offset = int(request.args.get('offset'))
     limit = int(request.args.get('limit'))
 
-    if sex == 'male':
-        sex = Sex.Male
-    elif sex == 'female':
-        sex = Sex.Female
-    else:
-        return json.dumps({'total': 0, 'rows': []}, cls=MastEncoder)
-
-    data = db_query.get_top_users_best_run(competition=competition, sex=sex, age=age,
-                                           number=limit, offset=offset)
+    data = db_query.get_top_users_best_run(number=limit, offset=offset)
     enriched_data = []
     order = offset + 1
     for item in data[1]:
         enriched_item = {'order': order,
                          'name': item.User.display(),
                          'datetime': item.Activity.datetime,
-                         'distance': item.Activity.distance,
                          'duration': item.Activity.duration,
                          'average_duration_per_km': item.Activity.average_duration_per_km}
         enriched_data.append(enriched_item)
