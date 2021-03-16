@@ -15,7 +15,6 @@ users = Blueprint('users', __name__)
 
 
 @users.route('/', methods=['GET', 'POST'])
-@users.route('/')
 @users.route('/welcome')
 def welcome():
     if current_user.is_authenticated:
@@ -87,10 +86,10 @@ def user_settings():
             if update_profile_form.validate():
                 current_user.complete_profile(first_name=update_profile_form.first_name.data.strip(),
                                               last_name=update_profile_form.last_name.data.strip(),
-                                              age=update_profile_form.age.data,
                                               sex=update_profile_form.sex.data,
                                               shirt_size=update_profile_form.shirt_size.data,
                                               user_type=update_profile_form.user_type.data,
+                                              study_field=update_profile_form.study_field.data,
                                               ukco=update_profile_form.ukco.data.strip(),
                                               display_name=update_profile_form.display_name.data.strip(),
                                               anonymous=update_profile_form.competing.data)
@@ -127,7 +126,6 @@ def user_settings():
             update_profile_form[key].data = current_user.__getattr__(key) or ''
 
     update_profile_form.ukco.data = current_user.uk_id or ''
-    update_profile_form.age.data = current_user.age.value if current_user.age else None
     update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
     update_profile_form.shirt_size.data = current_user.shirt_size or None
     update_profile_form.user_type.data = current_user.type.value if current_user.type else None

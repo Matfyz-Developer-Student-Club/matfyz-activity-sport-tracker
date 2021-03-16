@@ -10,8 +10,8 @@
 
 <!-- Render a table with personal activities for time -->
 {% macro render_personal_activities_time(distance) %}
-    {% call render_pageable_table('personal_activities_time_' + distance,
-                                  url_for('views.get_personal_activities_time', distance=distance)) %}
+    {% call render_pageable_table('personal_activities_time',
+                                  url_for('views.get_personal_activities_time')) %}
         <th data-field="order">#</th>
         <th data-field="datetime">Date</th>
         <th data-field="distance">Distance</th>
@@ -31,9 +31,9 @@
 {% endmacro %}
 
 <!-- Render a table with best users with activities for time -->
-{% macro render_best_users_time(distance, sex, age) %}
-    {% call render_pageable_table('best_users_time_' + distance + '_' + sex + '_' + age,
-                                  url_for('views.get_best_users_time', distance=distance, sex=sex, age=age)) %}
+{% macro render_best_users_time() %}
+    {% call render_pageable_table('best_users_time',
+                                  url_for('views.get_best_users_time')) %}
         <th data-field="order">#</th>
         <th data-field="name">Name</th>
         <th data-field="datetime">Date</th>

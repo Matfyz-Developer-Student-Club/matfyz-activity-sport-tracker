@@ -33,6 +33,19 @@ class UserType(Enum):
         return self.name
 
 
+class StudyField(Enum):
+    Inf = 'informatics'
+    Mat = 'mathematics'
+    Phs = 'physics'
+    Tea = 'teaching'
+
+    def __repr__(self):
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+
 class ActivityType(Enum):
     Walk = 1
     Run = 2
@@ -58,6 +71,7 @@ class User(db.Model, UserMixin):
     type = db.Column(db.Enum(UserType))
     uk_id = db.Column(db.String(10))
     verified = db.Column(db.Boolean, nullable=False, default=False)
+    field_of_study = db.column(db.Enum(StudyField))
     shirt_size = db.Column(db.String(100))
     avatar_url = db.Column(db.String(255))
     activities = db.relationship('Activity', backref='user', lazy=True)
@@ -112,7 +126,7 @@ class User(db.Model, UserMixin):
         else:
             return self.first_name + ' ' + self.last_name
 
-    def complete_profile(self, first_name, last_name, age, sex, shirt_size, user_type, ukco, anonymous,
+    def complete_profile(self, first_name, last_name, study_field, sex, shirt_size, user_type, ukco, anonymous,
                          display_name=None):
         assert (first_name is not None and
                 last_name is not None and
@@ -120,7 +134,8 @@ class User(db.Model, UserMixin):
                 sex is not None and
                 shirt_size is not None and
                 user_type is not None and
-                ukco is not None)
+                ukco is not None and
+                study_field is not None)
         self.first_name = first_name
         self.last_name = last_name
         if sex == 'male':
@@ -134,6 +149,16 @@ class User(db.Model, UserMixin):
             self.type = UserType.Employee
         else:
             self.type = UserType.Alumni
+
+        if study_field == 'Informatics':
+            self.field_of_study = StudyField.Inf
+        elif study_field == 'Physics':
+            self.field_of_study = StudyField.Phs
+        elif study_field == 'Maths':
+            self.field_of_study = StudyField.Mat
+        else:
+            self.field_of_study = StudyField.Tea
+
         self.uk_id = ukco
         self.anonymous = anonymous
         self.display_name = display_name

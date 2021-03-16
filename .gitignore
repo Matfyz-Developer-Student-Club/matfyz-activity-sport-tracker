@@ -141,5 +141,4 @@ landing
 .env.prod
 .env.prod.db
 
-# Balast
 *.cfg
