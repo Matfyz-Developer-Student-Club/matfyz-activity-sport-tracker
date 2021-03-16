@@ -12,6 +12,10 @@
                 <h2>Global Leaders</h2>
                 <h2>My Last Inline Skating</h2>
                 {{ render_personal_activities_score('inline') }}
+            </div>
+            <div class="col-sm mb-4">
+                <h2>Global Leaders</h2>
+
                 {% if position != 'none' %}
                     <h6>With your total score of {{ total_score }} points, you are on {{ position }} place.</h6>
                 {% else %}
