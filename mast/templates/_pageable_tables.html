@@ -79,16 +79,16 @@
     <div class="pageable-table">
         <table id="{{ id }}" class="table table-striped table-sm"
                data-toggle="table" data-height="400" data-url="{{ url }}"
-               data-side-pagination="server" data-pagination="true" data-page-list="[10]" >
+               data-side-pagination="server" data-pagination="true" data-page-list="[10]">
             <thead>
-                <tr>
-                    {{ caller() }}
-                </tr>
+            <tr>
+                {{ caller() }}
+            </tr>
             </thead>
         </table>
 
         <script>
-            $(function() {
+            $(function () {
                 let table = $('#{{ id }}');
                 table.bootstrapTable();
 
