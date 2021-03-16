@@ -47,7 +47,7 @@
                     </div>
                 </div>
             </div>
-            <div id="update_profile_div" style="display:{{ display_update_profile_form }}" class="col-4 offset-2">
+            <div id="update_profile_div" style="display:{{ display_update_profile_form }}" class="col-5 offset-2">
                 <form class="form-group" method="post">
                     {{ update_profile_form.hidden_tag() }}
 
@@ -59,8 +59,6 @@
 
                     {{ render_text_field(update_profile_form.ukco) }}
 
-                    {{ render_inline_radio_field(update_profile_form.age) }}
-
                     {{ render_inline_radio_field(update_profile_form.sex) }}
 
                     {{ render_inline_radio_field(update_profile_form.shirt_size) }}
@@ -68,6 +66,8 @@
                     {{ render_checkbox_field(update_profile_form.competing) }}
 
                     {{ render_inline_radio_field(update_profile_form.user_type) }}
+
+                    {{ render_inline_radio_field(update_profile_form.study_field) }}
 
                     {{ render_submit_button(update_profile_form.submit) }}
                 </form>

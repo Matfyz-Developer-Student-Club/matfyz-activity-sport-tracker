@@ -135,3 +135,9 @@ landing
 
 # DB
 *.db
+
+.env.prod
+.env.dev
+.env.prod.db
+
+*.cfg

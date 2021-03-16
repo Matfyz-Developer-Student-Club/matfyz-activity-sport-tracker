@@ -1,6 +1,5 @@
 from flask import render_template, Blueprint
 from flask_login import current_user, login_required
-from mast.models import Competition
 from mast.queries import Queries
 from mast.session import Session
 from mast.activities.utils import ordinal
@@ -36,38 +35,38 @@ def competitions():
     return render_template("competitions_public.html", title="Competitions")
 
 
-@activities.route('/running_5_km')
+@activities.route('/running')
 @login_required
-def running_5_km():
+def running():
     session_data = Session()
     check_profile_verified(session_data)
     db_query = Queries()
-    position = db_query.get_position_best_run(current_user.id, Competition.Run5km)
-    return render_template("running.html", title="Running-5", distance='5km',
+    position = db_query.get_position_best_run(current_user.id)
+    return render_template("running.html", title="Running",
                            position=ordinal(position), session_data=session_data)
 
 
-@activities.route('/running_10_km')
+@activities.route('/walking')
 @login_required
-def running_10_km():
-    session_data = Session()
-    check_profile_verified(session_data)
-    db_query = Queries()
-    position = db_query.get_position_best_run(current_user.id, Competition.Run10km)
-    return render_template("running.html", title="Running-10", distance='10km',
-                           position=ordinal(position), session_data=session_data)
-
-
-@activities.route('/running_walking')
-@login_required
-def running_walking():
+def walking():
     session_data = Session()
     check_profile_verified(session_data)
     db_query = Queries()
     total_distance = db_query.get_total_distance_by_user_on_foot(current_user.id)
     position = db_query.get_position_total_distance_on_foot(current_user.id)
-    return render_template("running_walking.html", title="Jogging",
+    return render_template("walking.html", title="Walking",
                            total_distance=total_distance, position=ordinal(position),
+                           session_data=session_data)
+
+
+@activities.route('/inline')
+@login_required
+def inline():
+    session_data = Session()
+    check_profile_verified(session_data)
+    db_query = Queries()
+    position = db_query.get_position_total_distance_on_foot(current_user.id)
+    return render_template("inline.html", title="Inline", position=ordinal(position),
                            session_data=session_data)
 
 

@@ -1,5 +1,5 @@
 from mast import db
-from mast.models import User, Sex, UserType, Activity, ActivityType, Season, ChallengePart
+from mast.models import User, UserType, Activity, ActivityType, Season, ChallengePart
 from sqlalchemy.sql import asc, func
 import datetime as dt
 
@@ -204,11 +204,9 @@ class Queries(object):
 
         return result
 
-    # TODO: Sex is apparently redundant :(
-    def _get_top_users_best_run_query(self, sex: Sex):
+    def _get_top_users_best_run_query(self):
         """
         Returns query for top users in the best run activity in a specified competition.
-        :param sex: Sex of users for the top users list.
         :returns: Subquery returning User and Activity for user´s best run.
         """
         best_times = db.session.query(Activity.user_id.label('user_id'),
@@ -233,19 +231,17 @@ class Queries(object):
             join(first_best_times, User.id == first_best_times.c.user_id). \
             join(Activity, db.and_(Activity.user_id == first_best_times.c.user_id,
                                    Activity.id == first_best_times.c.id)). \
-            filter(User.sex == sex,
-                   User.verified). \
+            filter(User.verified). \
             order_by(Activity.average_duration_per_km.asc())
 
-    def get_top_users_best_run(self, sex: Sex, number: int, offset: int = 0):
+    def get_top_users_best_run(self, number: int, offset: int = 0):
         """
         Returns top users in the best run activity in a specified competition and sex category.
-        :param sex: Sex of users for the top users list.
         :param number: Number of users in the top users list
         :param offset: Offset of returned activities - default: 0.
         :returns: Total count of users and list of top users and their best run activity.
         """
-        query = self._get_top_users_best_run_query(sex)
+        query = self._get_top_users_best_run_query()
         count = query. \
             count()
         items = query. \
@@ -261,7 +257,7 @@ class Queries(object):
         :returns: Position of user or -1.
         """
         user = db.session.query(User).get(user_id)
-        all_users = self._get_top_users_best_run_query(user.sex).all()
+        all_users = self._get_top_users_best_run_query().all()
 
         order = 0
         for user in all_users:

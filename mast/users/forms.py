@@ -18,6 +18,7 @@ max_length_attribute: Callable[[int], Dict[str, Any]] = lambda n: {'maxlength': 
 PASSWORD_MIN_LEN = 8
 PASSWORD_MAX_LEN = 50
 
+
 def log_form_submit(form):
     form_logger.info(f'Received {type(form)}')
     has_error = False
@@ -71,11 +72,12 @@ class UpdateProfileForm(LoggingFlaskForm):
                                description='Optional name to show on the scoreboards.')
     ukco = StringField('UKČO', validators=[DataRequired(), Length(min=8, max=8)],
                        render_kw={**min_length_attribute(8), **max_length_attribute(8)})
-    age = RadioField('Age', validators=[DataRequired()], choices=['<=35', '>35'])
     sex = RadioField('Sex', validators=[DataRequired()], choices=['male', 'female'])
     shirt_size = RadioField('Shirt size', validators=[DataRequired()], choices=['S', 'M', 'L', 'XL', 'XXL'])
     user_type = RadioField('I am', validators=[DataRequired()],
                            choices=['student', 'employee', 'alumni'])
+    study_field = RadioField('I study', validators=[DataRequired()],
+                             choices=['Informatics', 'Math', 'Physics', 'Teaching'])
     competing = BooleanField('I want to compete anonymously',
                              description='Results will be on the public scoreboards without name.')
     submit = SubmitField('Update profile')
