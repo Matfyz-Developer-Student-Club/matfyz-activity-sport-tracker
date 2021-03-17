@@ -12,6 +12,7 @@ from pathlib import Path
 class CreditsForm(LoggingFlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Display')
+    print()
 
 
 class AddActivityForm(LoggingFlaskForm):
