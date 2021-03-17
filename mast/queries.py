@@ -438,34 +438,34 @@ class Queries(object):
         """
         result = {
             'datetime': dt.datetime.now().strftime('%d.%m.%Y %H:%M:%S'),
-            'total': db.session.query(User).\
+            'total': db.session.query(User). \
                 count(),
-            'unverified': db.session.query(User).\
-                filter(db.not_(User.verified)).\
+            'unverified': db.session.query(User). \
+                filter(db.not_(User.verified)). \
                 count(),
-            'male students': db.session.query(User).\
+            'male students': db.session.query(User). \
                 filter(User.sex == Sex.Male,
-                       User.type == UserType.Student).\
+                       User.type == UserType.Student). \
                 count(),
-            'male employees': db.session.query(User).\
+            'male employees': db.session.query(User). \
                 filter(User.sex == Sex.Male,
-                       User.type == UserType.Employee).\
+                       User.type == UserType.Employee). \
                 count(),
-            'male alumni': db.session.query(User).\
+            'male alumni': db.session.query(User). \
                 filter(User.sex == Sex.Male,
-                       User.type == UserType.Alumni).\
+                       User.type == UserType.Alumni). \
                 count(),
-            'female students': db.session.query(User).\
+            'female students': db.session.query(User). \
                 filter(User.sex == Sex.Female,
-                       User.type == UserType.Student).\
+                       User.type == UserType.Student). \
                 count(),
-            'female employees': db.session.query(User).\
+            'female employees': db.session.query(User). \
                 filter(User.sex == Sex.Female,
-                       User.type == UserType.Employee).\
+                       User.type == UserType.Employee). \
                 count(),
-            'female alumni': db.session.query(User).\
+            'female alumni': db.session.query(User). \
                 filter(User.sex == Sex.Female,
-                       User.type == UserType.Alumni).\
+                       User.type == UserType.Alumni). \
                 count()
         }
 
@@ -477,23 +477,23 @@ class Queries(object):
         :returns: List of students.
         """
         dist_on_foot = db.session.query(Activity.user_id.label('user_id'),
-                                        func.sum(Activity.distance).label('on_foot')).\
+                                        func.sum(Activity.distance).label('on_foot')). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_([ActivityType.Run, ActivityType.Walk])).\
-            group_by(Activity.user_id).\
+                   Activity.type.in_([ActivityType.Run, ActivityType.Walk])). \
+            group_by(Activity.user_id). \
             subquery(with_labels=True)
         dist_on_bike = db.session.query(Activity.user_id.label('user_id'),
-                                        func.sum(Activity.distance).label('on_bike')).\
+                                        func.sum(Activity.distance).label('on_bike')). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type.in_([ActivityType.Ride])).\
-            group_by(Activity.user_id).\
+                   Activity.type.in_([ActivityType.Ride])). \
+            group_by(Activity.user_id). \
             subquery(with_labels=True)
-        data = db.session.query(User, dist_on_foot.c.on_foot, dist_on_bike.c.on_bike).\
-            select_from(User).\
-            outerjoin(dist_on_foot, User.id == dist_on_foot.c.user_id).\
-            outerjoin(dist_on_bike, User.id == dist_on_bike.c.user_id).\
+        data = db.session.query(User, dist_on_foot.c.on_foot, dist_on_bike.c.on_bike). \
+            select_from(User). \
+            outerjoin(dist_on_foot, User.id == dist_on_foot.c.user_id). \
+            outerjoin(dist_on_bike, User.id == dist_on_bike.c.user_id). \
             filter(User.type == UserType.Student). \
             order_by(User.last_name.asc(), User.first_name.asc())
 
@@ -510,3 +510,18 @@ class Queries(object):
             }
             result.append(item)
         return result
+
+    def _get_user_total_score_for_activity(self, activity_type: ActivityType, user_id: int) -> int:
+        return Activity.query(func.sum(Activity.score)).filter_by(user_id=user_id, type=activity_type).first()
+
+    def get_user_total_points_for_ride(self, user_id: int) -> int:
+        return self._get_user_total_score_for_activity(ActivityType.Ride, user_id)
+
+    def get_user_total_points_for_walk(self, user_id: int) -> int:
+        return self._get_user_total_score_for_activity(ActivityType.Walk, user_id)
+
+    def get_user_total_points_for_inline(self, user_id: int) -> int:
+        return self._get_user_total_score_for_activity(ActivityType.InlineSkate, user_id)
+
+    def get_user_total_points_for_run(self, user_id: int) -> int:
+        return self._get_user_total_score_for_activity(ActivityType.Run, user_id)
