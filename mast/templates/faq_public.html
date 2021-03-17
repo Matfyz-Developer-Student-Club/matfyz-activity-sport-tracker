@@ -1,10 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "public_layout_template.html" %}
 
-</body>
-</html>
+{% block content_page %}
+    <br><br><br>
+
+     <div class="container mb-4">
+        <div class="row-fluid">
+
+            <div class="col-sm mb-4">
+                <h2>Who can participate?</h2>
+                <p>
+                    Any student, employee or alumni of MFF UK.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>How do I participate?</h2>
+                <p>
+                    Well, all you need to do is to complete your profile on the User Settings page, authenticate via Strava in the
+                    <a href="{{url_for('main.integrations')}}">Integrations</a>
+                    and start running. Activities uploaded to STRAVA are automatically sent to Mathletics.
+                </p>
+                <p>
+                    Note that your STRAVA activity is counted only if it is made <b>public in STRAVA</b>.
+                </p>
+                <p>
+                    See <a href="#rules">rules</a> to see more about the rules.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>When does the event takes place?</h2>
+                <p>
+                    For this semester, Mathletics takes place from <b>22. 3.</b> till <b>30. 6. 2021</b>.
+                </p>
+            </div>
+
+
+
+            <div class="col-sm mb-4">
+                <h2>How can I win?</h2>
+                <p>
+                    For each recorded activity you will score some points. Then you need to place in top 10 in any category to win a prize. See <a href="#prizes"> What can I win?</a> section for more information about prizes.
+                </p>
+                <p>
+                    The score is computed by a sophisticated formula that takes in account your activity distance, pace and elevation gain and also your sex.
+                </p>
+            </div>
+
+            <div id="prizes" class="col-sm mb-4">
+                <h2>What can I win?</h2>
+                <p>
+                    First three places in every category win valuable gift basket form MFF.
+                </p>
+                <p>
+                    Also the first ten competitors win a T-shirt.
+                </p>
+            </div>
+
+            <div id="competitions" class="col-sm mb-4">
+                <h2>What are the competition categories?</h2>
+                <p>
+                    This season there is five disciplines all together.
+                </p>
+                <ul>
+                    <li><b>Walking</b> - any walk longer 3 km</li>
+                    <li><b>Running</b> - any run longer 5 km</li>
+                    <li><b>Inline skating</b> - any trip longer 8 km</li>
+                    <li><b>Cycling</b> - any ride longer 10 km</li>
+                    <li><b>Total</b> - the person with the biggest score sum across all the categories</li>
+                </ul>
+            </div>
+
+            <div id="rules" class="col-sm mb-4">
+                <h2>Rules</h2>
+                <ol>
+                    <li>You must be registered.</li>
+                    <li>The activity is accounted for only if it satisfies the minimum distance criterion (see <a href="#competitions">above</a>).</li>
+                    <li>The activity can not be interleaved with other activities and must be recorded outside.</li>
+                    <li>Activities obviously related to work duties such as being messenger, courier, food delivery boy will not be accounted.</li>
+                    <li>The organizer (KTV) reserves the right not to recognize activities that drift off reality caused by for instance GPS issues (such cases will be resolved individually).</li>
+                </ol>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>How do I enter the competitions?</h2>
+                <p>
+                    You enter the competitions automatically. All you need to do is authenticate via strava in Integrations and use STRAVA to record your activity.
+                </p>
+                <p>
+                    Any activity on strava that is public will be automatically uploaded to Mathletics.
+                </p>
+            </div>
+
+
+            <div class="col-sm mb-4">
+                <h2>I have encountered some technical difficulties. How should I report them?</h2>
+                <p>
+                    Honestly, that is pretty much expected due to time constraints on this project. We welcome all bug reports on <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a>.
+                </p>
+
+                <p>
+                    Additionally, you can contribute to this project and others by joining our club: <a href="https://matfyz-developer-student-club.github.io/websites/" target="_blank">Matfyz Developer Student Club</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock content_page %}
