@@ -9,7 +9,7 @@ from mast import bcr, db
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.tools.utils import check_profile_verified
 from mast.session import Session
-from mast.users.utils import send_reset_email
+from mast.users.utils import send_reset_email, send_registration_email
 
 users = Blueprint('users', __name__)
 
@@ -59,6 +59,8 @@ def register():
                 form.password.data.strip()).decode('UTF-8')
             user = User(email=form.email.data.lower().strip(),
                         password=hashed_password)
+
+            send_registration_email(user)
             login_user(user)
             return redirect(url_for('main.home'))
         else:
