@@ -135,3 +135,11 @@ landing
 
 # DB
 *.db
+
+# Docker configuration
+.env.dev
+.env.prod
+.env.prod.db
+
+# Balast
+*.cfg
