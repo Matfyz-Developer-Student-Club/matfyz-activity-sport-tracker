@@ -370,7 +370,7 @@ def _get_score(distance:float , elevation:float, pace:time, user:User, activity_
     :param distance: distance in KM
     :param elevation: elevation in M
     :param pace: pace in minutes on KM
-    :param sex: Sex
+    :param user: User who uploaded the activity
     :param activity_type: ActivityType
     :return: integer of score
     """
