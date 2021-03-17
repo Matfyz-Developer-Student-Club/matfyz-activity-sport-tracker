@@ -13,11 +13,13 @@ main = Blueprint('main', __name__)
 
 
 @main.route('/faq')
-@login_required
 def faq():
-    session_data = Session()
-    check_profile_verified(session_data)
-    return render_template("faq.html", title='Frequently Asked Questions', session_data=session_data)
+    if current_user.is_authenticated:
+        session_data = Session()
+        check_profile_verified(session_data)
+        return render_template("faq.html", title="Frequently Asked Questions", session_data=session_data)
+    else:
+        return render_template("faq_public.html", title="Frequently Asked Questions")
 
 
 @main.route('/about_competitions')
