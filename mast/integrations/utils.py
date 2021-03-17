@@ -1,13 +1,11 @@
 import json
+import logging
 import requests
 from flask_login import current_user
 from datetime import time, datetime
 from mast.queries import Queries
 from mast.models import  Activity, ActivityType, Sex, User
-from mast.tools.points import Points
-
-# TODO: remove
-import logging
+#from mast.tools.points import Points
 
 strava_logger = logging.getLogger('STRAVA')
 
@@ -15,10 +13,6 @@ strava_logger = logging.getLogger('STRAVA')
 STRAVA_CLIENT_ID = 61623
 STRAVA_CLIENT_SECRET = '71af3bcd89c9a583607db1a383e36f8c1cf6790a'
 STRAVA_SCOPE = ['activity:read']
-
-
-class ExpiredAccessToken(Exception):
-    pass
 
 
 def check_strava_permissions(scope):
@@ -119,7 +113,7 @@ def get_athlete(access_token):
     '''
     Request:
     $ http GET "https://www.strava.com/api/v3/athlete" "Authorization: Bearer [[token]]"
-    
+
     Return:
         some JSON
 
@@ -234,66 +228,54 @@ def process_strava_webhook(data: dict):
     :param data: dictionary of data from webhook
     :return: On Create: Activity; On Delete: None; On Update: None
     """
+    user = _get_user(data)
+    if user is None:
+        strava_logger.info(
+            f'User with strava_id:{data["owner_id"]} was not found, but create webhook was recieved')
+        strava_logger.info(data)
+        return
+
     if data['object_type'] == 'athlete':
         strava_logger.info('Webhook sent info about athlete')
-        return None
+        return
 
     if data['aspect_type'] == 'create':
         strava_logger.info('Webhook sent info about activity creation')
-        return _create_activity(data)
+        _store_activity(user, data)
+        return
 
     elif data['aspect_type'] == 'delete':
         strava_logger.info('Webhook sent info about activity delete')
-        _delete_activity(data)
-        return None
+        _delete_activity(user, data)
+        return
 
     elif data['aspect_type'] == 'update':
         strava_logger.info('Webhook sent info about activity update')
-        _update_activity(data)
-        return None
+        _update_activity(user, data)
+        return
 
     else:
-        strava_logger.info(f'Webhook with unknown aspect_type: {data["aspect_type"]} recieved: ')
+        strava_logger.info(f'Webhook with unknown aspect_type: recieved: ')
         strava_logger.info(data)
-        return None
+        return
 
 
-def _create_activity(data):
-    user = _get_user(data)
-
-    if user is None:
-        strava_logger.info(
-            f'TIME: {data["event_time"]}\tUser with strava_id:{data["owner_id"]} was not found, but create webhook was recieved')
-        return None
-
+def _store_activity(user, data):
     strava_activity_id = data['object_id']
     activity_data = get_activity(user.strava_access_token, strava_activity_id)
-    return create_activity_from_strava_json(activity_data, user, strava_activity_id)
+    activity = create_activity_from_strava_json(activity_data, user, strava_activity_id)
+
+    db_query = Queries(credit=True)
+    db_query.save_new_user_activities(activity.user_id, activity)
 
 
-def _delete_activity(data):
-    user = _get_user(data)
-
-    if user is None:
-        strava_logger.info(
-            f'TIME: {data["event_time"]}\t User with strava_id:{data["owner_id"]} was not found, but delete webhook was recieved')
-        return None
-
+def _delete_activity(user, data):
     strava_activity_id = data['object_id']
-
     db_query = Queries(credit=True)
     db_query.delete_activity_by_strava_id(strava_activity_id)
 
 
-def _update_activity(data):
-    user = _get_user(data)
-
-    # check if user is in our database
-    if user is None:
-        strava_logger.info(
-            f'TIME: {data["event_time"]}\tUser with strava_id:{data["owner_id"]} was not found, but update webhook was recieved')
-        return
-
+def _update_activity(user, data):
     strava_activity_id = data['object_id']
 
     # parse data to update
@@ -375,12 +357,14 @@ def _get_score(distance:float , elevation:float, pace:time, user:User, activity_
     :return: integer of score
     """
     # TODO: UPDATE when new activity is introduced
-    point = Points()
+    return 0
+    # TODO: uncomment when Points are introduced
+    #point = Points()
 
-    function_mapping = {
-        ActivityType.Run: point.get_run_activity_points,
-        ActivityType.Walk: point.get_walk_activity_points,
-        ActivityType.Ride: point.get_ride_activity_points,
-        ActivityType.InlineSkate: point.get_inline_activity_points,
-    }
-    return function_mapping[activity_type](user, elevation, distance, pace)
+    #function_mapping = {
+    #    ActivityType.Run: point.get_run_activity_points,
+    #    ActivityType.Walk: point.get_walk_activity_points,
+    #    ActivityType.Ride: point.get_ride_activity_points,
+    #    ActivityType.InlineSkate: point.get_inline_activity_points,
+    #}
+    #return function_mapping[activity_type](user, elevation, distance, pace)

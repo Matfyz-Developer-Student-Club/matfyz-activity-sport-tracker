@@ -10,7 +10,8 @@ from mast import csrf
 
 integrations = Blueprint('integrations', __name__)
 
-# TODO: investigate why https does not work
+# TODO: replace with http:// + SERVER_NAME on test server, on local debug replace with localhost
+#       though this will work only for strava authentication not on webhooks
 BASE_URL = 'http://mathletics-test.ks.matfyz.cz'
 
 
@@ -53,15 +54,8 @@ def strava_webhook():
     data = request.get_json()
 
     # process webhook
-    activity = process_strava_webhook(data)
-
-    # if new activity was created -> save it to database
-    if activity is Activity:
-        db_query = Queries(credit=True)
-        db_query.save_new_user_activities(activity.user_id, activity)
-
+    process_strava_webhook(data)
     return Response(status=200)
     
     #request_data = request.args.get('hub.challenge')
     #return Response({'hub.challenge': request_data}, status=200, mimetype='application/json')
-

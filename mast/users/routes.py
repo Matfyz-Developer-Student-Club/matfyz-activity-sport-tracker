@@ -10,7 +10,6 @@ from mast.tools.sis_authentication import authenticate_via_sis
 from mast.tools.utils import check_profile_verified
 from mast.session import Session
 from mast.users.utils import send_reset_email
-from mast.queries import Queries
 
 users = Blueprint('users', __name__)
 

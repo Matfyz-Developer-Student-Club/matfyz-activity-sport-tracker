@@ -17,6 +17,12 @@ login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 
 
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+
 def create_app(configuration=Config):
     app = Flask(__name__)
     app.config.from_object(configuration)
