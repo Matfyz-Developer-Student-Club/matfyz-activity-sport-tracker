@@ -13,6 +13,7 @@ strava_logger = logging.getLogger('STRAVA')
 STRAVA_CLIENT_ID = 61623
 STRAVA_CLIENT_SECRET = '71af3bcd89c9a583607db1a383e36f8c1cf6790a'
 STRAVA_SCOPE = ['activity:read']
+STRAVA_EXPIRE_RESERVE = 1000
 
 
 def check_strava_permissions(scope):
@@ -73,7 +74,7 @@ def save_strava_tokens(auth_code):
     current_user.strava_access_token = response_data["access_token"]
 
 
-def refresh_access_token():
+def refresh_access_token(user:User):
     '''
     Request:
     curl -X POST https://www.strava.com/api/v3/oauth/token \
@@ -96,7 +97,7 @@ def refresh_access_token():
         'client_id': STRAVA_CLIENT_ID,
         'client_secret': STRAVA_CLIENT_SECRET,
         'grant_type': 'refresh_token',
-        'refresh_token': current_user.strava_refresh_token
+        'refresh_token': user.strava_refresh_token
     }
     response = requests.post(url, data=data)
     response_data = json.loads(response.text)
@@ -104,9 +105,9 @@ def refresh_access_token():
     strava_logger.info(json.dumps(response_data, indent=4))
 
     # We have to renew both refresh and access token
-    current_user.strava_access_token = response_data['access_token']
-    current_user.strava_refresh_token = response_data['refresh_token']
-    current_user.strava_expires_at = int(response_data['expires_at'])
+    user.strava_access_token = response_data['access_token']
+    user.strava_refresh_token = response_data['refresh_token']
+    user.strava_expires_at = int(response_data['expires_at'])
 
 
 def get_athlete(access_token):
@@ -235,29 +236,38 @@ def process_strava_webhook(data: dict):
         strava_logger.info(data)
         return
 
+    # Check whether the access token for given user already expired with some reserve, if it did then refresh tokens
+    if user.strava_expires_at - STRAVA_EXPIRE_RESERVE > time():
+        refresh_access_token(user)
+
+    # Process incomming webhook based on object type
     if data['object_type'] == 'athlete':
         strava_logger.info('Webhook sent info about athlete')
         return
 
-    if data['aspect_type'] == 'create':
-        strava_logger.info('Webhook sent info about activity creation')
-        _store_activity(user, data)
-        return
+    # Process incomming webhook based on aspect type
+    try:
+        if data['aspect_type'] == 'create':
+            strava_logger.info('Webhook sent info about activity creation')
+            _store_activity(user, data)
+            return
 
-    elif data['aspect_type'] == 'delete':
-        strava_logger.info('Webhook sent info about activity delete')
-        _delete_activity(user, data)
-        return
+        elif data['aspect_type'] == 'delete':
+            strava_logger.info('Webhook sent info about activity delete')
+            _delete_activity(data)
+            return
 
-    elif data['aspect_type'] == 'update':
-        strava_logger.info('Webhook sent info about activity update')
-        _update_activity(user, data)
-        return
+        elif data['aspect_type'] == 'update':
+            strava_logger.info('Webhook sent info about activity update')
+            _update_activity(data)
+            return
 
-    else:
-        strava_logger.info(f'Webhook with unknown aspect_type: recieved: ')
-        strava_logger.info(data)
-        return
+        else:
+            strava_logger.info(f'Webhook with unknown aspect_type: recieved: ')
+            strava_logger.info(data)
+            return
+    except Exception as e:
+        strava_logger.error(f'Processing webhook {data} returned an exception: {e}')
 
 
 def _store_activity(user, data):
@@ -269,13 +279,13 @@ def _store_activity(user, data):
     db_query.save_new_user_activities(activity.user_id, activity)
 
 
-def _delete_activity(user, data):
+def _delete_activity(data):
     strava_activity_id = data['object_id']
     db_query = Queries(credit=True)
     db_query.delete_activity_by_strava_id(strava_activity_id)
 
 
-def _update_activity(user, data):
+def _update_activity(data):
     strava_activity_id = data['object_id']
 
     # parse data to update
