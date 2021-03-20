@@ -50,7 +50,7 @@ class ActivityType(Enum):
     Walk = 1
     Run = 2
     Ride = 3
-    Inline = 4
+    InlineSkate = 4
 
     def __repr__(self):
         return self.name
@@ -71,7 +71,7 @@ class User(db.Model, UserMixin):
     type = db.Column(db.Enum(UserType))
     uk_id = db.Column(db.String(10))
     verified = db.Column(db.Boolean, nullable=False, default=False)
-    field_of_study = db.column(db.Enum(StudyField))
+    field_of_study = db.Column(db.Enum(StudyField))
     shirt_size = db.Column(db.String(100))
     avatar_url = db.Column(db.String(255))
     activities = db.relationship('Activity', backref='user', lazy=True)
@@ -125,7 +125,6 @@ class User(db.Model, UserMixin):
                          display_name=None):
         assert (first_name is not None and
                 last_name is not None and
-                age is not None and
                 sex is not None and
                 shirt_size is not None and
                 user_type is not None and
@@ -180,6 +179,7 @@ class Activity(db.Model):
     average_duration_per_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    score = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"
@@ -205,3 +205,14 @@ class ChallengePart(db.Model):
 
     def __repr__(self):
         return f"ChallengePart(#{self.order}: to {self.target} {self.distance} km)"
+
+
+class CyclistsChallengePart(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    target = db.Column(db.String(100), nullable=False)
+    distance = db.Column(db.Integer, nullable=False)
+    altitude = db.Column(db.Float, nullable=False)
+    cycle = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"CyclistChallengePart(to {self.target} {self.distance} km)"

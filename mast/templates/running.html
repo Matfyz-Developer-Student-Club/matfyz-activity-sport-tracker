@@ -1,25 +1,25 @@
 {% extends "main_layout_template.html" %}
-{% from "_pageable_tables.html" import render_personal_activities_time, render_best_users_time %}
+{% from "_pageable_tables.html" import render_personal_activities_score, render_best_users_score %}
 
 {% block content_page %}
     <div class="container mb-4">
         <div class="row-fluid">
             <div class="col-sm mb-4">
                 <h2>My Best Runs</h2>
-                {{ render_personal_activities_time() }}
+                {{ render_personal_activities_score('run') }}
             </div>
             <div class="col-sm mb-4">
                 <h2>Global Leaders</h2>
 
                 {% if position != 'none' %}
-                    <h6>Currently, you are on {{ position }} place in your category.</h6>
+                    <h6>With your total score of {{ total_score }} points, you are on {{ position }} place.</h6>
                 {% else %}
                     <h6>You have no activities in this competition.</h6>
                 {% endif %}
 
 
 
-                {{ render_best_users_time() }}
+                {{ render_best_users_score('run') }}
             </div>
         </div>
     </div>

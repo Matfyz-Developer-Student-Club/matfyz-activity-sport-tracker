@@ -1,0 +1,104 @@
+{% macro render_matfyz_challenge_combined_page() %}
+    <div class="container">
+        <div class="row">
+
+            <div class="col align-self-center">
+                <div class="table-responsive">
+                    <table class="table" style="justify-content: right">
+                        <caption>List of Matfyz Challenge Checkpoints - Combined</caption>
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Checkpoints</th>
+                            <th scope="col">Distance</th>
+                            <th scope="col">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for checkpoint in checkpoints %}
+                            <tr>
+                                <th scope="row">
+                                    {{ checkpoint.order }}.
+                                </th>
+                                <td>
+                                    {{ checkpoint.place }}
+                                </td>
+                                <td>
+                                    {{ checkpoint.dist }} km
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-info modalButton"
+                                            data-toggle="modal"
+                                            data-target="#modalDescription"
+                                            data-order="{{ checkpoint.order }}">Description
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalDescription" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Checkpoint Description</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="article-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro render_matfyz_challenges_cyclists_page() %}
+    <div class="container">
+        <div class="row">
+
+            <div class="col align-self-center">
+                <div class="table-responsive">
+                    <table class="table">
+                        <caption>List of Matfyz Challenge Checkpoints - Cyclists</caption>
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Checkpoints</th>
+                            <th scope="col">Distance</th>
+                            <th scope="col">Altitude</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for checkpoint in checkpoints %}
+                            <tr>
+                                <th scope="row">
+                                    {{ checkpoint.order }}.
+                                </th>
+                                <td>
+                                    {{ checkpoint.place }}
+                                </td>
+                                <td>
+                                    {{ checkpoint.dist }} km
+                                </td>
+                                <td>
+                                    {{ checkpoint.altitude }} mamsl
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

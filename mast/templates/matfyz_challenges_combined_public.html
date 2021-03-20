@@ -1,0 +1,40 @@
+{% extends "public_layout_template.html" %}
+{% from "macros/matfyz_challenges_macro.html" import render_matfyz_challenge_combined_page, render_matfyz_challenges_cyclists_page with context %}
+
+{% block content_page %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-xl-1"></div>
+            <main role="main" class="col col-xl-10 col-12 main">
+                <div style="display: flex; justify-content: space-between">
+                    <div>
+                        <h1>Matfyz Challenges</h1>
+                    </div>
+                    <div>
+                        <a class="btn btn-warning btn-flat" href="{{ url_for(route) }}">Switch view</a>
+                    </div>
+                </div>
+                {% if default %}
+                    <h2>Combined Disciplines</h2>
+                    <canvas class="my-4 w-100" id="myChart" width="900" height="220"></canvas>
+                    <script src="{{ url_for('static', filename='global_contest_combined.js', version=3) }}"></script>
+
+                    {{ render_matfyz_challenge_combined_page() }}
+
+
+                    <script src="{{ url_for('static', filename='global_contest.js') }}"></script>
+                {% else %}
+                    <h2>Cycling Disciplines</h2>
+
+                    <canvas class="my-4 w-100" id="myChart" width="900" height="220"
+                            style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none"></canvas>
+
+                    <script src="{{ url_for('static', filename='global_contest_cyclists.js') }}"></script>
+
+                    {{ render_matfyz_challenges_cyclists_page() }}
+                {% endif %}
+            </main>
+            <div class="col col-xl-1"></div>
+        </div>
+    </div>
+{% endblock content_page %}
