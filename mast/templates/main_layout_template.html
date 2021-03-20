@@ -74,12 +74,21 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a {% if title == 'Matfyz Challenges' %} class="nav-link activity-wrap active" {% else %}
+                        <a {% if title == 'Matfyz Challenges - Combined' %} class="nav-link activity-wrap active" {% else %}
                                                                 class="nav-link activity-wrap" {% endif %}
-                                                                href="{{ url_for( 'activities.matfyz_challenges') }}">
-                            <img src="{{ url_for('static', filename='pics/bar-chart-2.svg') }}"
+                                                                href="{{ url_for( 'activities.matfyz_challenges_combined') }}">
+                            <img src="{{ url_for('static', filename='pics/contest.svg') }}"
                                  alt="Global Statistics" width="16" height="16">
-                            Matfyz Challenges
+                            Matfyz Challenges - Combined
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a {% if title == 'Matfyz Challenges - Cyclists' %} class="nav-link activity-wrap active" {% else %}
+                                                                class="nav-link activity-wrap" {% endif %}
+                                                                href="{{ url_for( 'activities.matfyz_challenges_cyclist') }}">
+                            <img src="{{ url_for('static', filename='pics/trophy-cyclo.svg') }}"
+                                 alt="Global Statistics" width="16" height="16">
+                            Matfyz Challenges - Cyclists
                         </a>
                     </li>
                     <li class="nav-item">

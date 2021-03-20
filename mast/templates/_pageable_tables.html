@@ -30,8 +30,18 @@
     {% endcall %}
 {% endmacro %}
 
+<!-- Render a table with personal activities for score -->
+{% macro render_personal_activities_score(type) %}
+    {% call render_pageable_table('personal_activities_score_' + type,
+                                  url_for('views.get_personal_activities_score', type=type)) %}
+        <th data-field="datetime">Date</th>
+        <th data-field="distance">Distance</th>
+        <th data-field="score">Score</th>
+    {% endcall %}
+{% endmacro %}
+
 <!-- Render a table with best users with activities for time -->
-{% macro render_best_users_time() %}
+{% macro render_best_users_time(distance) %}
     {% call render_pageable_table('best_users_time',
                                   url_for('views.get_best_users_time')) %}
         <th data-field="order">#</th>
@@ -50,6 +60,16 @@
         <th data-field="order">#</th>
         <th data-field="name">Name</th>
         <th data-field="distance">Distance</th>
+    {% endcall %}
+{% endmacro %}
+
+<!-- Render a table with best users with activities for score -->
+{% macro render_best_users_score(type) %}
+    {% call render_pageable_table('best_users_score_' + type,
+                                  url_for('views.get_best_users_score', type=type)) %}
+        <th data-field="order">#</th>
+        <th data-field="name">Name</th>
+        <th data-field="distance">Score</th>
     {% endcall %}
 {% endmacro %}
 
