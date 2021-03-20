@@ -1,21 +1,21 @@
 {% extends "main_layout_template.html" %}
-{% from "_pageable_tables.html" import render_personal_activities_distance, render_best_users_distace %}
+{% from "_pageable_tables.html" import render_personal_activities_score, render_best_users_score %}
 
 {% block content_page %}
     <div class="container mb-4">
         <div class="row-fluid">
             <div class="col-sm mb-4">
                 <h2>My Last Rides</h2>
-                {{ render_personal_activities_distance('bike') }}
+                {{ render_personal_activities_score('ride') }}
             </div>
             <div class="col-sm mb-4">
                 <h2>Global Leaders</h2>
                 {% if position != 'none' %}
-                    <h6>With your total distance of {{ total_distance }} km, you are on {{ position }} place.</h6>
+                    <h6>With your total score of {{ total_score }} points, you are on {{ position }} place.</h6>
                 {% else %}
                     <h6>You have no activities in this competition.</h6>
                 {% endif %}
-                {{ render_best_users_distace('bike') }}
+                {{ render_best_users_score('ride') }}
             </div>
         </div>
     </div>

@@ -1,0 +1,12 @@
+{% extends "main_layout_template.html" %}
+{% from "macros/matfyz_challenges_macro.html" import render_matfyz_challenge_combined_page with context %}
+{% block content_page %}
+    <canvas class="my-4 w-100" id="myChart" width="900" height="220"></canvas>
+    <script src="{{ url_for('static', filename='global_contest_combined.js', version=3) }}"></script>
+
+    {{ render_matfyz_challenge_combined_page() }}
+
+    <script src="{{ url_for('static', filename='global_contest.js') }}">
+
+    </script>
+{% endblock content_page %}

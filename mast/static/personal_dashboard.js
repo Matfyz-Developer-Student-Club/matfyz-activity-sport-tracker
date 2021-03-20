@@ -60,7 +60,7 @@ jQuery(document).ready(function () {
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true,
-                                callback: function (value) { return value + ' km'; }
+                                callback: function (value) { return Math.round((value + Number.EPSILON) * 100) / 100 + ' km'; }
                             }
                         }]
                     }
