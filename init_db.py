@@ -188,21 +188,17 @@ def test_data():
     db.session.add(activity)
 
     activity = Activity(datetime=datetime(2020, 11, 5, 18, 12, 15), distance=10, duration=time(0, 18, 40),
-<<<<<<< HEAD
 
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Run, user_id=user.id, strava_id=1)
     db.session.add(activity)
 
     activity = Activity(datetime=datetime(2020, 11, 7, 18, 12, 15), distance=10, duration=time(0, 18, 40),
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Ride, user_id=user.id, strava_id=1)
-=======
-                        average_duration_per_km=time(0, 1, 52), type=ActivityType.Walk, user_id=user.id)
     db.session.add(activity)
 
     activity = Activity(datetime=datetime(2020, 11, 7, 18, 12, 15), distance=10, duration=time(0, 18, 40),
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.InlineSkate, user_id=user.id)
     db.session.add(activity)
->>>>>>> Finalizing views and contest logic for the Release.
 
     activity = Activity(datetime=datetime(2020, 11, 8, 18, 12, 15), distance=15, duration=time(0, 28, 0),
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Ride, user_id=user.id, strava_id=1)
@@ -210,10 +206,6 @@ def test_data():
 
     activity = Activity(datetime=datetime(2020, 11, 8, 18, 12, 15), distance=17, duration=time(0, 28, 0),
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Run, user_id=user.id, strava_id=1)
-    db.session.add(activity)
-
-    activity = Activity(datetime=datetime(2020, 11, 8, 18, 12, 15), distance=17, duration=time(0, 28, 0),
-                        average_duration_per_km=time(0, 1, 52), type=ActivityType.Run, user_id=user.id)
     db.session.add(activity)
 
     user = User(email='a@b.com', password='')
@@ -225,21 +217,12 @@ def test_data():
     db.session.add(activity)
 
     activity = Activity(datetime=datetime(2020, 11, 5, 18, 12, 15), distance=8, duration=time(0, 8, 0),
-<<<<<<< HEAD
-
                         average_duration_per_km=time(0, 1, 0), type=ActivityType.Run, user_id=user.id, strava_id=1)
     db.session.add(activity)
 
     activity = Activity(datetime=datetime(2020, 11, 7, 18, 12, 15), distance=5, duration=time(0, 18, 40),
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Ride, user_id=user.id, strava_id=1)
 
-=======
-                        average_duration_per_km=time(0, 1, 0), type=ActivityType.Walk, user_id=user.id)
-    db.session.add(activity)
-
-    activity = Activity(datetime=datetime(2020, 11, 7, 18, 12, 15), distance=5, duration=time(0, 18, 40),
-                        average_duration_per_km=time(0, 1, 52), type=ActivityType.InlineSkate, user_id=user.id)
->>>>>>> Finalizing views and contest logic for the Release.
     db.session.add(activity)
 
     activity = Activity(datetime=datetime(2020, 11, 8, 18, 12, 15), distance=18, duration=time(0, 28, 0),
