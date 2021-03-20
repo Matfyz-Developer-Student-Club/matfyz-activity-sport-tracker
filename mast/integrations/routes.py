@@ -2,8 +2,9 @@ import mast
 import requests
 from flask import Response, redirect, request, render_template, url_for, Blueprint, flash, jsonify
 from flask_login import current_user, login_required
+from flask import current_app
+from mast.integrations.utils import check_strava_permissions, save_strava_tokens, process_strava_webhook
 from mast.session import Session
-from mast.integrations.utils import *
 from mast.session import Session
 import logging
 from mast import csrf
@@ -18,10 +19,10 @@ BASE_URL = 'http://mathletics-test.ks.matfyz.cz'
 @integrations.route('/strava/init', methods=['GET'])
 @login_required
 def strava_init():
-    scope = ','.join(STRAVA_SCOPE)
+    scope = ','.join(current_app.config['STRAVA_SCOPE'])
     redirect_uri = BASE_URL + url_for('integrations.strava_auth')
     logging.info(f"******** REDIRECT URI {redirect_uri} *******")
-    return redirect(f"http://www.strava.com/oauth/authorize?client_id={STRAVA_CLIENT_ID}&response_type=code&redirect_uri={redirect_uri}&approval_prompt=force&scope={scope}")
+    return redirect(f"http://www.strava.com/oauth/authorize?client_id={current_app.config['STRAVA_CLIENT_ID']}&response_type=code&redirect_uri={redirect_uri}&approval_prompt=force&scope={scope}")
 
 
 @integrations.route('/strava/auth', methods=['GET'])
@@ -48,14 +49,9 @@ def strava_webhook():
     """
         https://developers.strava.com/docs/webhooks
     """
-    #data = request.args.get('hub.challenge')
     logging.info(request.get_json())
-    #return jsonify({'hub.challenge': data})
     data = request.get_json()
 
-    # process webhook
+    # Process webhook
     process_strava_webhook(data)
     return Response(status=200)
-    
-    #request_data = request.args.get('hub.challenge')
-    #return Response({'hub.challenge': request_data}, status=200, mimetype='application/json')

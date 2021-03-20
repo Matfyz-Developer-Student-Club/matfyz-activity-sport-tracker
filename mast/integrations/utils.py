@@ -1,73 +1,40 @@
 import json
 import logging
 import requests
+from flask import current_app
 from flask_login import current_user
 from datetime import time, datetime
 from mast.queries import Queries
 from mast.models import  Activity, ActivityType, Sex, User
-#from mast.tools.points import Points
+# TODO: from mast.tools.points import Points
 
 strava_logger = logging.getLogger('STRAVA')
-
-# TODO: change these in the production since they are already public
-STRAVA_CLIENT_ID = 61623
-STRAVA_CLIENT_SECRET = '71af3bcd89c9a583607db1a383e36f8c1cf6790a'
-STRAVA_SCOPE = ['activity:read']
-STRAVA_EXPIRE_RESERVE = 1000
 
 
 def check_strava_permissions(scope):
     given_scopes = scope.split(',')
-    for requested in STRAVA_SCOPE:
+    for requested in current_app.config['STRAVA_SCOPE']:
         if requested not in given_scopes:
             return False
     return True
 
 
 def save_strava_tokens(auth_code):
+    ''' Acquire authentication and refresh token as well as info about an athlete with an authentication code.
+    '''
+
     url = 'https://www.strava.com/oauth/token'
     data = {
-        'client_id': STRAVA_CLIENT_ID,
-        'client_secret': STRAVA_CLIENT_SECRET,
+        'client_id': current_app.config['STRAVA_CLIENT_ID'],
+        'client_secret': current_app.config['STRAVA_CLIENT_SECRET'],
         'code': auth_code,
         'grant_type': 'authorization_code'
     }
     response = requests.post(url, data=data)
     response_data = json.loads(response.text)
 
-    strava_logger.info(
-        json.dumps(response_data, indent=4))  # this is JSON containing access and refresh token as well as athlete info
-    '''
-    INFO:root:{
-        "token_type": "Bearer",
-        "expires_at": 1615131642,
-        "expires_in": 21363,
-        "refresh_token": "226b0fc8f844e4e8ebef13ca5aee36d21039746c",
-        "access_token": "f889f917b27823a54ce7b6186e7c397e02b5247e",
-        "athlete": {
-            "id": 77482880,
-            "username": "drozdkt",
-            "resource_state": 2,
-            "firstname": "Tom\u00e1\u0161",
-            "lastname": "Drozd\u00edk",
-            "bio": null,
-            "city": null,
-            "state": null,
-            "country": null,
-            "sex": "M",
-            "premium": false,
-            "summit": false,
-            "created_at": "2021-01-31T17:33:25Z",
-            "updated_at": "2021-02-08T17:05:17Z",
-            "badge_type_id": 0,
-            "weight": 0.0,
-            "profile_medium": "https://lh3.googleusercontent.com/-aW_D6lEIPks/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuckvXZa5BpjtkjbodCd6tkLjqrcuQA/s96-c/photo.jpg",
-            "profile": "https://lh3.googleusercontent.com/-aW_D6lEIPks/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuckvXZa5BpjtkjbodCd6tkLjqrcuQA/s96-c/photo.jpg",
-            "friend": null,
-            "follower": null
-        }
-    }
-    '''
+    # This is JSON containing access and refresh token as well as athlete info
+    strava_logger.info( json.dumps(response_data, indent=4))
 
     current_user.strava_id = response_data["athlete"]["id"]
     current_user.strava_refresh_token = response_data["refresh_token"]
@@ -94,8 +61,8 @@ def refresh_access_token(user:User):
     '''
     url = 'https://www.strava.com/api/v3/oauth/token'
     data = {
-        'client_id': STRAVA_CLIENT_ID,
-        'client_secret': STRAVA_CLIENT_SECRET,
+        'client_id': current_app.config['STRAVA_CLIENT_ID'],
+        'client_secret': current_app.config['STRAVA_CLIENT_SECRET'],
         'grant_type': 'refresh_token',
         'refresh_token': user.strava_refresh_token
     }
@@ -237,7 +204,7 @@ def process_strava_webhook(data: dict):
         return
 
     # Check whether the access token for given user already expired with some reserve, if it did then refresh tokens
-    if user.strava_expires_at - STRAVA_EXPIRE_RESERVE > time():
+    if user.strava_expires_at - current_app.config['STRAVA_EXPIRE_RESERVE'] > time():
         refresh_access_token(user)
 
     # Process incomming webhook based on object type
@@ -366,11 +333,12 @@ def _get_score(distance:float , elevation:float, pace:time, user:User, activity_
     :param activity_type: ActivityType
     :return: integer of score
     """
-    # TODO: UPDATE when new activity is introduced
     return 0
+
     # TODO: uncomment when Points are introduced
     #point = Points()
-
+    #
+    # UPDATE when new activity is introduced
     #function_mapping = {
     #    ActivityType.Run: point.get_run_activity_points,
     #    ActivityType.Walk: point.get_walk_activity_points,
