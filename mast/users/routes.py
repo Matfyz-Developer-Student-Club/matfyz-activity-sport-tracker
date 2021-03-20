@@ -128,6 +128,7 @@ def user_settings():
     update_profile_form.shirt_size.data = current_user.shirt_size or None
     update_profile_form.user_type.data = current_user.type.value if current_user.type else None
     update_profile_form.competing.data = current_user.anonymous or None
+    update_profile_form.study_field.data = current_user.field_of_study or None
 
     return render_template("user_settings.html", title='User Settings',
                            profile=current_user,
