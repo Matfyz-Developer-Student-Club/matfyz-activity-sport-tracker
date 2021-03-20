@@ -512,6 +512,22 @@ class Queries(object):
             result.append(item)
         return result
 
+
+    def _get_user_total_score_for_activity(self, activity_type: ActivityType, user_id: int) -> int:
+        return Activity.query(func.sum(Activity.score)).filter_by(user_id=user_id, type=activity_type).first()
+
+    def get_user_total_points_for_ride(self, user_id: int) -> int:
+        return self._get_user_total_score_for_activity(ActivityType.Ride, user_id)
+
+    def get_user_total_points_for_walk(self, user_id: int) -> int:
+        return self._get_user_total_score_for_activity(ActivityType.Walk, user_id)
+
+    def get_user_total_points_for_inline(self, user_id: int) -> int:
+        return self._get_user_total_score_for_activity(ActivityType.InlineSkate, user_id)
+
+    def get_user_total_points_for_run(self, user_id: int) -> int:
+        return self._get_user_total_score_for_activity(ActivityType.Run, user_id)
+      
     def get_user_by_strava_id(self, strava_id):
         """
         Gets list of access tokens for strava of user with strava_id
