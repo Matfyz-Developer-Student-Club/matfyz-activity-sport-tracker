@@ -1,8 +1,10 @@
 {% extends "main_layout_template.html" %}
+
 {% from "_formhelpers.html" import render_text_field, render_inline_radio_field, render_checkbox_field, render_submit_button with context %}
 {% from "_pageable_tables.html" import render_personal_activities with context %}
 
 {% block content_page %}
+
     <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h2>Personal Dashboard</h2>
         <h3><span class="badge badge-light">{{ season['title'] }}</span></h3>

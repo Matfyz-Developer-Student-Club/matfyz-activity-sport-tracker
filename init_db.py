@@ -203,6 +203,10 @@ def test_data():
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Run, user_id=user.id, strava_id=1)
     db.session.add(activity)
 
+    activity = Activity(datetime=datetime(2020, 11, 8, 18, 12, 15), distance=17, duration=time(0, 28, 0),
+                        average_duration_per_km=time(0, 1, 52), type=ActivityType.Run, user_id=user.id, strava_id=1)
+    db.session.add(activity)
+
     user = User(email='a@b.com', password='')
     user.complete_profile(first_name='Joe', last_name='Biden', sex='male',
                           shirt_size='L', user_type='student', ukco='', anonymous=False, study_field=StudyField.Inf)
@@ -218,8 +222,6 @@ def test_data():
 
     activity = Activity(datetime=datetime(2020, 11, 7, 18, 12, 15), distance=5, duration=time(0, 18, 40),
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Ride, user_id=user.id, strava_id=1)
-
-    db.session.add(activity)
 
     activity = Activity(datetime=datetime(2020, 11, 8, 18, 12, 15), distance=18, duration=time(0, 28, 0),
                         average_duration_per_km=time(0, 1, 52), type=ActivityType.Ride, user_id=user.id, strava_id=1)

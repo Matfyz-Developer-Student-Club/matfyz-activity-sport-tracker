@@ -136,9 +136,14 @@ landing
 # DB
 *.db
 
+<<<<<<< HEAD
 # Docker configuration
 .env.dev
 .env.prod
+=======
+.env.prod
+.env.dev
+>>>>>>> 730d8aca6a2833b83d977494da47ec08001f5ad9
 .env.prod.db
 
 *.cfg
