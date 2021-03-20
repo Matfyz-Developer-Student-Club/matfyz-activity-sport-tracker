@@ -31,9 +31,12 @@ def about_competitions():
 @main.route('/integrations')
 @login_required
 def integrations():
+    db_query = Queries()
     session_data = Session()
     check_profile_verified(session_data)
-    return render_template("integrations.html", title='Integrations', session_data=session_data)
+    favorite_activities = db_query.get_user_favorite_activity(current_user.id)
+    return render_template("integrations.html", title='Integrations', session_data=session_data,
+                           favorite_activities=favorite_activities)
 
 
 @main.route("/statistics")
@@ -51,7 +54,7 @@ def display_credits():
     else:
         form = CreditsForm(request.form)
         if form.validate_on_submit():
-            if form.password.data == 'KTV2020': #TODO: Obsoleted
+            if form.password.data == 'KTV2020':  # TODO: Obsoleted
                 db_query = Queries(credit=True)
                 students = db_query.get_students()
                 return render_template('credits.html', title='Credits', authorized=True, students=students)

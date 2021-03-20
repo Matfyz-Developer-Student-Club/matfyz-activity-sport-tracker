@@ -1,8 +1,66 @@
 {% extends "main_layout_template.html" %}
+{% from "macros/_flash.html" import render_flash %}
+
+
 {% block content_page %}
-    <div class="container">
-            <div class="alert alert-primary mt-2 w-100 text-center" role="alert">
-                We working on it.. Stay tuned!
+    <h1 class="h2 mt-2">Integrations - STRAVA</h1>
+    <hr>
+    {#    <div class="container">#}
+    {{ render_flash() }}
+
+    <div class="row justify-content-left mt-5 w-100">
+        {{ render_flash() }}
+        {% if current_user.strava_id %}
+            <div class="col-md-6 order-md-1 my-auto shadow-lg p-3 mb-5 bg-white rounded"
+                 style="display: flex; overflow: auto">
+                <div id="user_card" class="col-md-4 align-self-center">
+                    <div class="card border-info mb-3">
+                        <img class="card-img-top mt-4"
+                                {# TODO: Add URI to Strava profile picture #}
+                             src="{{ url_for('static', filename='pics/default_avatar.svg') }}"
+                             alt="Avatar image" width="200"
+                             height="200">
+                        <div class="card-body">
+                            <h4 class="card-text">{{ current_user.display_name }}</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 w-100"
+                     style="display: flex; flex-direction: column">
+                    <h4>
+                        <span class="badge badge-pill badge-warning">STRAVA USER</span>
+                        {% if current_user.competing %}
+                            <span class="badge badge-pill badge-success">COMPETING - YES</span>
+                        {% else %}
+                            <span class="badge badge-pill badge-danger">COMPETING - NO</span>
+                        {% endif %}
+                    </h4>
+                    <div style="display: flex; justify-content: space-between;" class="mt-4">
+                        <div style="display: grid">
+                            <h5>Username:</h5>
+                            <h5>E-mail:</h5>
+                            <h5>Favorite activity:</h5>
+                            <h5>Score:</h5>
+                        </div>
+                        <div style="display: grid;">
+                            <h5>{{ current_user.first_name }} {% if current_user.display_name != None %}
+                                {{ '"' + current_user.display_name + '"' }}{% endif %} {{ current_user.last_name }}</h5>
+                            <h5>{{ current_user.email }}</h5>
+                            <h5>{% if favorite_activities %} {{ favorite_activities }} {% else %} No activity posted yet. {% endif %}</h5>
+                            {# TODO: Add once implemented support for activity points #}
+                            <h5>TODO</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
-    </div>
+
+            </div>
+        {% else %}
+            <form action="{{ url_for( 'integrations.strava_init' ) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+                <input class="btn btn-outline-dark" type="submit" value="STRAVA"/>
+            </form>
+
+        {% endif %}
+    {#    </div>#}
 {% endblock content_page %}
