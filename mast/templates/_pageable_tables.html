@@ -2,8 +2,7 @@
 {% macro render_personal_activities() %}
     {% call render_pageable_table('personal_activities', url_for('views.get_personal_activities')) %}
         <th data-field="datetime">Date</th>
-        <th data-field="distance">Distance</th>
-        <th data-field="duration">Duration</th>
+        <th data-field="score">Score</th>
         <th data-field="type">Type of activity</th>
     {% endcall %}
 {% endmacro %}

@@ -73,57 +73,15 @@ def display_credits():
 def home():
     session_data = Session()
     db_query = Queries(credit=True)
-    add_activity_form = AddActivityForm()
-    if add_activity_form.validate_on_submit():
-        filename = secure_filename(add_activity_form.file.data.filename)
-        path = os.path.join(__file__, os.pardir)
-        add_activity_form.file.data.save(os.path.join(
-            os.path.abspath(path), current_app.config['UPLOAD_FILE_DIR'], filename))
-
-        if add_activity_form.activity.data == ActivityType.Ride.name:
-            a_type = ActivityType.Ride
-        elif add_activity_form.activity.data == ActivityType.Run.name:
-            a_type = ActivityType.Run
-        else:
-            a_type = ActivityType.Walk
-
-        activity = current_app.config['PROCESSOR'].process_input_data(filename)
-        current_app.config['PROCESSOR'].landing_cleanup(filename)
-        distance = activity[0]
-        seconds = activity[1].total_seconds()
-        start_time = activity[2]
-
-        if distance == 0:
-            session_data.warning('Activity of zero distance ignored.')
-        elif start_time is None:
-            if a_type == ActivityType.Run:
-                a_type = ActivityType.Walk
-            start_time = datetime.datetime.now().replace(microsecond=0)
-            full_time = datetime.time()
-            avg_time = datetime.time()
-            new_activity = Activity(datetime=start_time, distance=distance, duration=full_time,
-                                    average_duration_per_km=avg_time, type=a_type)
-            db_query.save_new_user_activities(current_user.id, new_activity)
-            session_data.info(str(a_type) + ' activity of ' + str(distance) + ' km added.')
-        else:
-            avg_seconds = round(seconds / distance)
-            full_time = (datetime.datetime(2000, 1, 1, 0) + datetime.timedelta(seconds=seconds)).time()
-            avg_time = (datetime.datetime(2000, 1, 1, 0) + datetime.timedelta(seconds=avg_seconds)).time()
-            new_activity = Activity(datetime=start_time, distance=distance, duration=full_time,
-                                    average_duration_per_km=avg_time, type=a_type)
-            db_query.save_new_user_activities(current_user.id, new_activity)
-            session_data.info(str(a_type) + ' activity of ' + str(distance) + ' km added.')
-
-        return redirect(url_for('main.home'))
 
     check_profile_verified(session_data)
-    total_foot = db_query.get_total_distance_by_user_on_foot(current_user.id) or 0
-    total_bike = db_query.get_total_distance_by_user_on_bike(current_user.id) or 0
-    total_credit = None
-    if current_user.type == UserType.Student:
-        total_credit = round(total_foot + total_bike / 2, 2)
+    total_run_score = db_query.get_total_score_by_user_for_run(current_user.id) or 0
+    total_walk_score = db_query.get_total_score_by_user_for_walk(current_user.id) or 0
+    total_inline_score = db_query.get_total_score_by_user_for_inline(current_user.id) or 0
+    total_ride_score = db_query.get_total_score_by_user_for_ride(current_user.id) or 0
 
-    return render_template("personal_dashboard.html", title='Home', form=add_activity_form,
-                           total_foot=total_foot, total_bike=total_bike, total_credit=total_credit,
+    return render_template("personal_dashboard.html", title='Home',
+                           total_run_score=total_run_score, total_walk_score=total_walk_score,
+                           total_inline_score=total_inline_score, total_ride_score=total_ride_score,
                            season=db_query.SEASON_COMPETITION, season_credit=db_query.SEASON_CREDIT,
                            session_data=session_data)

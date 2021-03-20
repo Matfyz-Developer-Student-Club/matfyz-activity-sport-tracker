@@ -530,11 +530,8 @@ class Queries(object):
                    join(User.activities). \
                    filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                           func.date(Activity.datetime) <= self.SEASON.end_date,
-                          Activity.type.in_(activity_types)). \
+                          Activity.type.in_(activity_types), User.verified). \
                    scalar() or 0
-
-    # Add back condition on ,
-    #                           User.verified
 
     def get_global_total_score_for_walk(self) -> int:
         return self._get_global_total_score(ActivityType.Walk)
@@ -753,7 +750,6 @@ class Queries(object):
             result.append(item)
         return result
 
-
     def _get_user_total_score_for_activity(self, activity_type: ActivityType, user_id: int) -> int:
         return Activity.query(func.sum(Activity.score)).filter_by(user_id=user_id, type=activity_type).first()
 
@@ -768,7 +764,7 @@ class Queries(object):
 
     def get_user_total_points_for_run(self, user_id: int) -> int:
         return self._get_user_total_score_for_activity(ActivityType.Run, user_id)
-      
+
     def get_user_by_strava_id(self, strava_id):
         """
         Gets list of access tokens for strava of user with strava_id
