@@ -17,6 +17,12 @@ login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 
 
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.INFO,
+    datefmt='%Y-%m-%d %H:%M:%S')
+
+
 def create_app(configuration=Config):
     app = Flask(__name__)
     app.config.from_object(configuration)
@@ -41,10 +47,12 @@ def create_app(configuration=Config):
     from mast.activities.routes import activities
     from mast.main.routes import main
     from mast.views.routes import views
+    from mast.integrations.routes import integrations
 
     app.register_blueprint(users)
     app.register_blueprint(activities)
     app.register_blueprint(main)
     app.register_blueprint(views)
+    app.register_blueprint(integrations)
 
     return app

@@ -48,6 +48,7 @@ class ActivityType(Enum):
     Walk = 1
     Run = 2
     Ride = 3
+    InlineSkate = 4
 
     def __repr__(self):
         return self.name
@@ -83,6 +84,11 @@ class User(db.Model, UserMixin):
     shirt_size = db.Column(db.String(100))
     competing = db.Column(db.Boolean, nullable=False, default=True)
     activities = db.relationship('Activity', backref='user', lazy=True)
+    strava_id = db.Column(db.String(20))
+    strava_access_token = db.Column(db.String(40))
+    strava_refresh_token = db.Column(db.String(40))
+    strava_expires_at = db.Column(db.Integer)
+    avatar = db.Column(db.String(255), default='static/pics/default_avatar.svg')
 
     def get_reset_token(self, expires_sec=1800):
         serializer = Serializer(current_app.config['SECRET_KEY'], expires_sec)
@@ -114,11 +120,11 @@ class User(db.Model, UserMixin):
         return self.display()
 
     def is_completed(self):
-        return self.first_name is not None and\
-               self.last_name is not None and\
-               self.sex is not None and\
-               self.age is not None and\
-               self.type is not None and\
+        return self.first_name is not None and \
+               self.last_name is not None and \
+               self.sex is not None and \
+               self.age is not None and \
+               self.type is not None and \
                self.uk_id is not None
 
     def display(self):
@@ -172,6 +178,23 @@ class User(db.Model, UserMixin):
         db.session.add(self)
         db.session.commit()
 
+    def strava_init(self, id, access_token, refresh_token):
+        assert (id is not None and
+                access_token is not None and
+                refresh_token is not None)
+        self.strava_id = id
+        self.strava_access_token = access_token
+        self.strava_refresh_token = refresh_token
+        db.session.add(self)
+        db.session.commit()
+
+    def strava_update_access_token(self, access_token):
+        assert (self.strava_refresh_token is not None)
+        assert (access_token is not None)
+        self.strava_access_token = access_token
+        db.session.add(self)
+        db.session.commit()
+
 
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -181,6 +204,10 @@ class Activity(db.Model):
     average_duration_per_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(30), nullable=False, default='activity')
+    elevation = db.Column(db.Float, nullable=False, default=0.0)
+    strava_id = db.Column(db.Integer, nullable=False)
+    score = db.Column(db.Integer, nullable= False, default=0)
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"
