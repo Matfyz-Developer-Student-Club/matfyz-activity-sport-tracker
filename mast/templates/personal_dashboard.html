@@ -27,14 +27,30 @@
         and {{ season['end_date'].strftime('%B %d, %Y') }} are considered for competitions and challenges.
     </h6>
     <h6>
-        For points for Optional Physical Education, we count all activities till the end of semester,
-        i.e. {{ season_credit['end_date'].strftime('%B %d, %Y') }}.
-    </h6>
-    <h6>
-        You have made {{ total_foot }} km on foot and {{ total_bike }} km on bike.
-        {% if total_credit != None %}
-            That makes {{ total_credit }} points for Optional Physical Education.
+        {% if total_run_score or total_inline_score or total_ride_score or total_walk_score %}
+            You have made:
         {% endif %}
+
+        {% if total_run_score %}
+            <br>
+            - {{ total_run_score }} points for running.
+        {% endif %}
+        {% if total_walk_score %}
+            <br>
+            - {{ total_walk_score }} points for walking.
+        {% endif %}
+        {% if total_ride_score %}
+            <br>
+            - {{ total_ride_score }} points for cycling.
+        {% endif %}
+        {% if total_inline_score %}
+            <br>
+            - {{ total_inline_score }} points for inline skating.
+        {% endif %}
+        {% if not (total_run_score or total_walk_score or total_ride_score or total_inline_score) %}
+            - No activity posted yet.
+        {% endif %}
+
     </h6>
     {{ render_personal_activities() }}
 {% endblock content_page %}
