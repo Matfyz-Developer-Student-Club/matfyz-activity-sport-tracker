@@ -1,5 +1,6 @@
 {% extends "public_layout_template.html" %}
 {% from "macros/form_macros.html" import create_login_form with context %}
+{% from "macros/_flash.html" import render_flash %}
 
 {% block content_page %}
     <!-- login part of the page -->
@@ -8,15 +9,7 @@
             <div class="row justify-content-center align-middle">
                 <div class="col-5 text-center">
                     <h1 class="display-1">Mathletics</h1>
-                    {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                            {% for message in messages %}
-                            <div class="alert alert-success" role="alert">
-                                {{ message }}
-                            </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
+                    {{ render_flash() }}
                     <form class="form-group" method="POST">
 
                         {{ create_login_form(form) }}

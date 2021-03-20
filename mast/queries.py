@@ -2,6 +2,7 @@ from mast import db
 from mast.models import User, Sex, Age, UserType, Activity, ActivityType, Competition, Season, ChallengePart
 from sqlalchemy.sql import asc, func
 import datetime as dt
+from typing import Optional
 
 
 class Queries(object):
@@ -511,6 +512,7 @@ class Queries(object):
             result.append(item)
         return result
 
+
     def _get_user_total_score_for_activity(self, activity_type: ActivityType, user_id: int) -> int:
         return Activity.query(func.sum(Activity.score)).filter_by(user_id=user_id, type=activity_type).first()
 
@@ -525,3 +527,41 @@ class Queries(object):
 
     def get_user_total_points_for_run(self, user_id: int) -> int:
         return self._get_user_total_score_for_activity(ActivityType.Run, user_id)
+      
+    def get_user_by_strava_id(self, strava_id):
+        """
+        Gets list of access tokens for strava of user with strava_id
+        :param strava_id: strava id of a user
+        :return: number of results and list of strava access tokens (result should always be only 1)
+        """
+        query = db.session.query(User). \
+            filter(User.strava_id == strava_id)
+
+        return query.all()
+
+    def delete_activity_by_strava_id(self, strava_id):
+        db.session.query(Activity). \
+            filter(Activity.strava_id == strava_id) \
+            .delete()
+
+    def update_activity_info(self, strava_id: int, info_to_update: dict):
+        db.session.query(Activity). \
+            filter(Activity.strava_id == strava_id). \
+            update(info_to_update, synchronize_session=False)
+
+    def get_user_favorite_activity(self, user_id: int) -> Optional[str]:
+        """
+            This method aims to provide list of user favorite activities, based
+            on the count of the activity recurrence.
+        :param user_id: Current user id
+        :return: List of most performed activity types performed by the user
+        """
+        activity_counts = Activity.query.filter(Activity.user_id == user_id).with_entities(Activity.type, func.count(
+            Activity.type)).group_by(Activity.type).all()
+
+        if activity_counts:
+            sorted(activity_counts, key=lambda x: x[1])
+            local_max = max(([x[1] for x in activity_counts]))
+
+            return ", ".join([str(act[0]) for act in activity_counts if act[1] == local_max])
+        return None
