@@ -18,5 +18,5 @@ class Config:
     STRAVA_CLIENT_SECRET = os.getenv('STRAVA_CLIENT_ID')
     STRAVA_SCOPE = ['activity:read']
     STRAVA_EXPIRE_RESERVE = 1000
-    #TODO: not working on local with this field
-    #SERVER_NAME = 'mathletics-test.ks.matfyz.cz'
+    # TODO: not working on local with this field
+    # SERVER_NAME = 'mathletics-test.ks.matfyz.cz'
