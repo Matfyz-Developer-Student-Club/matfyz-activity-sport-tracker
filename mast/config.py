@@ -20,3 +20,4 @@ class Config:
     STRAVA_EXPIRE_RESERVE = 1000
     # TODO: not working on local with this field
     # SERVER_NAME = 'mathletics-test.ks.matfyz.cz'
+    
