@@ -5,8 +5,9 @@ from flask import current_app
 from flask_login import current_user
 from datetime import time, datetime
 from mast.queries import Queries
-from mast.models import  Activity, ActivityType, Sex, User
-# TODO: from mast.tools.points import Points
+from mast.models import Activity, ActivityType, Sex, User
+from mast.tools.points import Points
+from mast import db
 
 strava_logger = logging.getLogger('STRAVA')
 
@@ -39,7 +40,8 @@ def save_strava_tokens(auth_code):
     current_user.strava_id = response_data["athlete"]["id"]
     current_user.strava_refresh_token = response_data["refresh_token"]
     current_user.strava_access_token = response_data["access_token"]
-
+    db.session.add(current_user)
+    db.session.commit()
 
 def refresh_access_token(user:User):
     '''
@@ -75,7 +77,6 @@ def refresh_access_token(user:User):
     user.strava_access_token = response_data['access_token']
     user.strava_refresh_token = response_data['refresh_token']
     user.strava_expires_at = int(response_data['expires_at'])
-
 
 def get_athlete(access_token):
     '''
