@@ -15,8 +15,8 @@ class Config:
     MAIL_USERNAME = os.getenv('EMAIL_USER')
     MAIL_PASSWORD = os.getenv('EMAIL_PASS')
     STRAVA_CLIENT_ID = os.getenv('STRAVA_CLIENT_ID')
-    STRAVA_CLIENT_SECRET = os.getenv('STRAVA_CLIENT_ID')
+    STRAVA_CLIENT_SECRET = os.getenv('STRAVA_CLIENT_SECRET')
     STRAVA_SCOPE = ['activity:read']
     STRAVA_EXPIRE_RESERVE = 1000
     #TODO: not working on local with this field
-    #SERVER_NAME = 'mathletics-test.ks.matfyz.cz'
+    SERVER_NAME = 'mathletics-test.ks.matfyz.cz'

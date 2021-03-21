@@ -114,7 +114,6 @@ class User(db.Model, UserMixin):
         return self.first_name is not None and \
                self.last_name is not None and \
                self.sex is not None and \
-               self.age is not None and \
                self.type is not None and \
                self.uk_id is not None
 
