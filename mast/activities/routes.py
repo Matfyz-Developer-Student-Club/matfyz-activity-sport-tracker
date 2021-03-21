@@ -66,23 +66,10 @@ def running():
     session_data = Session()
     check_profile_verified(session_data)
     db_query = Queries()
-<<<<<<< HEAD
-<<<<<<< HEAD
     position = db_query.get_score_position_for_run(current_user.id)
     total_score = db_query.get_total_score_by_user_for_run(current_user.id)
     return render_template("running.html", title="Running",
                            position=ordinal(position), session_data=session_data, total_score=total_score)
-=======
-    position = db_query.get_position_best_run(current_user.id)
-    return render_template("running.html", title="Running",
-                           position=ordinal(position), session_data=session_data)
->>>>>>> Adding inline view and route. Adjustment of data model.
-=======
-    position = db_query.get_score_position_for_run(current_user.id)
-    total_score = db_query.get_total_score_by_user_for_run(current_user.id)
-    return render_template("running.html", title="Running",
-                           position=ordinal(position), session_data=session_data, total_score=total_score)
->>>>>>> Finalizing views and contest logic for the Release.
 
 
 @activities.route('/walking')
@@ -91,24 +78,10 @@ def walking():
     session_data = Session()
     check_profile_verified(session_data)
     db_query = Queries()
-<<<<<<< HEAD
-<<<<<<< HEAD
     total_score = db_query.get_total_score_by_user_for_walk(current_user.id)
     position = db_query.get_score_position_for_walk(current_user.id)
     return render_template("walking.html", title="Walking",
                            total_score=total_score, position=ordinal(position),
-=======
-    total_distance = db_query.get_total_distance_by_user_on_foot(current_user.id)
-    position = db_query.get_position_total_distance_on_foot(current_user.id)
-    return render_template("walking.html", title="Walking",
-                           total_distance=total_distance, position=ordinal(position),
->>>>>>> Adding inline view and route. Adjustment of data model.
-=======
-    total_score = db_query.get_total_score_by_user_for_walk(current_user.id)
-    position = db_query.get_score_position_for_walk(current_user.id)
-    return render_template("walking.html", title="Walking",
-                           total_score=total_score, position=ordinal(position),
->>>>>>> Finalizing views and contest logic for the Release.
                            session_data=session_data)
 
 
@@ -118,23 +91,10 @@ def inline():
     session_data = Session()
     check_profile_verified(session_data)
     db_query = Queries()
-<<<<<<< HEAD
-<<<<<<< HEAD
     position = db_query.get_score_position_for_inline(current_user.id)
     total_score = db_query.get_total_score_by_user_for_inline(current_user.id)
     return render_template("inline.html", title="Inline", position=ordinal(position),
                            session_data=session_data, total_score=total_score)
-=======
-    position = db_query.get_position_total_distance_on_foot(current_user.id)
-    return render_template("inline.html", title="Inline", position=ordinal(position),
-                           session_data=session_data)
->>>>>>> Adding inline view and route. Adjustment of data model.
-=======
-    position = db_query.get_score_position_for_inline(current_user.id)
-    total_score = db_query.get_total_score_by_user_for_inline(current_user.id)
-    return render_template("inline.html", title="Inline", position=ordinal(position),
-                           session_data=session_data, total_score=total_score)
->>>>>>> Finalizing views and contest logic for the Release.
 
 
 @activities.route('/cycling')
