@@ -42,7 +42,7 @@ def create_app(configuration=Config):
 
     # Logging setup
     logging.basicConfig(level=logging.DEBUG)
-
+    logging.info(f"{app.config['STRAVA_CLIENT_ID']}")
     from mast.users.routes import users
     from mast.activities.routes import activities
     from mast.main.routes import main

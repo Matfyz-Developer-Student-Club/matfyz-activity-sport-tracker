@@ -74,12 +74,21 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a {% if title == 'Matfyz Challenges' %} class="nav-link activity-wrap active" {% else %}
+                        <a {% if title == 'Matfyz Challenges - Combined' %} class="nav-link activity-wrap active" {% else %}
                                                                 class="nav-link activity-wrap" {% endif %}
-                                                                href="{{ url_for( 'activities.matfyz_challenges') }}">
-                            <img src="{{ url_for('static', filename='pics/bar-chart-2.svg') }}"
+                                                                href="{{ url_for( 'activities.matfyz_challenges_combined') }}">
+                            <img src="{{ url_for('static', filename='pics/contest.svg') }}"
                                  alt="Global Statistics" width="16" height="16">
-                            Matfyz Challenges
+                            Matfyz Challenges - Combined
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a {% if title == 'Matfyz Challenges - Cyclists' %} class="nav-link activity-wrap active" {% else %}
+                                                                class="nav-link activity-wrap" {% endif %}
+                                                                href="{{ url_for( 'activities.matfyz_challenges_cyclist') }}">
+                            <img src="{{ url_for('static', filename='pics/trophy-cyclo.svg') }}"
+                                 alt="Global Statistics" width="16" height="16">
+                            Matfyz Challenges - Cyclists
                         </a>
                     </li>
                     <li class="nav-item">
@@ -126,31 +135,31 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a {% if title == 'Running-5' %} class="nav-link activity-wrap active" {% else %}
+                        <a {% if title == 'Running' %} class="nav-link activity-wrap active" {% else %}
                                                          class="nav-link activity-wrap" {% endif %}
-                                                         href="{{ url_for( 'activities.running_5_km') }}">
-                            <img src="{{ url_for('static', filename='pics/run.svg') }}" alt="Running-5"
-                                 width="16" height="16"> Running - 5 km
+                                                         href="{{ url_for( 'activities.running') }}">
+                            <img src="{{ url_for('static', filename='pics/run.svg') }}" alt="Running"
+                                 width="16" height="16"> Running
                             <span class="sr-only"></span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a {% if title == 'Running-10' %} class="nav-link activity-wrap active" {% else %}
-                                                          class="nav-link activity-wrap" {% endif %}
-                                                          href="{{ url_for( 'activities.running_10_km') }}">
-                            <img class="activity" src="{{ url_for('static', filename='pics/run.svg') }}"
-                                 alt="Running-5" width="16" height="16">
-                            Running - 10 km
-                            <span class="sr-only"></span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a {% if title == 'Jogging' %} class="nav-link activity-wrap active" {% else %}
+                        <a {% if title == 'Walking' %} class="nav-link activity-wrap active" {% else %}
                                                        class="nav-link activity-wrap" {% endif %}
-                                                       href="{{ url_for( 'activities.running_walking') }}">
+                                                       href="{{ url_for( 'activities.walking') }}">
                             <img class="activity" src="{{ url_for('static', filename='pics/jogging.svg') }}"
-                                 alt="Jogging" width="16" height="16">
-                            Running / Walking
+                                 alt="Walking" width="16" height="16">
+                            Walking
+                            <span class="sr-only"></span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a {% if title == 'Inline' %} class="nav-link activity-wrap active" {% else %}
+                                                          class="nav-link activity-wrap" {% endif %}
+                                                          href="{{ url_for( 'activities.inline') }}">
+                            <img class="activity" src="{{ url_for('static', filename='pics/skating.svg') }}"
+                                 alt="Inline" width="16" height="16">
+                            Inline
                             <span class="sr-only"></span>
                         </a>
                     </li>

@@ -1,87 +1,25 @@
 {% extends "main_layout_template.html" %}
-{% from "_pageable_tables.html" import render_personal_activities_time, render_best_users_time %}
+{% from "_pageable_tables.html" import render_personal_activities_score, render_best_users_score %}
 
 {% block content_page %}
     <div class="container mb-4">
         <div class="row-fluid">
             <div class="col-sm mb-4">
                 <h2>My Best Runs</h2>
-                {{ render_personal_activities_time(distance) }}
+                {{ render_personal_activities_score('run') }}
             </div>
             <div class="col-sm mb-4">
-                <h2>Leaders</h2>
+                <h2>Global Leaders</h2>
 
                 {% if position != 'none' %}
-                    <h6>Currently, you are on {{ position }} place in your category.</h6>
+                    <h6>With your total score of {{ total_score }} points, you are on {{ position }} place.</h6>
                 {% else %}
                     <h6>You have no activities in this competition.</h6>
                 {% endif %}
 
-                <div id="accordion">
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    <h3>Men Under 35</h3>
-                                </button>
-                            </h5>
-                        </div>
 
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                            <div class="card-body">
-                                {{ render_best_users_time(distance, 'male', 'under') }}
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="card">
-                        <div class="card-header" id="headingTwo">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    <h3>Men Over 35</h3>
-                                </button>
-                            </h5>
-                        </div>
-
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                            <div class="card-body">
-                                {{ render_best_users_time(distance, 'male', 'over') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header" id="headingThree">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    <h3>Women Under 35</h3>
-                                </button>
-                            </h5>
-                        </div>
-
-                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
-                            <div class="card-body">
-                                {{ render_best_users_time(distance, 'female', 'under') }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header" id="headingFour">
-                            <h5 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                    <h3>Women Over 35</h3>
-                                </button>
-                            </h5>
-                        </div>
-
-                        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion">
-                            <div class="card-body">
-                                {{ render_best_users_time(distance, 'female', 'over') }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {{ render_best_users_score('run') }}
             </div>
         </div>
     </div>

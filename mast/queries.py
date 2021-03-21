@@ -1,5 +1,5 @@
 from mast import db
-from mast.models import User, Sex, Age, UserType, Activity, ActivityType, Competition, Season, ChallengePart
+from mast.models import User, UserType, Activity, ActivityType, Season, ChallengePart, CyclistsChallengePart
 from sqlalchemy.sql import asc, func
 import datetime as dt
 from typing import Optional
@@ -66,7 +66,8 @@ class Queries(object):
         :returns: Total count of activities and list of last activities.
         """
         return self._get_user_last_activities(user_id,
-                                              [ActivityType.Run, ActivityType.Walk, ActivityType.Ride],
+                                              [ActivityType.Run, ActivityType.Walk, ActivityType.Ride,
+                                               ActivityType.InlineSkate],
                                               number, offset)
 
     def get_user_last_activities_on_foot(self, user_id: int, number: int, offset: int = 0):
@@ -81,6 +82,30 @@ class Queries(object):
                                               [ActivityType.Run, ActivityType.Walk],
                                               number, offset)
 
+    def get_user_last_activities_for_run(self, user_id: int, number: int, offset: int = 0):
+        """
+        Returns the last run activities by specified user.
+        :param user_id: ID of user.
+        :param number: Number of returned activities.
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of activities and list of last activities.
+        """
+        return self._get_user_last_activities(user_id,
+                                              [ActivityType.Run],
+                                              number, offset)
+
+    def get_user_last_activities_for_walk(self, user_id: int, number: int, offset: int = 0):
+        """
+        Returns the last walk activities by specified user.
+        :param user_id: ID of user.
+        :param number: Number of returned activities.
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of activities and list of last activities.
+        """
+        return self._get_user_last_activities(user_id,
+                                              [ActivityType.Walk],
+                                              number, offset)
+
     def get_user_last_activities_on_bike(self, user_id: int, number: int, offset: int = 0):
         """
         Returns the last bike activities by specified user.
@@ -93,6 +118,18 @@ class Queries(object):
                                               [ActivityType.Ride],
                                               number, offset)
 
+    def get_user_last_activities_for_inline(self, user_id: int, number: int, offset: int = 0):
+        """
+        Returns the last bike activities by specified user.
+        :param user_id: ID of user.
+        :param number: Number of returned activities.
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of activities and list of last activities.
+        """
+        return self._get_user_last_activities(user_id,
+                                              [ActivityType.InlineSkate],
+                                              number, offset)
+
     def save_new_user_activities(self, user_id: int, activity: Activity):
         """
         Saves new activity by user.
@@ -103,11 +140,10 @@ class Queries(object):
         db.session.add(activity)
         db.session.commit()
 
-    def get_best_run_activities_by_user(self, user_id: int, competition: Competition, number: int, offset: int = 0):
+    def get_best_run_activities_by_user(self, user_id: int, number: int, offset: int = 0):
         """
         Returns the best run activity by a specified user in a specified competition.
         :param user_id: ID of user.
-        :param competition: Competition where we want the best run.
         :param number: Number of returned activities.
         :param offset: Offset of returned activities - default: 0.
         :returns: Total count of activities and list of best activities.
@@ -116,8 +152,7 @@ class Queries(object):
             filter(Activity.user_id == user_id,
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type == ActivityType.Run,
-                   Activity.distance >= competition.value). \
+                   Activity.type == ActivityType.Run). \
             order_by(Activity.average_duration_per_km.asc())
         count = query. \
             count()
@@ -141,6 +176,20 @@ class Queries(object):
                    Activity.type.in_(activity_types)). \
             scalar()
 
+    def _get_total_score_by_user(self, user_id: int, activity_type: ActivityType) -> int:
+        """
+        Returns the total score taken by a specified user in a specified type of activity.
+        :param user_id: ID of user.
+        :param activity_type: Type of activity we want to sum to total score.
+        :returns: The total score.
+        """
+        return db.session.query(func.sum(Activity.score)). \
+            filter(Activity.user_id == user_id,
+                   func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type == activity_type). \
+            scalar()
+
     def get_total_distance_by_user_on_foot(self, user_id: int):
         """
         Returns the total run/walk distance taken by a specified user.
@@ -156,6 +205,46 @@ class Queries(object):
         :returns: The total distance in kilometres.
         """
         return self._get_total_distance_by_user(user_id, [ActivityType.Ride])
+
+    def get_total_distance_by_user_on_inline(self, user_id: int):
+        """
+        Returns the total inline distance taken by a specified user.
+        :param user_id: ID of user.
+        :returns: The total distance in kilometres.
+        """
+        return self._get_total_distance_by_user(user_id, [ActivityType.InlineSkate])
+
+    def get_total_score_by_user_for_inline(self, user_id: int) -> int:
+        """
+        Returns the total inline score taken by a specified user.
+        :param user_id: ID of user.
+        :returns: The total score.
+        """
+        return self._get_total_score_by_user(user_id, ActivityType.InlineSkate)
+
+    def get_total_score_by_user_for_run(self, user_id: int) -> int:
+        """
+        Returns the total run score taken by a specified user.
+        :param user_id: ID of user.
+        :returns: The total score.
+        """
+        return self._get_total_score_by_user(user_id, ActivityType.Run)
+
+    def get_total_score_by_user_for_walk(self, user_id: int) -> int:
+        """
+        Returns the total walk score taken by a specified user.
+        :param user_id: ID of user.
+        :returns: The total score.
+        """
+        return self._get_total_score_by_user(user_id, ActivityType.Walk)
+
+    def get_total_score_by_user_for_ride(self, user_id: int) -> int:
+        """
+        Returns the total ride score taken by a specified user.
+        :param user_id: ID of user.
+        :returns: The total score.
+        """
+        return self._get_total_score_by_user(user_id, ActivityType.Ride)
 
     def get_total_distances_by_user_in_last_days(self, user_id: int, days: int):
         """
@@ -186,20 +275,17 @@ class Queries(object):
 
         return result
 
-    def _get_top_users_best_run_query(self, competition: Competition, sex: Sex, age: Age):
+    # LEGACY
+    def _get_top_users_best_run_query(self):
         """
         Returns query for top users in the best run activity in a specified competition.
-        :param competition: Competition where we want top users for the best run.
-        :param sex: Sex of users for the top users list.
-        :param age: Age category of users for the top users list.
         :returns: Subquery returning User and Activity for user´s best run.
         """
         best_times = db.session.query(Activity.user_id.label('user_id'),
                                       func.min(Activity.average_duration_per_km).label('best_time')). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type == ActivityType.Run,
-                   Activity.distance >= competition.value). \
+                   Activity.type == ActivityType.Run). \
             group_by(Activity.user_id). \
             subquery(with_labels=True)
         first_best_times = db.session.query(Activity.user_id.label('user_id'),
@@ -209,8 +295,7 @@ class Queries(object):
                                      Activity.average_duration_per_km == best_times.c.best_time)). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
-                   Activity.type == ActivityType.Run,
-                   Activity.distance >= competition.value). \
+                   Activity.type == ActivityType.Run). \
             group_by(Activity.user_id). \
             subquery(with_labels=True)
         return db.session.query(User, Activity). \
@@ -218,23 +303,17 @@ class Queries(object):
             join(first_best_times, User.id == first_best_times.c.user_id). \
             join(Activity, db.and_(Activity.user_id == first_best_times.c.user_id,
                                    Activity.id == first_best_times.c.id)). \
-            filter(User.sex == sex,
-                   User.age == age,
-                   User.competing,
-                   User.verified). \
+            filter(User.verified). \
             order_by(Activity.average_duration_per_km.asc())
 
-    def get_top_users_best_run(self, competition: Competition, sex: Sex, age: Age, number: int, offset: int = 0):
+    def get_top_users_best_run(self, number: int, offset: int = 0):
         """
-        Returns top users in the best run activity in a specified competition, sex and age category.
-        :param competition: Competition where we want top users for the best run.
-        :param sex: Sex of users for the top users list.
-        :param age: Age category of users for the top users list.
+        Returns top users in the best run activity in a specified competition and sex category.
         :param number: Number of users in the top users list
         :param offset: Offset of returned activities - default: 0.
         :returns: Total count of users and list of top users and their best run activity.
         """
-        query = self._get_top_users_best_run_query(competition, sex, age)
+        query = self._get_top_users_best_run_query()
         count = query. \
             count()
         items = query. \
@@ -243,15 +322,13 @@ class Queries(object):
             all()
         return [count, items]
 
-    def get_position_best_run(self, user_id: int, competition: Competition):
+    def get_position_best_run(self, user_id: int):
         """
         Returns position of the current user in the best run in specified competition.
         :param user_id: ID of user.
-        :param competition: Competition where we want the position for the best run.
         :returns: Position of user or -1.
         """
-        user = db.session.query(User).get(user_id)
-        all_users = self._get_top_users_best_run_query(competition, user.sex, user.age).all()
+        all_users = self._get_top_users_best_run_query().all()
 
         order = 0
         for user in all_users:
@@ -259,6 +336,22 @@ class Queries(object):
             if user.User.id == user_id:
                 return order
         return -1
+
+    def get_score_position_for_run(self, user_id: int) -> int:
+        all_users = list(enumerate(self._get_top_users_total_score_query(ActivityType.Run).all()))
+        return next((x[0] + 1 for x in all_users if x[1][0].id == user_id), -1)
+
+    def get_score_position_for_inline(self, user_id: int) -> int:
+        all_users = list(enumerate(self._get_top_users_total_score_query(ActivityType.InlineSkate).all()))
+        return next((x[0] + 1 for x in all_users if x[1][0].id == user_id), -1)
+
+    def get_score_position_for_walk(self, user_id: int) -> int:
+        all_users = list(enumerate(self._get_top_users_total_score_query(ActivityType.Walk).all()))
+        return next((x[0] + 1 for x in all_users if x[1][0].id == user_id), -1)
+
+    def get_score_position_for_ride(self, user_id: int) -> int:
+        all_users = list(enumerate(self._get_top_users_total_score_query(ActivityType.Ride).all()))
+        return next((x[0] + 1 for x in all_users if x[1][0].id == user_id), -1)
 
     def _get_top_users_total_distance_query(self, activity_types: list):
         """
@@ -276,9 +369,27 @@ class Queries(object):
         return db.session.query(User, total_distances.c.total_distance). \
             select_from(User). \
             join(total_distances, User.id == total_distances.c.user_id). \
-            filter(User.competing,
-                   User.verified). \
+            filter(User.verified). \
             order_by(total_distances.c.total_distance.desc())
+
+    def _get_top_users_total_score_query(self, activity_type: ActivityType):
+        """
+        Returns query for top users in the total score in specified activity type.
+        :param activity_type: Type of the activity we want to sum to total score.
+        :returns: Query returning User and total score.
+        """
+        total_scores = db.session.query(Activity.user_id.label('user_id'),
+                                        func.sum(Activity.score).label('total_score')). \
+            filter(func.date(Activity.datetime) >= self.SEASON.start_date,
+                   func.date(Activity.datetime) <= self.SEASON.end_date,
+                   Activity.type == activity_type). \
+            group_by(Activity.user_id). \
+            subquery(with_labels=True)
+        return db.session.query(User, total_scores.c.total_score). \
+            select_from(User). \
+            join(total_scores, User.id == total_scores.c.user_id). \
+            filter(User.verified). \
+            order_by(total_scores.c.total_score.desc())
 
     def _get_top_users_total_distance(self, activity_types: list, number: int, offset: int = 0):
         """
@@ -289,6 +400,23 @@ class Queries(object):
         :returns: Total count of users and list of top users and their total distance.
         """
         query = self._get_top_users_total_distance_query(activity_types)
+        count = query. \
+            count()
+        items = query. \
+            limit(number). \
+            offset(offset). \
+            all()
+        return [count, items]
+
+    def _get_top_users_total_score(self, activity_type: ActivityType, number: int, offset: int = 0):
+        """
+        Returns top users in the total score in specified activity type.
+        :param activity_type: Type of the activity we want to sum to total score.
+        :param number: Number of users in the top users list.
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of users and list of top users and their total score.
+        """
+        query = self._get_top_users_total_score_query(activity_type)
         count = query. \
             count()
         items = query. \
@@ -314,6 +442,42 @@ class Queries(object):
         :returns: Total count of users and list of top users and their total distance.
         """
         return self._get_top_users_total_distance([ActivityType.Ride], number, offset)
+
+    def get_top_users_total_score_for_ride(self, number: int, offset: int = 0):
+        """
+        Returns top users in the total ride score.
+        :param number: Number of users in the top users list.
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of users and list of top users and their total score.
+        """
+        return self._get_top_users_total_score(ActivityType.Ride, number, offset)
+
+    def get_top_users_total_score_for_walk(self, number: int, offset: int = 0):
+        """
+        Returns top users in the total walk score.
+        :param number: Number of users in the top users list.
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of users and list of top users and their total score.
+        """
+        return self._get_top_users_total_score(ActivityType.Walk, number, offset)
+
+    def get_top_users_total_score_for_run(self, number: int, offset: int = 0):
+        """
+        Returns top users in the total run score.
+        :param number: Number of users in the top users list.
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of users and list of top users and their total score.
+        """
+        return self._get_top_users_total_score(ActivityType.Run, number, offset)
+
+    def get_top_users_total_score_for_inline(self, number: int, offset: int = 0):
+        """
+        Returns top users in the total inline skating score.
+        :param number: Number of users in the top users list.
+        :param offset: Offset of returned activities - default: 0.
+        :returns: Total count of users and list of top users and their total score.
+        """
+        return self._get_top_users_total_score(ActivityType.InlineSkate, number, offset)
 
     def _get_position_total_distance(self, user_id: int, activity_types: list):
         """
@@ -347,6 +511,14 @@ class Queries(object):
         """
         return self._get_position_total_distance(user_id, [ActivityType.Ride])
 
+    def get_position_total_distance_on_inline(self, user_id: int):
+        """
+        Returns position of the current user in the total ride distance competition.
+        :param user_id: ID of user.
+        :returns: Position of user or -1.
+        """
+        return self._get_position_total_distance(user_id, [ActivityType.InlineSkate])
+
     def _get_global_total_distance(self, activity_types: list):
         """
         Returns the total distance by all users in specified activity types.
@@ -358,8 +530,28 @@ class Queries(object):
                    join(User.activities). \
                    filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                           func.date(Activity.datetime) <= self.SEASON.end_date,
-                          Activity.type.in_(activity_types),
-                          User.verified). \
+                          Activity.type.in_(activity_types), User.verified). \
+                   scalar() or 0
+
+    def get_global_total_score_for_walk(self) -> int:
+        return self._get_global_total_score(ActivityType.Walk)
+
+    def get_global_total_score_for_inline(self) -> int:
+        return self._get_global_total_score(ActivityType.InlineSkate)
+
+    def get_global_total_score_for_run(self) -> int:
+        return self._get_global_total_score(ActivityType.Run)
+
+    def get_global_total_score_for_ride(self) -> int:
+        return self._get_global_total_score(ActivityType.Ride)
+
+    def _get_global_total_score(self, activity_type: ActivityType) -> int:
+        return db.session.query(func.sum(Activity.score)). \
+                   select_from(User). \
+                   join(User.activities). \
+                   filter(func.date(Activity.datetime) >= self.SEASON.start_date,
+                          func.date(Activity.datetime) <= self.SEASON.end_date,
+                          Activity.type == activity_type). \
                    scalar() or 0
 
     def get_global_total_distance_on_foot(self):
@@ -375,6 +567,31 @@ class Queries(object):
         :returns: The total distance in kilometres.
         """
         return self._get_global_total_distance([ActivityType.Ride])
+
+    def get_global_total_distance_combined(self):
+        """
+        Returns the total run/walk/inline distance by all users.
+        :returns: The total distance in kilometres.
+        """
+        return self._get_global_total_distance([ActivityType.Walk, ActivityType.Run, ActivityType.InlineSkate])
+
+    def get_global_total_distance_on_inline(self):
+        """
+        Returns the total ride distance by all users.
+        :returns: The total distance in kilometres.
+        """
+        return self._get_global_total_distance([ActivityType.InlineSkate])
+
+    def _get_cyclist_challenge_part(self, cycle):
+        query_result = CyclistsChallengePart.query.filter_by(cycle=cycle).order_by(
+            CyclistsChallengePart.id.asc()).all()
+
+        result = {}
+        dist = 0
+        for item in query_result:
+            result[item.distance] = {"target": item.target, "alt": item.altitude}
+
+        return result
 
     def _get_challenge_parts(self):
         """
@@ -400,7 +617,7 @@ class Queries(object):
         all completed parts, current part and one more (if present).
         :returns: Dictionary containing names of check points and distances.
         """
-        dist = max(self.get_global_total_distance_on_foot(), self.get_global_total_distance_on_bike())
+        dist = self.get_global_total_distance_combined()
         checkpoints = self._get_challenge_parts()
 
         result = {}
@@ -415,6 +632,27 @@ class Queries(object):
                 result[d] = target
                 break
         return result
+
+    def _get_current_cycle(self, current_distance: int) -> int:
+        return CyclistsChallengePart.query.filter(CyclistsChallengePart.distance >= current_distance).first().cycle
+
+    def get_cyclists_challenge_parts_to_display(self):
+        current_reached_dist = self.get_global_total_distance_on_bike()
+        cycle = self._get_current_cycle(current_reached_dist)
+        checkpoints = self._get_cyclist_challenge_part(cycle=cycle)
+
+        result = {}
+        one_more = True
+        for d, target in checkpoints.items():
+            if d <= current_reached_dist:
+                result[d] = target
+            elif one_more:
+                result[d] = target
+                one_more = False
+            else:
+                result[d] = target
+                break
+        return result, current_reached_dist
 
     def get_current_challenge_part(self):
         """
@@ -512,7 +750,6 @@ class Queries(object):
             result.append(item)
         return result
 
-
     def _get_user_total_score_for_activity(self, activity_type: ActivityType, user_id: int) -> int:
         return Activity.query(func.sum(Activity.score)).filter_by(user_id=user_id, type=activity_type).first()
 
@@ -527,7 +764,7 @@ class Queries(object):
 
     def get_user_total_points_for_run(self, user_id: int) -> int:
         return self._get_user_total_score_for_activity(ActivityType.Run, user_id)
-      
+
     def get_user_by_strava_id(self, strava_id):
         """
         Gets list of access tokens for strava of user with strava_id

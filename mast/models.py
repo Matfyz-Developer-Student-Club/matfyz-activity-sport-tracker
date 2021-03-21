@@ -21,9 +21,10 @@ class Sex(Enum):
         return self.name
 
 
-class Age(Enum):
-    Under35 = '<=35'
-    Over35 = '>35'
+class UserType(Enum):
+    Student = 'student'
+    Employee = 'employee'
+    Alumni = 'alumni'
 
     def __repr__(self):
         return self.name
@@ -32,10 +33,11 @@ class Age(Enum):
         return self.name
 
 
-class UserType(Enum):
-    Student = 'student'
-    Employee = 'employee'
-    Alumni = 'alumni'
+class StudyField(Enum):
+    Inf = 'informatics'
+    Mat = 'mathematics'
+    Phs = 'physics'
+    Tea = 'teaching'
 
     def __repr__(self):
         return self.name
@@ -57,17 +59,6 @@ class ActivityType(Enum):
         return self.name
 
 
-class Competition(Enum):
-    Run5km = 5
-    Run10km = 10
-
-    def __repr__(self):
-        return self.name
-
-    def __str__(self):
-        return self.name
-
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -76,13 +67,13 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50), nullable=False, default='')
     display_name = db.Column(db.String(50))
     sex = db.Column(db.Enum(Sex))
-    age = db.Column(db.Enum(Age))
     anonymous = db.Column(db.Boolean, nullable=False, default=False)
     type = db.Column(db.Enum(UserType))
     uk_id = db.Column(db.String(10))
     verified = db.Column(db.Boolean, nullable=False, default=False)
+    field_of_study = db.Column(db.Enum(StudyField))
     shirt_size = db.Column(db.String(100))
-    competing = db.Column(db.Boolean, nullable=False, default=True)
+    avatar_url = db.Column(db.String(255))
     activities = db.relationship('Activity', backref='user', lazy=True)
     strava_id = db.Column(db.String(20))
     strava_access_token = db.Column(db.String(40))
@@ -123,7 +114,6 @@ class User(db.Model, UserMixin):
         return self.first_name is not None and \
                self.last_name is not None and \
                self.sex is not None and \
-               self.age is not None and \
                self.type is not None and \
                self.uk_id is not None
 
@@ -135,21 +125,17 @@ class User(db.Model, UserMixin):
         else:
             return self.first_name + ' ' + self.last_name
 
-    def complete_profile(self, first_name, last_name, age, sex, shirt_size, user_type, ukco, anonymous,
+    def complete_profile(self, first_name, last_name, study_field, sex, shirt_size, user_type, ukco, anonymous,
                          display_name=None):
         assert (first_name is not None and
                 last_name is not None and
-                age is not None and
                 sex is not None and
                 shirt_size is not None and
                 user_type is not None and
-                ukco is not None)
+                ukco is not None and
+                study_field is not None)
         self.first_name = first_name
         self.last_name = last_name
-        if age == '<=35':
-            self.age = Age.Under35
-        else:
-            self.age = Age.Over35
         if sex == 'male':
             self.sex = Sex.Male
         else:
@@ -161,6 +147,16 @@ class User(db.Model, UserMixin):
             self.type = UserType.Employee
         else:
             self.type = UserType.Alumni
+
+        if study_field == 'Informatics':
+            self.field_of_study = StudyField.Inf
+        elif study_field == 'Physics':
+            self.field_of_study = StudyField.Phs
+        elif study_field == 'Maths':
+            self.field_of_study = StudyField.Mat
+        else:
+            self.field_of_study = StudyField.Tea
+
         self.uk_id = ukco
         self.anonymous = anonymous
         self.display_name = display_name
@@ -207,7 +203,7 @@ class Activity(db.Model):
     name = db.Column(db.String(30), nullable=False, default='activity')
     elevation = db.Column(db.Float, nullable=False, default=0.0)
     strava_id = db.Column(db.Integer, nullable=False)
-    score = db.Column(db.Integer, nullable= False, default=0)
+    score = db.Column(db.Integer, nullable=False, default=0)
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"
@@ -233,3 +229,14 @@ class ChallengePart(db.Model):
 
     def __repr__(self):
         return f"ChallengePart(#{self.order}: to {self.target} {self.distance} km)"
+
+
+class CyclistsChallengePart(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    target = db.Column(db.String(100), nullable=False)
+    distance = db.Column(db.Integer, nullable=False)
+    altitude = db.Column(db.Float, nullable=False)
+    cycle = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"CyclistChallengePart(to {self.target} {self.distance} km)"

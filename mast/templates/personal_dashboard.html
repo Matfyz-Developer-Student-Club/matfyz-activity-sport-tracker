@@ -1,67 +1,58 @@
 {% extends "main_layout_template.html" %}
-{% from "_formhelpers.html" import render_text_field, render_inline_radio_field, render_checkbox_field, render_submit_button, render_file_upload_field %}
-{% from "_pageable_tables.html" import render_personal_activities %}
+
+{% from "_formhelpers.html" import render_text_field, render_inline_radio_field, render_checkbox_field, render_submit_button with context %}
+{% from "_pageable_tables.html" import render_personal_activities with context %}
 
 {% block content_page %}
-    <!-- Modal -->
-    <div class="modal fade" id="addActivity" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add activity</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="form-group" method="post" enctype="multipart/form-data">
-                        {{ form.csrf_token() }}
-
-                        {{ render_inline_radio_field(form.activity) }}
-
-                        {{ render_file_upload_field(form.file) }}
-
-                        {{ render_submit_button(form.submit) }}
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h2>Personal Dashboard</h2>
         <h3><span class="badge badge-light">{{ season['title'] }}</span></h3>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group mr-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary" style="visibility: hidden;" >Share</button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" style="visibility: hidden;">Export</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" style="visibility: hidden;">Share
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" style="visibility: hidden;">Export
+                </button>
             </div>
             <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" style="visibility: hidden;">
                 <span data-feather="calendar"></span>
                 This week
             </button>
-            <div class="btn-group ml-4">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addActivity"> Add Activity </button>
-            </div>
         </div>
     </div>
     <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
     <script src="{{ url_for('static', filename='personal_dashboard.js', version=1) }}"></script>
     <h2>Achievements</h2>
     <h6>
-        Only activities between {{ season['start_date'].strftime('%B %d, %Y') }} and {{ season['end_date'].strftime('%B %d, %Y') }} are considered for competitions and challenges.
+        Only activities between {{ season['start_date'].strftime('%B %d, %Y') }}
+        and {{ season['end_date'].strftime('%B %d, %Y') }} are considered for competitions and challenges.
     </h6>
     <h6>
-        For points for Optional Physical Education, we count all activities till the end of semester, i.e. {{ season_credit['end_date'].strftime('%B %d, %Y') }}.
-    </h6>
-    <h6>
-        You have made {{ total_foot }} km on foot and {{ total_bike }} km on bike.
-        {% if total_credit != None %}
-            That makes {{ total_credit }} points for Optional Physical Education.
+        {% if total_run_score or total_inline_score or total_ride_score or total_walk_score %}
+            You have made:
         {% endif %}
+
+        {% if total_run_score %}
+            <br>
+            - {{ total_run_score }} points for running.
+        {% endif %}
+        {% if total_walk_score %}
+            <br>
+            - {{ total_walk_score }} points for walking.
+        {% endif %}
+        {% if total_ride_score %}
+            <br>
+            - {{ total_ride_score }} points for cycling.
+        {% endif %}
+        {% if total_inline_score %}
+            <br>
+            - {{ total_inline_score }} points for inline skating.
+        {% endif %}
+        {% if not (total_run_score or total_walk_score or total_ride_score or total_inline_score) %}
+            - No activity posted yet.
+        {% endif %}
+
     </h6>
     {{ render_personal_activities() }}
 {% endblock content_page %}
