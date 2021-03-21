@@ -15,3 +15,23 @@ def send_reset_email(user):
     If you did not make this request then simply ignore this email. No changes required here.
     '''
     mail.send(msg)
+
+def send_registration_email(user):
+    msg = Message('Welcome to Mathletics',
+                  sender='noreply@mathletics.mff.cuni.cz',
+                  recipients=[user.email])
+
+    msg.body = f'''Hi, 
+        welcome to Mathletics.
+        
+        You can now participate in our current competitions. 
+
+        Good luck,
+        Matfyz Developer Student Club
+
+
+
+        If you did not register, please contact us at matfyz.sdc@gmail.com.
+
+        '''
+    mail.send(msg)
