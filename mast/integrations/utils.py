@@ -4,10 +4,12 @@ import requests
 from flask import current_app
 from flask_login import current_user
 from datetime import time, datetime
+from time import time as t
 from mast.queries import Queries
 from mast.models import Activity, ActivityType, Sex, User
 from mast.tools.points import Points
 from mast import db
+from math import floor
 
 strava_logger = logging.getLogger('STRAVA')
 
@@ -162,7 +164,7 @@ def create_activity_from_strava_json(activity: dict, user: User, strava_activity
     name = activity['name'][:30] if not None else ''    # string
     pace = _get_time(round(time_in_secs / distance * 1000))     # minutes per km
     activity_date = datetime.strptime(activity['start_date'],'%Y-%m-%dT%H:%M:%SZ')  # datetime
-    score = _get_score(distance, elevation, pace, user, activity_type)     # int
+    score = _get_score(distance / 1000, elevation, pace, user, activity_type)     # int
 
     # check activity constrains
     if activity_type is None:    # unsupported ActivityType
@@ -204,8 +206,12 @@ def process_strava_webhook(data: dict):
         strava_logger.info(data)
         return
 
+    if user.strava_expires_at == None:
+        refresh_access_token(user)
+
+
     # Check whether the access token for given user already expired with some reserve, if it did then refresh tokens
-    if user.strava_expires_at - current_app.config['STRAVA_EXPIRE_RESERVE'] > time():
+    if user.strava_expires_at - current_app.config['STRAVA_EXPIRE_RESERVE'] > floor(t()):
         refresh_access_token(user)
 
     # Process incomming webhook based on object type
@@ -243,13 +249,13 @@ def _store_activity(user, data):
     activity_data = get_activity(user.strava_access_token, strava_activity_id)
     activity = create_activity_from_strava_json(activity_data, user, strava_activity_id)
 
-    db_query = Queries(credit=True)
+    db_query = Queries()
     db_query.save_new_user_activities(activity.user_id, activity)
 
 
 def _delete_activity(data):
     strava_activity_id = data['object_id']
-    db_query = Queries(credit=True)
+    db_query = Queries()
     db_query.delete_activity_by_strava_id(strava_activity_id)
 
 
@@ -263,7 +269,7 @@ def _update_activity(data):
 
     # changed to private -> delete activity
     if is_private:
-        db_query = Queries(credit=True)
+        db_query = Queries()
         db_query.delete_activity_by_strava_id(strava_activity_id)
         return
 
@@ -275,19 +281,19 @@ def _update_activity(data):
         data_to_update['type'] = _get_activity_type(new_type)
 
     # update database
-    db_query = Queries(credit=True)
+    db_query = Queries()
     db_query.update_activity_info(strava_activity_id, data_to_update)
 
 
 def _get_user(data):
-    db_query = Queries(credit=True)
+    db_query = Queries()
     db_res = db_query.get_user_by_strava_id(data['owner_id'])
     if len(db_res) != 1:
         return None
     return db_res[0]
 
 
-def _get_activity_type(strava_activity:str) -> bool:
+def _get_activity_type(strava_activity:str) -> ActivityType:
     for a in ActivityType:
         if str(a) == strava_activity:
             return a
@@ -334,16 +340,13 @@ def _get_score(distance:float , elevation:float, pace:time, user:User, activity_
     :param activity_type: ActivityType
     :return: integer of score
     """
-    return 0
-
-    # TODO: uncomment when Points are introduced
-    #point = Points()
-    #
+    point = Points()
+    
     # UPDATE when new activity is introduced
-    #function_mapping = {
-    #    ActivityType.Run: point.get_run_activity_points,
-    #    ActivityType.Walk: point.get_walk_activity_points,
-    #    ActivityType.Ride: point.get_ride_activity_points,
-    #    ActivityType.InlineSkate: point.get_inline_activity_points,
-    #}
-    #return function_mapping[activity_type](user, elevation, distance, pace)
+    function_mapping = {
+        ActivityType.Run: point.get_run_activity_points,
+        ActivityType.Walk: point.get_walk_activity_points,
+        ActivityType.Ride: point.get_ride_activity_points,
+        ActivityType.InlineSkate: point.get_inline_activity_points,
+    }
+    return function_mapping[activity_type](user, elevation, distance, pace)

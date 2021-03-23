@@ -57,7 +57,7 @@ def display_credits():
         form = CreditsForm(request.form)
         if form.validate_on_submit():
             if form.password.data == 'KTV2020':  # TODO: Obsoleted
-                db_query = Queries(credit=True)
+                db_query = Queries()
                 students = db_query.get_students()
                 return render_template('credits.html', title='Credits', authorized=True, students=students)
             else:
@@ -72,7 +72,7 @@ def display_credits():
 @login_required
 def home():
     session_data = Session()
-    db_query = Queries(credit=True)
+    db_query = Queries()
 
     check_profile_verified(session_data)
     total_run_score = db_query.get_total_score_by_user_for_run(current_user.id) or 0
@@ -83,5 +83,4 @@ def home():
     return render_template("personal_dashboard.html", title='Home',
                            total_run_score=total_run_score, total_walk_score=total_walk_score,
                            total_inline_score=total_inline_score, total_ride_score=total_ride_score,
-                           season=db_query.SEASON_COMPETITION, season_credit=db_query.SEASON_CREDIT,
-                           session_data=session_data)
+                           season=db_query.SEASON_COMPETITION, session_data=session_data)

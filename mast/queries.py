@@ -1,5 +1,5 @@
 from mast import db
-from mast.models import User, UserType, Activity, ActivityType, Season, ChallengePart, CyclistsChallengePart
+from mast.models import User, UserType, Activity, ActivityType, Season, ChallengePart, CyclistsChallengePart, Sex
 from sqlalchemy.sql import asc, func
 import datetime as dt
 from typing import Optional
@@ -27,12 +27,9 @@ class Queries(object):
                 first()
         if self.SEASON_COMPETITION is None:
             self.SEASON_COMPETITION = Season(title='', start_date=dt.date.today(), end_date=dt.date.today())
-        self.SEASON_CREDIT = Season(title='',
-                                    start_date=self.SEASON_COMPETITION.start_date, end_date=dt.date(2021, 1, 10))
-        if credit:
-            self.SEASON = self.SEASON_CREDIT
-        else:
-            self.SEASON = self.SEASON_COMPETITION
+
+        self.SEASON = self.SEASON_COMPETITION
+
 
     def _get_user_last_activities(self, user_id: int, activity_types: list, number: int, offset: int = 0):
         """
@@ -48,6 +45,9 @@ class Queries(object):
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type.in_(activity_types))
+        #print(f"{query.first().datetime}")
+        print(f"{self.SEASON.start_date}")
+        print(f"{self.SEASON.end_date}")
         count = query. \
             count()
         items = query. \
@@ -771,7 +771,7 @@ class Queries(object):
         :return: number of results and list of strava access tokens (result should always be only 1)
         """
         query = db.session.query(User). \
-            filter(User.strava_id == strava_id)
+            filter(User.strava_id == f"{strava_id}")
 
         return query.all()
 
