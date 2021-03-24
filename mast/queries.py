@@ -779,11 +779,13 @@ class Queries(object):
         db.session.query(Activity). \
             filter(Activity.strava_id == strava_id) \
             .delete()
+        db.session.commit()
 
     def update_activity_info(self, strava_id: int, info_to_update: dict):
         db.session.query(Activity). \
             filter(Activity.strava_id == strava_id). \
             update(info_to_update, synchronize_session=False)
+        db.session.commit()
 
     def get_user_favorite_activity(self, user_id: int) -> Optional[str]:
         """
