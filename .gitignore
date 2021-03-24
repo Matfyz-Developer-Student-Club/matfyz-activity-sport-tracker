@@ -141,3 +141,6 @@ landing
 .env.prod.db
 
 *.cfg
+
+*.bat
+*.sh
