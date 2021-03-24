@@ -1,4 +1,4 @@
-from flask import url_for
+from flask import url_for, current_app
 from mast import mail
 from flask_mail import Message
 
@@ -6,7 +6,7 @@ from flask_mail import Message
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request',
-                  sender='noreply@mathletics.mff.cuni.cz',
+                  sender=current_app.config['MAIL_USERNAME'],
                   recipients=[user.email])
 
     msg.body = f'''To reset your password, visit the following link:
@@ -23,7 +23,7 @@ def send_registration_email(user):
 
     msg.body = f'''Hi, 
         welcome to Mathletics.
-        
+      
         You can now participate in our current competitions. 
 
         Good luck,

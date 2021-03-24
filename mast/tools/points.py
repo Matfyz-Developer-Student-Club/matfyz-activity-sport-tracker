@@ -105,11 +105,11 @@ class Points(object):
         :param pace: Pace in the minute per kilometres for the given activity.
         :return: Points for the given activity.
         """
-        if _get_user_sex(user) == Sex.Female:
-            return ceil((distance * (1 + self._get_elevation_percentage(elevation,
-                                                             distance)) * self._FEMALE_COEFFICIENT) * _get_pace_percentage(
-                pace))
+        if Points._get_user_sex(user) == Sex.Female:
+            return int((distance * (1 + Points._get_elevation_percentage(elevation,
+                                                                         distance)) * self._FEMALE_COEFFICIENT) * Points._get_pace_percentage(
+                pace) * 1000)
 
-        return ceil(
-            (distance * (1 + self._get_elevation(elevation, distance)) * self._MALE_COEFFICIENT) * _get_pace_percentage(
-                pace))
+        return int(((distance * (1 + Points._get_elevation_percentage(elevation,
+                                                                      distance)) * self._MALE_COEFFICIENT) * Points._get_pace_percentage(
+            pace)) * 1000)

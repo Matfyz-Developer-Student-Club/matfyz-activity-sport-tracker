@@ -27,18 +27,13 @@ def create_app(configuration=Config):
     app = Flask(__name__)
     app.config.from_object(configuration)
 
-    try:
-        if not os.path.exists(app.config['LANDING_DIR']):
-            logging.info("Creating landing directory")
-            os.mkdir(app.config['LANDING_DIR'])
-    except IOError:
-        logging.error("Error when creating the landing directory")
-
     mail.init_app(app)
     db.init_app(app)
     bcr.init_app(app)
     csrf.init_app(app)
     login_manager.init_app(app)
+    logging.info(f"{app.config['SQLALCHEMY_DATABASE_URI']}")
+    logging.info(f"{os.getenv('DATABASE_URL')}")
 
     # Logging setup
     logging.basicConfig(level=logging.DEBUG)

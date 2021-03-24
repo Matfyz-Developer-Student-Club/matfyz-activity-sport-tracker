@@ -5,7 +5,7 @@ from datetime import datetime, time
 
 class MastEncoder(JSONEncoder):
     def default(self, obj):
-        
+
         if isinstance(obj, Activity):
             if obj.duration == time(0):
                 duration = 'Not available'

@@ -73,7 +73,6 @@ class User(db.Model, UserMixin):
     verified = db.Column(db.Boolean, nullable=False, default=False)
     field_of_study = db.Column(db.Enum(StudyField))
     shirt_size = db.Column(db.String(100))
-    avatar_url = db.Column(db.String(255))
     activities = db.relationship('Activity', backref='user', lazy=True)
     strava_id = db.Column(db.String(20))
     strava_access_token = db.Column(db.String(40))
@@ -202,8 +201,8 @@ class Activity(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     name = db.Column(db.String(30), nullable=False, default='activity')
     elevation = db.Column(db.Float, nullable=False, default=0.0)
-    strava_id = db.Column(db.Integer, nullable=False)
-    score = db.Column(db.Integer, nullable=False, default=0)
+    strava_id = db.Column(db.BigInteger, nullable=False)
+    score = db.Column(db.BigInteger, nullable=False, default=0)
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"

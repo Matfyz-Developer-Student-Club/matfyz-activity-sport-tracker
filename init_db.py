@@ -4,12 +4,14 @@ from mast.models import Season, ChallengePart, User, Activity, ActivityType, Cyc
 from datetime import date, time, datetime
 import logging
 from mast import db, create_app
+import os
 
 
 def init():
     """
     Creates all DB tables and fills Season and ChallengePart
     """
+    logging.info(db)
     logging.info("Creating DB")
     db.drop_all()
     db.create_all()
@@ -17,13 +19,13 @@ def init():
     # season = Season(title='ZS 2020/2021',
     #                 start_date=date(year=2020, month=11, day=12),
     #                 end_date=date(year=2020, month=12, day=20))
-    season = Season(title='ZS 2020/2021',
-                    start_date=date(year=2020, month=11, day=1),
-                    end_date=date(year=2020, month=12, day=20))
+    #season = Season(title='ZS 2020/2021',
+    #                start_date=date(year=2020, month=11, day=1),
+    #                end_date=date(year=2020, month=12, day=20))
 
-    # season = Season(title='LS 2020/2021',
-    #                 start_date=date(year=2021, month=3, day=29),
-    #                 end_date=date(year=2021, month=6, day=30))
+    season = Season(title='LS 2020/2021',
+                    start_date=date(year=2021, month=3, day=21),
+                    end_date=date(year=2021, month=6, day=30))
     db.session.add(season)
     db.session.flush()
 
@@ -232,4 +234,4 @@ if __name__ == '__main__':
     app = create_app()
     app.app_context().push()
     init()
-    test_data()
+    #test_data()
