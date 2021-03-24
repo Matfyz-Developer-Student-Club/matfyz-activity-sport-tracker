@@ -1,7 +1,7 @@
 import json
 import logging
 import requests
-from flask import current_app
+from flask import current_app, flash
 from flask_login import current_user
 from datetime import time, datetime
 from time import time as t
@@ -22,6 +22,14 @@ def check_strava_permissions(scope):
     return True
 
 
+def check_strava_id_is_used(strava_id: int) -> bool:
+    db_queries = Queries()
+    athletes = db_queries.get_user_by_strava_id(strava_id)
+    if len(athletes) > 0:
+        return True
+    return False
+
+
 def save_strava_tokens(auth_code):
     ''' Acquire authentication and refresh token as well as info about an athlete with an authentication code.
     '''
@@ -38,6 +46,9 @@ def save_strava_tokens(auth_code):
 
     # This is JSON containing access and refresh token as well as athlete info
     strava_logger.info( json.dumps(response_data, indent=4))
+
+    if check_strava_id_is_used(response_data["athlete"]["id"]):
+        flash('This STRAVA account is already used by another user.', 'danger')
 
     current_user.strava_id = response_data["athlete"]["id"]
     current_user.strava_refresh_token = response_data["refresh_token"]
