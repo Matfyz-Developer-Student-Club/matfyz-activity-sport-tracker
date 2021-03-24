@@ -1,5 +1,5 @@
 from mast import db
-from mast.models import User, UserType, Activity, ActivityType, Season, ChallengePart, CyclistsChallengePart
+from mast.models import User, UserType, Activity, ActivityType, Season, ChallengePart, CyclistsChallengePart, Sex
 from sqlalchemy.sql import asc, func
 import datetime as dt
 from typing import Optional

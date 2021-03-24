@@ -324,7 +324,7 @@ def _satisfy_distance_constrains(distance:int , type:ActivityType) -> bool:
     return True if distance >= LIMITS[type] else False
 
 
-def _get_score(distance:float , elevation:float, pace:time, user:User, activity_type:ActivityType) -> int:
+def _get_score(distance:float, elevation:float, pace:time, user:User, activity_type:ActivityType) -> int:
     """
 
     :param distance: distance in KM

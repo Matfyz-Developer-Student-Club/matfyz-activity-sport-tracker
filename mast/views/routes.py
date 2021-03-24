@@ -15,6 +15,8 @@ def get_personal_stats():
     data = db_query.get_total_distances_by_user_in_last_days(user_id=current_user.id, days=7)
     labels = [key for key, val in data.items()]
     data = [val for key, val in data.items()]
+    print(f"LABELS: {labels}")
+    print(f"DATA: {data}")
     return jsonify({'payload': json.dumps({'data': data, 'labels': labels})})
 
 

@@ -106,7 +106,7 @@ class Points(object):
         :return: Points for the given activity.
         """
         if _get_user_sex(user) == Sex.Female:
-            return ceil((distance * (1 + self._get_elevation(elevation,
+            return ceil((distance * (1 + self._get_elevation_percentage(elevation,
                                                              distance)) * self._FEMALE_COEFFICIENT) * _get_pace_percentage(
                 pace))
 
