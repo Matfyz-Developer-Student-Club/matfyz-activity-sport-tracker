@@ -232,7 +232,6 @@ def test_data():
 
 if __name__ == '__main__':
     app = create_app()
-    logging.info(os.getenv('DATABASE_URL'))
     app.app_context().push()
     init()
-    test_data()
+    #test_data()

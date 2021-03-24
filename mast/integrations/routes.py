@@ -51,7 +51,6 @@ def strava_webhook():
     """
     logging.info(request.get_json())
     data = request.get_json()
-
     # Process webhook
     process_strava_webhook(data)
     return Response(status=200)

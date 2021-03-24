@@ -1,5 +1,5 @@
 import mast
-from flask import redirect, request, render_template, url_for, Blueprint, flash
+from flask import redirect, request, render_template, url_for, Blueprint, flash, current_app
 from flask_login import login_user, current_user, logout_user, login_required
 from mast.users.forms import (LoginForm, RegisterForm,
                               UpdateProfileForm, ChangePasswordForm,
