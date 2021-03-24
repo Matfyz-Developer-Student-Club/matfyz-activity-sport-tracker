@@ -11,14 +11,15 @@
                     <div class="card-body">
                         {% if profile.is_completed() %}
                             <h4 class="card-title">
-                                {{ profile.first_name }} {% if profile.display_name != '' %}{{ '"' + profile.display_name + '"' }}{% endif %} {{ profile.last_name }} </h4>
+                                {{ profile.first_name }} {% if profile.display_name != '' %}
+                                {{ '"' + profile.display_name + '"' }}{% endif %} {{ profile.last_name }} </h4>
                             <h5>
                                 {% if profile.verified %}
                                     <span class="badge badge-success">Verified</span>
                                 {% else %}
                                     <span class="badge badge-info">Profile complete</span>
                                 {% endif %}
-                                {% if profile.anonymous %}
+                                {% if profile.competing %}
                                     <span class="badge badge-info">Competing</span>
                                 {% else %}
                                     <span class="badge badge-warning">Not competing</span>
@@ -64,6 +65,8 @@
 
                     {{ render_checkbox_field(update_profile_form.competing) }}
 
+                    {{ render_checkbox_field(update_profile_form.anonymous) }}
+
                     {{ render_inline_radio_field(update_profile_form.user_type) }}
 
                     {{ render_inline_radio_field(update_profile_form.study_field) }}
@@ -85,4 +88,35 @@
             </div>
         </div>
     </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            let studentRadioButtons = [];
+            let studyFieldsButtons = [];
+
+            //TODO: This is fairly ugly. Change into generic code.
+            for (let i = 0; i < 3; ++i) {
+                studentRadioButtons.push(document.getElementById(`user_type-${i}`));
+            }
+            //TODO: This is fairly ugly. Change into generic code.
+            for (let i = 0; i < 4; ++i) {
+                studyFieldsButtons.push(document.getElementById(`study_field-${i}`));
+            }
+
+            studentRadioButtons.forEach(btn => {
+                btn.addEventListener('input', () => {
+                    if (btn.value === 'student' && btn.checked) {
+                        studyFieldsButtons.forEach(sfb => {
+                            sfb.removeAttribute("disabled");
+                        });
+                    } else {
+                        studyFieldsButtons.forEach(sfb => {
+                            sfb.setAttribute("disabled", "");
+                        });
+                    }
+                });
+            });
+        });
+
+    </script>
 {% endblock content_page %}

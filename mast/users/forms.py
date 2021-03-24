@@ -77,9 +77,11 @@ class UpdateProfileForm(LoggingFlaskForm):
     user_type = RadioField('I am', validators=[DataRequired()],
                            choices=['student', 'employee', 'alumni'])
     study_field = RadioField('I study', validators=[DataRequired()],
-                             choices=['Informatics', 'Math', 'Physics', 'Teaching'])
-    competing = BooleanField('I want to compete anonymously',
+                             choices=['Informatics', 'Maths', 'Physics', 'Teaching'])
+    anonymous = BooleanField('I want to compete anonymously',
                              description='Results will be on the public scoreboards without name.')
+    competing = BooleanField('I want to compete',
+                             description='Results will be included in the common challenges.')
     submit = SubmitField('Update profile')
 
 

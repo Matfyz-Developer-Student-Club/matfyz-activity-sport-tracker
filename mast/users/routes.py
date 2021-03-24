@@ -92,7 +92,8 @@ def user_settings():
                                               study_field=update_profile_form.study_field.data,
                                               ukco=update_profile_form.ukco.data.strip(),
                                               display_name=update_profile_form.display_name.data.strip(),
-                                              anonymous=update_profile_form.competing.data)
+                                              anonymous=update_profile_form.anonymous.data,
+                                              competing=update_profile_form.competing.data)
 
                 if authenticate_via_sis(name=current_user.first_name, surname=current_user.last_name, login=None,
                                         uk_id=current_user.uk_id, is_employee=current_user.type.value):
@@ -129,8 +130,9 @@ def user_settings():
     update_profile_form.sex.data = current_user.sex.value if current_user.sex else None
     update_profile_form.shirt_size.data = current_user.shirt_size or None
     update_profile_form.user_type.data = current_user.type.value if current_user.type else None
-    update_profile_form.competing.data = current_user.anonymous or None
-    update_profile_form.study_field.data = current_user.field_of_study or None
+    update_profile_form.competing.data = current_user.competing or None
+    update_profile_form.anonymous.data = current_user.anonymous or None
+    update_profile_form.study_field.data = current_user.field_of_study.value if current_user.field_of_study else None
 
     return render_template("user_settings.html", title='User Settings',
                            profile=current_user,

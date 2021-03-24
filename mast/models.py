@@ -34,10 +34,10 @@ class UserType(Enum):
 
 
 class StudyField(Enum):
-    Inf = 'informatics'
-    Mat = 'mathematics'
-    Phs = 'physics'
-    Tea = 'teaching'
+    Inf = 'Informatics'
+    Mat = 'Mathematics'
+    Phs = 'Physics'
+    Tea = 'Teaching'
 
     def __repr__(self):
         return self.name
@@ -68,6 +68,7 @@ class User(db.Model, UserMixin):
     display_name = db.Column(db.String(50))
     sex = db.Column(db.Enum(Sex))
     anonymous = db.Column(db.Boolean, nullable=False, default=False)
+    competing = db.Column(db.Boolean, nullable=False, default=True)
     type = db.Column(db.Enum(UserType))
     uk_id = db.Column(db.String(10))
     verified = db.Column(db.Boolean, nullable=False, default=False)
@@ -125,6 +126,7 @@ class User(db.Model, UserMixin):
             return self.first_name + ' ' + self.last_name
 
     def complete_profile(self, first_name, last_name, study_field, sex, shirt_size, user_type, ukco, anonymous,
+                         competing,
                          display_name=None):
         assert (first_name is not None and
                 last_name is not None and
@@ -132,7 +134,8 @@ class User(db.Model, UserMixin):
                 shirt_size is not None and
                 user_type is not None and
                 ukco is not None and
-                study_field is not None)
+                study_field is not None and
+                competing is not None)
         self.first_name = first_name
         self.last_name = last_name
         if sex == 'male':
@@ -142,20 +145,22 @@ class User(db.Model, UserMixin):
         self.shirt_size = shirt_size
         if user_type == 'student':
             self.type = UserType.Student
+            if study_field == 'Informatics':
+                print("WORKS")
+                self.field_of_study = StudyField.Inf
+            elif study_field == 'Physics':
+                self.field_of_study = StudyField.Phs
+            elif study_field == 'Maths':
+                self.field_of_study = StudyField.Mat
+            else:
+                self.field_of_study = StudyField.Tea
+
         elif user_type == 'employee':
             self.type = UserType.Employee
         else:
             self.type = UserType.Alumni
 
-        if study_field == 'Informatics':
-            self.field_of_study = StudyField.Inf
-        elif study_field == 'Physics':
-            self.field_of_study = StudyField.Phs
-        elif study_field == 'Maths':
-            self.field_of_study = StudyField.Mat
-        else:
-            self.field_of_study = StudyField.Tea
-
+        self.competing = competing
         self.uk_id = ukco
         self.anonymous = anonymous
         self.display_name = display_name
