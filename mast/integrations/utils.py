@@ -49,6 +49,7 @@ def save_strava_tokens(auth_code):
 
     if check_strava_id_is_used(response_data["athlete"]["id"]):
         flash('This STRAVA account is already used by another user.', 'danger')
+        return
 
     current_user.strava_id = response_data["athlete"]["id"]
     current_user.strava_refresh_token = response_data["refresh_token"]
