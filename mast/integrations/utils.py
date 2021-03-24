@@ -42,6 +42,7 @@ def save_strava_tokens(auth_code):
     current_user.strava_id = response_data["athlete"]["id"]
     current_user.strava_refresh_token = response_data["refresh_token"]
     current_user.strava_access_token = response_data["access_token"]
+    current_user.strava_expires_at = int(response_data["expires_at"])
     db.session.add(current_user)
     db.session.commit()
 
@@ -206,10 +207,6 @@ def process_strava_webhook(data: dict):
         strava_logger.info(data)
         return
 
-    if user.strava_expires_at == None:
-        refresh_access_token(user)
-
-
     # Check whether the access token for given user already expired with some reserve, if it did then refresh tokens
     if user.strava_expires_at - current_app.config['STRAVA_EXPIRE_RESERVE'] > floor(t()):
         refresh_access_token(user)
@@ -250,6 +247,12 @@ def _store_activity(user, data):
     activity = create_activity_from_strava_json(activity_data, user, strava_activity_id)
 
     db_query = Queries()
+
+    #do not allow same activity to be uploaded twice
+    existing_activities = db_query.get_activity_by_strava_id(strava_activity_id)
+    if len(existing_activities) > 0:
+        return
+
     db_query.save_new_user_activities(activity.user_id, activity)
 
 

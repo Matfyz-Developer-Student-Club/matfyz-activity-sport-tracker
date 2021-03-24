@@ -139,6 +139,13 @@ class Queries(object):
         db.session.add(activity)
         db.session.commit()
 
+
+    def get_activity_by_strava_id(self, strava_id: int):
+        query = db.session.query(Activity). \
+            filter(Activity.strava_id == strava_id)
+
+        return query.all()
+
     def get_best_run_activities_by_user(self, user_id: int, number: int, offset: int = 0):
         """
         Returns the best run activity by a specified user in a specified competition.
