@@ -161,7 +161,7 @@ def get_best_users_score():
     for item in data[1]:
         enriched_item = {'order': order,
                          'name': item.User.display(),
-                         'distance': round(item.total_score, 1)}
+                         'score': int(round(item.total_score, 1))}
         enriched_data.append(enriched_item)
         order = order + 1
     return json.dumps({'total': data[0], 'rows': enriched_data}, cls=MastEncoder)
