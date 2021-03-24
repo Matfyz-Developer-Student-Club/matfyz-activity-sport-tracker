@@ -36,9 +36,15 @@ def integrations():
     db_query = Queries()
     session_data = Session()
     check_profile_verified(session_data)
+    total_run_score = db_query.get_total_score_by_user_for_run(current_user.id) or 0
+    total_walk_score = db_query.get_total_score_by_user_for_walk(current_user.id) or 0
+    total_inline_score = db_query.get_total_score_by_user_for_inline(current_user.id) or 0
+    total_ride_score = db_query.get_total_score_by_user_for_ride(current_user.id) or 0
     favorite_activities = db_query.get_user_favorite_activity(current_user.id)
     return render_template("integrations.html", title='Integrations', session_data=session_data,
-                           favorite_activities=favorite_activities)
+                           favorite_activities=favorite_activities, total_run_score=total_run_score,
+                           total_walk_score=total_walk_score, total_inline_score=total_inline_score,
+                           total_ride_score=total_ride_score)
 
 
 @main.route("/statistics")
