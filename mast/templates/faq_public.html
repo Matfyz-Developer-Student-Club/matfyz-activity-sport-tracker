@@ -3,7 +3,7 @@
 {% block content_page %}
     <br><br><br>
 
-     <div class="container mb-4">
+    <div class="container mb-4">
         <div class="row-fluid">
 
             <div class="col-sm mb-4">
@@ -18,7 +18,7 @@
                 <p>
                     Well, all you need to do is to complete your profile on the User Settings page, authenticate via Strava in the
                     <a href="{{url_for('main.integrations')}}">Integrations</a>
-                    and start running. Activities uploaded to STRAVA are automatically sent to Mathletics.
+                    and start running. Activities uploaded to STRAVA are automatically sent to Mathletics starting March 29.
                 </p>
                 <p>
                     Note that your STRAVA activity is counted only if it is made <b>public in STRAVA</b>.
@@ -31,7 +31,7 @@
             <div class="col-sm mb-4">
                 <h2>When does the event takes place?</h2>
                 <p>
-                    For this semester, Mathletics takes place from <b>22. 3.</b> till <b>30. 6. 2021</b>.
+                    For this semester, Mathletics takes place from <b>29. 3.</b> till <b>30. 6. 2021</b>.
                 </p>
             </div>
 
@@ -45,15 +45,34 @@
                 <p>
                     The score is computed by a sophisticated formula that takes in account your activity distance, pace and elevation gain and also your sex.
                 </p>
+                <h6>
+                    The Formula:
+                </h6>
+                    <p>
+                        <img src="../static/pics/points_formula.png" alt="Points Formula"></img>
+                        <figure>
+                            <figcaption>d ... distance</figcaption>
+                            <figcaption>a ... scaled elevation [0;1]</figcaption>
+                            <figcaption>p ... sex (1 for male; 1,1 for female)</figcaption>
+                            <figcaption>t ... scaled pace [0;1]</figcaption>
+                        </figure>
+
+                </p>
+                <p>
+                    Note that not every category uses all parameters used in the formula. For more information see <a href="{{url_for('main.about_competitions')}}">About Competitions</a>.
+                </p>
             </div>
 
             <div id="prizes" class="col-sm mb-4">
                 <h2>What can I win?</h2>
                 <p>
-                    First three places in every category win valuable gift basket form MFF.
+                    First three participants in each category win equipment worth 700 Kč, 500 Kč or 300 Kč respectively.
                 </p>
                 <p>
-                    Also the first ten competitors win a T-shirt.
+                    Also, the first ten competitors win a MFF T-shirt.
+                </p>
+                <p>
+                    The department of physical education (KTV) picks the best participants in each category based on uploaded activities.
                 </p>
             </div>
 
@@ -63,19 +82,21 @@
                     This season there is five disciplines all together.
                 </p>
                 <ul>
-                    <li><b>Walking</b> - any walk longer 3 km</li>
-                    <li><b>Running</b> - any run longer 5 km</li>
+                    <li><b>Running</b> - any run longer 3 km</li>
+                    <li><b>Walking</b> - any walk longer 5 km</li>
                     <li><b>Inline skating</b> - any trip longer 8 km</li>
                     <li><b>Cycling</b> - any ride longer 10 km</li>
-                    <li><b>Total</b> - the person with the biggest score sum across all the categories</li>
+                    <!--<li><b>Total</b> - the person with the biggest score sum across all the categories</li>-->
                 </ul>
             </div>
 
             <div id="rules" class="col-sm mb-4">
                 <h2>Rules</h2>
                 <ol>
-                    <li>You must be registered.</li>
-                    <li>The activity is accounted for only if it satisfies the minimum distance criterion (see <a href="#competitions">above</a>).</li>
+                    <li>You must be registered on this website.</li>
+                    <li>You have to authenticate via Strava. Activities <b>uploaded before</b> authentication will <b>not</b> be counted.</li>
+                    <li>Activity must be accessible to <b>public in STRAVA</b>.</li>
+                    <li>The activity is accounted for only if it satisfies the <b>minimum distance criterion</b> (see <a href="#competitions">above</a>).</li>
                     <li>The activity can not be interleaved with other activities and must be recorded outside.</li>
                     <li>Activities obviously related to work duties such as being messenger, courier, food delivery boy will not be accounted.</li>
                     <li>The organizer (KTV) reserves the right not to recognize activities that drift off reality caused by for instance GPS issues (such cases will be resolved individually).</li>
@@ -88,7 +109,7 @@
                     You enter the competitions automatically. All you need to do is authenticate via strava in Integrations and use STRAVA to record your activity.
                 </p>
                 <p>
-                    Any activity on strava that is public will be automatically uploaded to Mathletics.
+                    Any activity on STRAVA that is public will be automatically uploaded to Mathletics in about 5 minutes after upload.
                 </p>
             </div>
 
