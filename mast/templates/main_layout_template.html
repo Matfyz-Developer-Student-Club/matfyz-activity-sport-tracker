@@ -74,18 +74,20 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a {% if title == 'Matfyz Challenges - Combined' %} class="nav-link activity-wrap active" {% else %}
-                                                                class="nav-link activity-wrap" {% endif %}
-                                                                href="{{ url_for( 'activities.matfyz_challenges_combined') }}">
+                        <a {% if title == 'Matfyz Challenges - Combined' %}
+                            class="nav-link activity-wrap active" {% else %}
+                            class="nav-link activity-wrap" {% endif %}
+                            href="{{ url_for( 'activities.matfyz_challenges_combined') }}">
                             <img src="{{ url_for('static', filename='pics/contest.svg') }}"
                                  alt="Global Statistics" width="16" height="16">
                             Matfyz Challenges - Combined
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a {% if title == 'Matfyz Challenges - Cyclists' %} class="nav-link activity-wrap active" {% else %}
-                                                                class="nav-link activity-wrap" {% endif %}
-                                                                href="{{ url_for( 'activities.matfyz_challenges_cyclist') }}">
+                        <a {% if title == 'Matfyz Challenges - Cyclists' %}
+                            class="nav-link activity-wrap active" {% else %}
+                            class="nav-link activity-wrap" {% endif %}
+                            href="{{ url_for( 'activities.matfyz_challenges_cyclist') }}">
                             <img src="{{ url_for('static', filename='pics/trophy-cyclo.svg') }}"
                                  alt="Global Statistics" width="16" height="16">
                             Matfyz Challenges - Cyclists
@@ -110,10 +112,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a {% if title == 'Frequently Asked Questions' %} class="nav-link activity-wrap active" {% else %}
-                                                                          class="nav-link activity-wrap" {% endif %}
-                                                                          href="{{ url_for( 'main.faq') }}">
-                            <img src="{{ url_for('static', filename='pics/question.svg') }}" alt="Frequently Asked Questions"
+                        <a {% if title == 'Frequently Asked Questions' %}
+                            class="nav-link activity-wrap active" {% else %}
+                            class="nav-link activity-wrap" {% endif %}
+                            href="{{ url_for( 'main.faq') }}">
+                            <img src="{{ url_for('static', filename='pics/question.svg') }}"
+                                 alt="Frequently Asked Questions"
                                  width="16" height="16">
                             Frequently Asked Questions
                         </a>
@@ -121,7 +125,7 @@
                 </ul>
 
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span wfd-id="13">Sports Competitions</span>
+                    <span>Sports Competitions</span>
                 </h6>
 
                 <ul class="nav flex-column">
@@ -136,8 +140,8 @@
                     </li>
                     <li class="nav-item">
                         <a {% if title == 'Running' %} class="nav-link activity-wrap active" {% else %}
-                                                         class="nav-link activity-wrap" {% endif %}
-                                                         href="{{ url_for( 'activities.running') }}">
+                                                       class="nav-link activity-wrap" {% endif %}
+                                                       href="{{ url_for( 'activities.running') }}">
                             <img src="{{ url_for('static', filename='pics/run.svg') }}" alt="Running"
                                  width="16" height="16"> Running
                             <span class="sr-only"></span>
@@ -155,8 +159,8 @@
                     </li>
                     <li class="nav-item">
                         <a {% if title == 'Inline' %} class="nav-link activity-wrap active" {% else %}
-                                                          class="nav-link activity-wrap" {% endif %}
-                                                          href="{{ url_for( 'activities.inline') }}">
+                                                      class="nav-link activity-wrap" {% endif %}
+                                                      href="{{ url_for( 'activities.inline') }}">
                             <img class="activity" src="{{ url_for('static', filename='pics/skating.svg') }}"
                                  alt="Inline" width="16" height="16">
                             Inline
@@ -175,9 +179,30 @@
                     </li>
                 </ul>
 
+            {% if current_user.role.is_admin() %}
+
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Admin Section</span>
+                </h6>
+
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a {% if title == 'Admin Panel' %} class="nav-link activity-wrap active" {% else %}
+                                                       class="nav-link activity-wrap" {% endif %}
+                                                       href="{{ url_for('admin.admin_panel') }}">
+                            <img class="activity" src="{{ url_for('static', filename='pics/admin.svg') }}"
+                                 alt="Admin Panel" width="16" height="16">
+                            Admin Panel
+                            <span class="sr-only"></span>
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
+
                 <footer class="footer mt-auto py-3">
                     <div class="container">
-                        <span class="text-muted">Powered by <a href="https://matfyz-developer-student-club.github.io/websites/" target="_blank">Matfyz Developer Student Club</a>.</span>
+                        <span class="text-muted">Powered by <a
+                                href="https://matfyz-developer-student-club.github.io/websites/" target="_blank">Matfyz Developer Student Club</a>.</span>
                     </div>
                 </footer>
             </div>
@@ -188,9 +213,11 @@
             {% autoescape false %}
             {% if session_data is defined %}
                 {% for msg in session_data.pop_error_msgs() %}
-                    <div class="alert alert-danger container-fluid d-flex flex-wrap align-items-center mt-2" role="alert">
+                    <div class="alert alert-danger container-fluid d-flex flex-wrap align-items-center mt-2"
+                         role="alert">
                         <div class="icon">
-                            <svg width="2em" height="2em" viewBox="0 0 486.463 486.463" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="2em" height="2em" viewBox="0 0 486.463 486.463"
+                                 xmlns="http://www.w3.org/2000/svg">
                                 <path d="M243.225,333.382c-13.6,0-25,11.4-25,25s11.4,25,25,25c13.1,0,25-11.4,24.4-24.4
                                     C268.225,344.682,256.925,333.382,243.225,333.382z"/>
                                 <path d="M474.625,421.982c15.7-27.1,15.8-59.4,0.2-86.4l-156.6-271.2c-15.5-27.3-43.5-43.5-74.9-43.5s-59.4,16.3-74.9,43.4
@@ -208,9 +235,11 @@
                 {% endfor %}
 
                 {% for msg in session_data.pop_warning_msgs() %}
-                    <div class="alert alert-warning container-fluid d-flex flex-wrap align-items-center mt-2" role="alert">
+                    <div class="alert alert-warning container-fluid d-flex flex-wrap align-items-center mt-2"
+                         role="alert">
                         <div class="icon">
-                            <svg width="2em" height="2em" viewBox="0 0 486.463 486.463" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="2em" height="2em" viewBox="0 0 486.463 486.463"
+                                 xmlns="http://www.w3.org/2000/svg">
                                 <path d="M243.225,333.382c-13.6,0-25,11.4-25,25s11.4,25,25,25c13.1,0,25-11.4,24.4-24.4
                                     C268.225,344.682,256.925,333.382,243.225,333.382z"/>
                                 <path d="M474.625,421.982c15.7-27.1,15.8-59.4,0.2-86.4l-156.6-271.2c-15.5-27.3-43.5-43.5-74.9-43.5s-59.4,16.3-74.9,43.4
@@ -228,7 +257,8 @@
                 {% endfor %}
 
                 {% for msg in session_data.pop_info_msgs() %}
-                    <div class="alert alert-success container-fluid d-flex flex-wrap align-items-center mt-2" role="alert">
+                    <div class="alert alert-success container-fluid d-flex flex-wrap align-items-center mt-2"
+                         role="alert">
                         <div class="icon">
                             <svg width="2em" height="2em" viewBox="0 0 330 330" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M165,0C74.019,0,0,74.02,0,165.001C0,255.982,74.019,330,165,330s165-74.018,165-164.999C330,74.02,255.981,0,165,0z

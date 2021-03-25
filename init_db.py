@@ -19,7 +19,7 @@ def init():
     # season = Season(title='ZS 2020/2021',
     #                 start_date=date(year=2020, month=11, day=12),
     #                 end_date=date(year=2020, month=12, day=20))
-    #season = Season(title='ZS 2020/2021',
+    # season = Season(title='ZS 2020/2021',
     #                start_date=date(year=2020, month=11, day=1),
     #                end_date=date(year=2020, month=12, day=20))
 
@@ -183,7 +183,8 @@ def test_data():
 
     user = User(email='a@b.cz', password='')
     user.complete_profile(first_name='Donald', last_name='Trump', sex='male',
-                          shirt_size='L', user_type='student', ukco='', anonymous=False, study_field=StudyField.Mat)
+                          shirt_size='L', user_type='student', ukco='', anonymous=False, study_field=StudyField.Mat,
+                          competing=True)
 
     activity = Activity(datetime=datetime(2020, 11, 5, 15, 32, 15), distance=12.5, duration=time(0, 18, 45),
                         average_duration_per_km=time(0, 1, 30), type=ActivityType.Run, user_id=user.id, strava_id=1)
@@ -208,7 +209,8 @@ def test_data():
 
     user = User(email='a@b.com', password='')
     user.complete_profile(first_name='Joe', last_name='Biden', sex='male',
-                          shirt_size='L', user_type='student', ukco='', anonymous=False, study_field=StudyField.Inf)
+                          shirt_size='L', user_type='student', ukco='', anonymous=False, study_field=StudyField.Inf,
+                          competing=True)
 
     activity = Activity(datetime=datetime(2020, 11, 5, 15, 32, 15), distance=10, duration=time(0, 20, 0),
                         average_duration_per_km=time(0, 2, 0), type=ActivityType.Run, user_id=user.id, strava_id=1)
@@ -234,4 +236,4 @@ if __name__ == '__main__':
     app = create_app()
     app.app_context().push()
     init()
-    #test_data()
+    # test_data()

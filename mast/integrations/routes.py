@@ -1,10 +1,7 @@
-import mast
-import requests
 from flask import Response, redirect, request, render_template, url_for, Blueprint, flash, jsonify
 from flask_login import current_user, login_required
 from flask import current_app
 from mast.integrations.utils import check_strava_permissions, save_strava_tokens, process_strava_webhook
-from mast.session import Session
 from mast.session import Session
 import logging
 from mast import csrf

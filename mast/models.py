@@ -33,6 +33,14 @@ class UserType(Enum):
         return self.name
 
 
+class Role(Enum):
+    Regular = 0
+    Admin = 1
+
+    def is_admin(self) -> bool:
+        return self.value == 1
+
+
 class StudyField(Enum):
     Inf = 'Informatics'
     Mat = 'Mathematics'
@@ -40,10 +48,10 @@ class StudyField(Enum):
     Tea = 'Teaching'
 
     def __repr__(self):
-        return self.name
+        return self.value
 
     def __str__(self):
-        return self.name
+        return self.value
 
 
 class ActivityType(Enum):
@@ -80,6 +88,7 @@ class User(db.Model, UserMixin):
     strava_refresh_token = db.Column(db.String(40))
     strava_expires_at = db.Column(db.Integer)
     avatar = db.Column(db.String(255), default='static/pics/default_avatar.svg')
+    role = db.Column(db.Enum(Role), default=Role.Regular)
 
     def get_reset_token(self, expires_sec=1800):
         serializer = Serializer(current_app.config['SECRET_KEY'], expires_sec)

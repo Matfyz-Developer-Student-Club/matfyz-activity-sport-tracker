@@ -16,7 +16,6 @@ login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 
-
 logging.basicConfig(
     format='%(asctime)s %(levelname)-8s %(message)s',
     level=logging.INFO,
@@ -32,22 +31,22 @@ def create_app(configuration=Config):
     bcr.init_app(app)
     csrf.init_app(app)
     login_manager.init_app(app)
-    logging.info(f"{app.config['SQLALCHEMY_DATABASE_URI']}")
-    logging.info(f"{os.getenv('DATABASE_URL')}")
+    logging.info(f"Connected to database - {app.config['SQLALCHEMY_DATABASE_URI']}")
 
     # Logging setup
     logging.basicConfig(level=logging.DEBUG)
-    logging.info(f"{app.config['STRAVA_CLIENT_ID']}")
     from mast.users.routes import users
     from mast.activities.routes import activities
     from mast.main.routes import main
     from mast.views.routes import views
     from mast.integrations.routes import integrations
+    from mast.admin.routes import admin
 
     app.register_blueprint(users)
     app.register_blueprint(activities)
     app.register_blueprint(main)
     app.register_blueprint(views)
+    app.register_blueprint(admin)
     app.register_blueprint(integrations)
 
     return app
