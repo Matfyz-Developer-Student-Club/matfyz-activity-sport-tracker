@@ -20,4 +20,5 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
             "pool_pre_ping": True,
     }
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 

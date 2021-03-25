@@ -1,0 +1,133 @@
+{% extends "main_layout_template.html" %}
+{% from "macros/_flash.html" import render_flash %}
+
+
+{% block content_page %}
+    <h1 class="h2 mt-2">Admin Panel</h1>
+    <hr>
+    {{ render_flash() }}
+
+    <div class="row justify-content-left mt-5 w-100">
+        <div id="accordion" class="w-100">
+            {% for user in users %}
+                <div class="card">
+                    <div class="card-header" id="heading-{{ user.id }}">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-{{ user.id }}"
+                                    aria-expanded="true" aria-controls="collapse-{{ user.id }}">
+                                {% if user.first_name or user.last_name %}
+                                    {{ user.first_name }}
+                                    {% if user.display_name and user.display_name != '' %}
+                                        {{ '"' + user.display_name + '"' }}
+                                    {% endif %} {{ user.last_name }}
+                                {% else %}
+                                    {{ user.email }}
+                                {% endif %}
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="collapse-{{ user.id }}" class="collapse" aria-labelledby="heading-{{ user.one }}"
+                         data-parent="#accordion">
+                        <div class="card-body">
+                            <h6>User information</h6>
+                            <hr>
+                            <table class="table">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">First Name</th>
+                                    <th scope="col">Last Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">UK Number</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Field of Study</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>{{ user.first_name }}</td>
+                                    <td>{{ user.last_name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.uk_id }}</td>
+                                    <td>{{ user.type }}</td>
+                                    <td>{{ user.field_of_study }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <h6>User's activities</h6>
+                            <hr>
+
+                            <table class="table">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Activity Type</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Distance</th>
+                                    <th scope="col">Duration</th>
+                                    <th scope="col">Average Speed (on km)</th>
+                                    <th scope="col">Elevation</th>
+                                    <th scope="col">Activity Name in STRAVA</th>
+                                    <th scope="col">Score</th>
+                                    <th scope="col">Action</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for activity in user.activities %}
+                                    <tr data-activity_id="{{ activity.id }}">
+                                        <td>{{ activity.type }}</td>
+                                        <td>{{ activity.datetime }}</td>
+                                        <td>{{ activity.distance }}</td>
+                                        <td>{{ activity.duration }}</td>
+                                        <td>{{ activity.average_duration_per_km }}</td>
+                                        <td>{{ activity.elevation }}</td>
+                                        <td>{{ activity.name }}</td>
+                                        <td>{{ activity.score }}</td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm send-notification">Request Control
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        let notificationButtons = Array.from(document.getElementsByClassName('send-notification'));
+
+        notificationButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+
+                let containingRow = btn.parentElement;
+                let params = new URLSearchParams();
+
+                params.append("activity_id", containingRow.dataset.activity_id);
+
+                fetch(`${window.origin}/admin/suspicious_activity`, {
+                    method: 'GET',
+                    credentials: "include",
+                    body: params
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            }
+                        }
+                    }).catch(ex => {
+                    window.alert("Notification of the user was unsuccessful");
+                    console.log(`For more detail, please see the following error: ${ex}`)
+                })
+            })
+        })
+
+
+    </script>
+
+{% endblock content_page %}
+

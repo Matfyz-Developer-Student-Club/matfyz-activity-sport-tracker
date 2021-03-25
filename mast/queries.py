@@ -30,7 +30,6 @@ class Queries(object):
 
         self.SEASON = self.SEASON_COMPETITION
 
-
     def _get_user_last_activities(self, user_id: int, activity_types: list, number: int, offset: int = 0):
         """
         Returns the last activities of specified types by specified user.
@@ -45,7 +44,7 @@ class Queries(object):
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type.in_(activity_types))
-        #print(f"{query.first().datetime}")
+        # print(f"{query.first().datetime}")
         print(f"{self.SEASON.start_date}")
         print(f"{self.SEASON.end_date}")
         count = query. \
@@ -810,3 +809,12 @@ class Queries(object):
 
             return ", ".join([str(act[0]) for act in activity_counts if act[1] == local_max])
         return None
+
+    def enumerate_admin_stats(self):
+        return User.query.all()
+
+    def get_activity_by_id(self, activity_id: int) -> Activity:
+        return Activity.query.filter_by(id=activity_id).first()
+
+    def get_user_by_id(self, user_id: int) -> User:
+        return User.query.filter_by(id=user_id).first()

@@ -45,7 +45,7 @@ def save_strava_tokens(auth_code):
     response_data = json.loads(response.text)
 
     # This is JSON containing access and refresh token as well as athlete info
-    strava_logger.info( json.dumps(response_data, indent=4))
+    strava_logger.info(json.dumps(response_data, indent=4))
 
     if check_strava_id_is_used(response_data["athlete"]["id"]):
         flash('This STRAVA account is already used by another user.', 'danger')
@@ -58,7 +58,8 @@ def save_strava_tokens(auth_code):
     db.session.add(current_user)
     db.session.commit()
 
-def refresh_access_token(user:User):
+
+def refresh_access_token(user: User):
     '''
     Request:
     curl -X POST https://www.strava.com/api/v3/oauth/token \
@@ -92,6 +93,7 @@ def refresh_access_token(user:User):
     user.strava_access_token = response_data['access_token']
     user.strava_refresh_token = response_data['refresh_token']
     user.strava_expires_at = int(response_data['expires_at'])
+
 
 def get_athlete(access_token):
     '''
@@ -169,23 +171,24 @@ def create_activity_from_strava_json(activity: dict, user: User, strava_activity
     :return: new Activity ready to save into database
     """
 
-    distance = activity['distance']     # meters
+    distance = activity['distance']  # meters
     time_in_secs = activity['moving_time']  # seconds
-    total_time = _get_time(time_in_secs)     # time(H:M:S)
-    elevation = activity['total_elevation_gain'] if not None else 0     # meters
-    activity_type = _get_activity_type(activity['type'])  # https://developers.strava.com/docs/reference/#api-models-ActivityType
-    name = activity['name'][:30] if not None else ''    # string
-    pace = _get_time(round(time_in_secs / distance * 1000))     # minutes per km
-    activity_date = datetime.strptime(activity['start_date'],'%Y-%m-%dT%H:%M:%SZ')  # datetime
-    score = _get_score(distance / 1000, elevation, pace, user, activity_type)     # int
+    total_time = _get_time(time_in_secs)  # time(H:M:S)
+    elevation = activity['total_elevation_gain'] if not None else 0  # meters
+    activity_type = _get_activity_type(
+        activity['type'])  # https://developers.strava.com/docs/reference/#api-models-ActivityType
+    name = activity['name'][:30] if not None else ''  # string
+    pace = _get_time(round(time_in_secs / distance * 1000))  # minutes per km
+    activity_date = datetime.strptime(activity['start_date'], '%Y-%m-%dT%H:%M:%SZ')  # datetime
+    score = _get_score(distance / 1000, elevation, pace, user, activity_type)  # int
 
     # check activity constrains
-    if activity_type is None:    # unsupported ActivityType
+    if activity_type is None:  # unsupported ActivityType
         strava_logger.info(
             f'Activity :{activity_type} is not supported.')
         return None
 
-    if _satisfy_distance_constrains(distance/1000, activity_type):     # Activity is not long enough to be counted
+    if _satisfy_distance_constrains(distance / 1000, activity_type):  # Activity is not long enough to be counted
         strava_logger.info(
             f'Activity :{activity_type} of length {distance} meters does not satisfy distance constrains.')
         return None
@@ -260,7 +263,7 @@ def _store_activity(user, data):
 
     db_query = Queries()
 
-    #do not allow same activity to be uploaded twice
+    # do not allow same activity to be uploaded twice
     existing_activities = db_query.get_activity_by_strava_id(strava_activity_id)
     if len(existing_activities) > 0:
         return
@@ -308,7 +311,7 @@ def _get_user(data):
     return db_res[0]
 
 
-def _get_activity_type(strava_activity:str) -> ActivityType:
+def _get_activity_type(strava_activity: str) -> ActivityType:
     for a in ActivityType:
         if str(a) == strava_activity:
             return a
@@ -327,7 +330,7 @@ def _get_time(in_time):
     return time(hours, minutes, seconds)
 
 
-def _satisfy_distance_constrains(distance:int , type:ActivityType) -> bool:
+def _satisfy_distance_constrains(distance: int, type: ActivityType) -> bool:
     """
 
     :param distance: distance in METERS
@@ -345,7 +348,7 @@ def _satisfy_distance_constrains(distance:int , type:ActivityType) -> bool:
     return True if distance >= LIMITS[type] else False
 
 
-def _get_score(distance:float, elevation:float, pace:time, user:User, activity_type:ActivityType) -> int:
+def _get_score(distance: float, elevation: float, pace: time, user: User, activity_type: ActivityType) -> int:
     """
 
     :param distance: distance in KM
@@ -356,7 +359,7 @@ def _get_score(distance:float, elevation:float, pace:time, user:User, activity_t
     :return: integer of score
     """
     point = Points()
-    
+
     # UPDATE when new activity is introduced
     function_mapping = {
         ActivityType.Run: point.get_run_activity_points,
