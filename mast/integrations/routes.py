@@ -32,6 +32,11 @@ def strava_auth():
     inspect request code and scope
     if scope is not valid then display error msg
     '''
+
+    if request.args.get('error') and request.args.get('error') == 'access_denied':
+        flash('You have to accept required permissions.', 'danger')
+        return redirect(url_for('main.integrations'))
+
     auth_code = request.args.get('code')
     scope = request.args.get('scope')
 
