@@ -74,7 +74,7 @@
                                 </thead>
                                 <tbody>
                                 {% for activity in user.activities %}
-                                    <tr data-activity_id="{{ activity.id }}">
+                                    <tr data-activity-id="{{ activity.id }}">
                                         <td>{{ activity.type }}</td>
                                         <td>{{ activity.datetime }}</td>
                                         <td>{{ activity.distance }}</td>
@@ -103,15 +103,10 @@
         notificationButtons.forEach(btn => {
             btn.addEventListener('click', () => {
 
-                let containingRow = btn.parentElement;
-                let params = new URLSearchParams();
+                let containingRow = btn.parentElement.parentElement;
 
-                params.append("activity_id", containingRow.dataset.activity_id);
-
-                fetch(`${window.origin}/admin/suspicious_activity`, {
-                    method: 'GET',
-                    credentials: "include",
-                    body: params
+                fetch(`${window.origin}/admin/suspicious_activity?activity_id=${containingRow.dataset.activityId}`, {
+                    method: 'GET'
                 }).then(response => response.json())
                     .then(data => {
                         if (data.ok) {

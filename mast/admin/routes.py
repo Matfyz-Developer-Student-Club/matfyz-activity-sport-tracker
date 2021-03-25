@@ -27,10 +27,11 @@ def admin_panel():
 @login_required
 def suspicious_activity_endpoint():
     db_query = Queries()
-    activity_id = request.args.get("activity_id")
+    activity_id = int(request.args.get("activity_id"))
     activity = db_query.get_activity_by_id(activity_id)
     user = db_query.get_user_by_id(activity.user_id)
     send_suspicious_activity_email(activity, user)
+    flash("User was notified.", category="info")
 
     return jsonify({"body": "User was notified.", "ok": True, "redirect": url_for('admin.admin_panel')})
 

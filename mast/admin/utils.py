@@ -18,10 +18,10 @@ def send_suspicious_activity_email(activity: Activity, user: User):
     
     Activity data:
         Date of activity: {activity.datetime}
-        Distance: {activity.distance}
-        Duration: {activity.duration}
-        Elevation: {activity.elevation}
-        Score: {activity.score}
+        Distance: {activity.distance} km
+        Duration: {activity.duration} hh:mm:ss
+        Elevation: {activity.elevation} m
+        Score: {activity.score} points
         
     
     Stay tuned and have a nice day!
