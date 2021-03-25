@@ -1,9 +1,9 @@
 # from mast.models import Season, ChallengePart
-from mast.models import Season, ChallengePart, User, Activity, ActivityType, CyclistsChallengePart, StudyField
+from mast.models import Role, Season, ChallengePart, User, Activity, ActivityType, CyclistsChallengePart, StudyField
 # from datetime import date
 from datetime import date, time, datetime
 import logging
-from mast import db, create_app
+from mast import db, create_app, bcr
 import os
 
 
@@ -175,6 +175,7 @@ def init():
 
     db.session.add(cyclo)
 
+
     db.session.commit()
 
 
@@ -237,3 +238,4 @@ if __name__ == '__main__':
     app.app_context().push()
     init()
     # test_data()
+

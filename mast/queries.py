@@ -44,9 +44,6 @@ class Queries(object):
                    func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type.in_(activity_types))
-        # print(f"{query.first().datetime}")
-        print(f"{self.SEASON.start_date}")
-        print(f"{self.SEASON.end_date}")
         count = query. \
             count()
         items = query. \

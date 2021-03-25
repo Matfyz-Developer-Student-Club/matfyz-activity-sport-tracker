@@ -108,11 +108,12 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.email}')"
 
-    def __init__(self, email, password):
+    def __init__(self, email, password, role=Role.Regular):
         assert (email is not None and
                 password is not None)
         self.email = email
         self.password = password
+        self.role = role
         db.session.add(self)
         db.session.commit()
 
