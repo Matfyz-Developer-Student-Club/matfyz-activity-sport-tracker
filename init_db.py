@@ -473,11 +473,15 @@ def init():
                                   distance=0,
                                   altitude=34,
                                   cycle=4)
+    d
+    b.session.add(cyclo)
 
     cyclo = CyclistsChallengePart(target="Bologna",
                                   distance=353,
                                   altitude=74,
                                   cycle=4)
+
+    db.session.add(cyclo)
 
     cyclo = CyclistsChallengePart(target="Toscanella di Dozza",
                                   distance=628,
@@ -489,15 +493,248 @@ def init():
                                   altitude=30,
                                   cycle=4)
 
-    cyclo = CyclistsChallengePart(target="Budrio",  
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Budrio",
                                   distance=1297,
                                   altitude=34,
                                   cycle=4)
+
+    db.session.add(cyclo)
 
     cyclo = CyclistsChallengePart(target="Cattolica",
                                   distance=1710,
                                   altitude=9,
                                   cycle=4)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Grotte di Frasassi",
+                                  distance=0,
+                                  altitude=225,
+                                  cycle=5)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Castelraimondo",
+                                  distance=216,
+                                  altitude=313,
+                                  cycle=5)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Maddalena",
+                                  distance=406,
+                                  altitude=428,
+                                  cycle=5)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Visso",
+                                  distance=604,
+                                  altitude=602,
+                                  cycle=5)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Forca di Gualdo",
+                                  distance=781,
+                                  altitude=1496,
+                                  cycle=5)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Forca di Presta",
+                                  distance=905,
+                                  altitude=1536,
+                                  cycle=5)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Quintodecimo",
+                                  distance=1118,
+                                  altitude=407,
+                                  cycle=5)
+
+    cyclo = CyclistsChallengePart(target="Ascoli Piceno",
+                                  distance=1331,
+                                  altitude=153,
+                                  cycle=5)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Ascoli Piceno (S.Giacomo)",
+                                  distance=1500,
+                                  altitude=1090,
+                                  cycle=5)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Notaresco",
+                                  distance=0,
+                                  altitude=62,
+                                  cycle=6)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Montesilviano",
+                                  distance=277,
+                                  altitude=4,
+                                  cycle=6)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Chieti",
+                                  distance=599,
+                                  altitude=330,
+                                  cycle=6)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Crecchio",
+                                  distance=908,
+                                  altitude=202,
+                                  cycle=6)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Marina di San Vito",
+                                  distance=1127,
+                                  altitude=14,
+                                  cycle=6)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Marina di Vasto",
+                                  distance=1511,
+                                  altitude=15,
+                                  cycle=6)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Termoli",
+                                  distance=1780,
+                                  altitude=39,
+                                  cycle=6)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Foggia",
+                                  distance=0,
+                                  altitude=78,
+                                  cycle=7)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Svinc. di Volturara Appula",
+                                  distance=434,
+                                  altitude=347,
+                                  cycle=7)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Campobasso",
+                                  distance=835,
+                                  altitude=710,
+                                  cycle=7)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Bocca della Selva",
+                                  distance=1196,
+                                  altitude=1393,
+                                  cycle=7)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Cerreto Sannita",
+                                  distance=1485,
+                                  altitude=287,
+                                  cycle=7)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Guardia Sanframondi",
+                                  distance=1730,
+                                  altitude=445,
+                                  cycle=7)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Castel di Sangro",
+                                  distance=0,
+                                  altitude=820,
+                                  cycle=8)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Passo Godi",
+                                  distance=363,
+                                  altitude=1556,
+                                  cycle=8)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Anversa degli Abruzzi",
+                                  distance=658,
+                                  altitude=556,
+                                  cycle=8)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Forca Caruso",
+                                  distance=1028,
+                                  altitude=1107,
+                                  cycle=8)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Ovindoli",
+                                  distance=1337,
+                                  altitude=1378,
+                                  cycle=8)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Campo Felice",
+                                  distance=1600,
+                                  altitude=1655,
+                                  cycle=8)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="L'Aquila",
+                                  distance=0,
+                                  altitude=637,
+                                  cycle=9)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Terme id Cotilia",
+                                  distance=386,
+                                  altitude=409,
+                                  cycle=9)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Piediluco",
+                                  distance=743,
+                                  altitude=381,
+                                  cycle=9)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Valico della Somma",
+                                  distance=1008,
+                                  altitude=655,
+                                  cycle=9)
+
+    db.session.add(cyclo)
+
+    cyclo = CyclistsChallengePart(target="Foligno",
+                                  distance=1400,
+                                  altitude=226,
+                                  cycle=9)
 
     db.session.add(cyclo)
 
