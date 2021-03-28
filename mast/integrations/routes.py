@@ -10,7 +10,7 @@ integrations = Blueprint('integrations', __name__)
 
 # TODO: replace with http:// + SERVER_NAME on test server, on local debug replace with localhost
 #       though this will work only for strava authentication not on webhooks
-BASE_URL = 'http://mathletics-test.ks.matfyz.cz'
+BASE_URL = 'https://mathletics.mff.cuni.cz/'
 
 
 @integrations.route('/strava/init', methods=['GET'])

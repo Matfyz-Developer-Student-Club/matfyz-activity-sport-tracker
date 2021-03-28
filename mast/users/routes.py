@@ -26,47 +26,45 @@ def welcome():
 
 @users.route('/login', methods=['GET', 'POST'])
 def login():
-#    if current_user.is_authenticated:
-#        return redirect(url_for('main.home'))
-#    elif request.method == 'GET':
-#        form = LoginForm()
-#        return render_template('login.html', form=form)
-#    else:
-#        form = LoginForm(request.form)
-#        if form.validate():
-#            user = User.query.filter_by(email=form.email.data.lower()).first()
-#            if user and bcr.check_password_hash(user.password, form.password.data):
-#                login_user(user, remember=form.remember.data)
-#                return redirect(url_for('main.home'))
-#            else:
-#                form.email.errors.append(
-#                    'Specified pair of email and password is invalid!')
-#    return render_template('login.html', form=form)
-    form = LoginForm()
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    elif request.method == 'GET':
+        form = LoginForm()
+        return render_template('login.html', form=form)
+    else:
+        form = LoginForm(request.form)
+        if form.validate():
+            user = User.query.filter_by(email=form.email.data.lower()).first()
+            if user and bcr.check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('main.home'))
+            else:
+                form.email.errors.append(
+                    'Specified pair of email and password is invalid!')
     return render_template('login.html', form=form)
+
 
 @users.route('/register', methods=['GET', 'POST'])
 def register():
-#    if current_user.is_authenticated:
-#        return redirect(url_for('main.home'))
-#    elif request.method == 'GET':
-#        form = RegisterForm('register_form')
-#        return render_template('register.html', title='Registration', form=form)
-#    else:
-#        form = RegisterForm(request.form)
-#        if form.validate_on_submit():
-#            hashed_password = bcr.generate_password_hash(
-#                form.password.data.strip()).decode('UTF-8')
-#            user = User(email=form.email.data.lower().strip(),
-#                        password=hashed_password)
-#
-#            send_registration_email(user)
-#            login_user(user)
-#            return redirect(url_for('main.home'))
-#        else:
-#            return render_template('register.html', title='Registration', form=form)
-    form = RegisterForm('register_form')
-    return render_template('register.html', title='Registration', form=form)
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+    elif request.method == 'GET':
+        form = RegisterForm('register_form')
+        return render_template('register.html', title='Registration', form=form)
+    else:
+        form = RegisterForm(request.form)
+        if form.validate_on_submit():
+            hashed_password = bcr.generate_password_hash(
+                form.password.data.strip()).decode('UTF-8')
+            user = User(email=form.email.data.lower().strip(),
+                        password=hashed_password)
+
+            send_registration_email(user)
+            login_user(user)
+            return redirect(url_for('main.home'))
+        else:
+            return render_template('register.html', title='Registration', form=form)
+
 
 @users.route("/logout")
 def logout():

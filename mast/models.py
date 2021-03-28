@@ -135,19 +135,18 @@ class User(db.Model, UserMixin):
         else:
             return self.first_name + ' ' + self.last_name
 
-    def complete_profile(self, first_name, last_name, study_field, sex, shirt_size, user_type, ukco, anonymous,
-                         competing,
-                         display_name=None):
+    def complete_profile(self, first_name, last_name, sex, shirt_size, user_type, ukco, anonymous,
+                         competing, study_field = None, display_name=None):
         assert (first_name is not None and
                 last_name is not None and
                 sex is not None and
                 shirt_size is not None and
                 user_type is not None and
                 ukco is not None and
-                study_field is not None and
                 competing is not None)
         self.first_name = first_name
         self.last_name = last_name
+        self.field_of_study = study_field
         if sex == 'male':
             self.sex = Sex.Male
         else:

@@ -31,7 +31,7 @@ def send_registration_email(user):
 
 
 
-        If you did not register, please contact us at matfyz.sdc@gmail.com.
+        If you did not register, please contact us at matfyz.dsc@gmail.com.
 
         '''
     mail.send(msg)

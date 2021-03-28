@@ -21,4 +21,4 @@ class Config:
             "pool_pre_ping": True,
     }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    SESSION_COOKIE_SECURE = False

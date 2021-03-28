@@ -2,7 +2,7 @@ from typing import Dict, Any, Callable
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, RadioField, FileField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional
 import logging
 from mast.models import User
 
@@ -76,8 +76,7 @@ class UpdateProfileForm(LoggingFlaskForm):
     shirt_size = RadioField('Shirt size', validators=[DataRequired()], choices=['S', 'M', 'L', 'XL', 'XXL'])
     user_type = RadioField('I am', validators=[DataRequired()],
                            choices=['student', 'employee', 'alumni'])
-    study_field = RadioField('I study', validators=[DataRequired()],
-                             choices=['Informatics', 'Maths', 'Physics', 'Teaching'])
+    study_field = RadioField('I study', validators=[Optional()], choices=['Informatics', 'Maths', 'Physics', 'Teaching'])
     anonymous = BooleanField('I want to compete anonymously',
                              description='Results will be on the public scoreboards without name.')
     competing = BooleanField('I want to compete',

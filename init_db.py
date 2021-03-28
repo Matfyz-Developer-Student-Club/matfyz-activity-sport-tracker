@@ -473,8 +473,7 @@ def init():
                                   distance=0,
                                   altitude=34,
                                   cycle=4)
-    d
-    b.session.add(cyclo)
+    db.session.add(cyclo)
 
     cyclo = CyclistsChallengePart(target="Bologna",
                                   distance=353,

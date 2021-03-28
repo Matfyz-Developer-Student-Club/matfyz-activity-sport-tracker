@@ -15,7 +15,7 @@
 <a href="{{ url_for( 'users.login' ) }}">Already registered?</a>
 </div>
 
-{{ render_submit_button(form.submit, disabled="") }}
+{{ render_submit_button(form.submit) }}
 {% endmacro %}
 {# ********** Registration form ********** #}
 
@@ -37,7 +37,7 @@
     <a href="{{ url_for( 'users.reset_request' ) }}">Forgot Password?</a>
   </div>
 
-  {{ render_submit_button(form.submit, disabled="") }}
+  {{ render_submit_button(form.submit) }}
 {% endmacro %}
 
 {# ********** Login form ********** #}
