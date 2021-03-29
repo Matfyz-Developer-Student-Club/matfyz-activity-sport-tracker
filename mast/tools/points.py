@@ -87,14 +87,14 @@ class Points(object):
         pace_values = list(reversed(
             [time(minute=x // 10, second=(30 if x % 2 != 0 else 0)) for x in range(25, 80, 5)]))
     
-        if pace < pace_values[0]:
-            return 2
-
-        if pace > pace_values[-1]:
+        if pace > pace_values[0]:
             return 1
 
+        if pace < pace_values[-1]:
+            return 2
+
         for i in range(1, len(pace_values)):
-            if pace_values[i - 1] <= pace <= pace_values[i]:
+            if pace_values[i - 1] >= pace >= pace_values[i]:
                 return 1 + i / 10
 
     def _get_points(self, user: User, elevation: float, distance: float, pace: time) -> int:
