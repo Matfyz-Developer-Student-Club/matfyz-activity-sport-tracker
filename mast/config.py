@@ -18,7 +18,7 @@ class Config:
     STRAVA_SCOPE = ['activity:read']
     STRAVA_EXPIRE_RESERVE = 1000
     # TODO: not working on local with this field
-    SERVER_NAME = 'mathletics-test.ks.matfyz.cz'
+    # SERVER_NAME = 'mathletics-test.ks.matfyz.cz'
     SQLALCHEMY_ENGINE_OPTIONS = {
             "pool_pre_ping": True,
     }

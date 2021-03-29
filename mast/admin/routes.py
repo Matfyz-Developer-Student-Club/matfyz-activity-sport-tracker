@@ -6,7 +6,9 @@ from mast.session import Session
 from mast.queries import Queries
 import logging
 from mast.admin.utils import send_suspicious_activity_email
-
+from mast.tools.points import Points
+from mast.integrations.utils import get_score
+from mast import db
 
 admin = Blueprint('admin', __name__)
 
@@ -36,3 +38,23 @@ def suspicious_activity_endpoint():
     return jsonify({"body": "User was notified.", "ok": True, "redirect": url_for('admin.admin_panel')})
 
 
+@admin.route('/admin/reevaluate_all_score')
+@login_required
+def re_evaluate_all_users_score():
+    if current_user.role.is_admin():
+        db_query = Queries()
+        users = db_query.enumerate_admin_stats()
+
+        for user in users:
+            for activity in user.activities:
+                score = get_score(activity.distance, activity.elevation, activity.average_duration_per_km, user,
+                                  activity.type)
+                activity.score = score
+                db.session.add(activity)
+
+        db.session.commit()
+        flash("Activity score was successfully re-evaluated", 'success')
+
+        return jsonify({"ok": True, "redirect": url_for('admin.admin_panel')})
+
+    return jsonify({"ok": False, "redirect": url_for('admin.admin_panel')})

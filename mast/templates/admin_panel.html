@@ -4,6 +4,10 @@
 
 {% block content_page %}
     <h1 class="h2 mt-2">Admin Panel</h1>
+    <div style="display: flex; justify-content: flex-end;">
+        <button class="btn btn-warning" style="margin-right: 1em;" id="re-evaluate-btn">Re-evaluate score</button>
+        <button class="btn btn-success" id="fetch-btn">Fetch all season activities</button>
+    </div>
     <hr>
     {{ render_flash() }}
 
@@ -116,10 +120,47 @@
                         }
                     }).catch(ex => {
                     window.alert("Notification of the user was unsuccessful");
-                    console.log(`For more detail, please see the following error: ${ex}`)
+                    console.log(`For more detail, please see the following error: ${ex}`);
                 })
             })
-        })
+        });
+
+        let reEvaluateBtn = document.getElementById("re-evaluate-btn");
+
+
+        reEvaluateBtn.addEventListener('click', () => {
+            fetch(`${window.origin}/admin/reevaluate_all_score`, {
+                method: 'GET'
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    }
+                }).catch(ex => {
+                window.alert("Re-evaluation of the users score was unsuccessful.");
+                console.log(`For more detail, please see the following error: ${ex}`);
+            });
+        });
+
+
+        let fetchBtn = document.getElementById("fetch-btn");
+        fetchBtn.addEventListener('click', () => {
+            fetch(`${window.origin}/admin/fetch_season_activities`, {
+                method: 'GET'
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    }
+                }).catch(ex => {
+                window.alert("Fetching all season activities was unsuccessful.");
+                console.log(`For more detail, please see the following error: ${ex}`);
+            });
+        });
 
 
     </script>

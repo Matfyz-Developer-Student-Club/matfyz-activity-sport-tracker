@@ -198,7 +198,7 @@ def create_activity_from_strava_json(activity: dict, user: User, strava_activity
     name = activity['name'][:30] if not None else ''  # string
     pace = _get_time(round(time_in_secs / distance * 1000))  # minutes per km
     activity_date = datetime.strptime(activity['start_date'], '%Y-%m-%dT%H:%M:%SZ')  # datetime
-    score = _get_score(distance / 1000, elevation, pace, user, activity_type)  # int
+    score = get_score(distance / 1000, elevation, pace, user, activity_type)  # int
 
     # check activity constrains
     if activity_type is None:  # unsupported ActivityType
@@ -370,7 +370,7 @@ def _satisfy_distance_constrains(distance: int, type: ActivityType) -> bool:
     return True if distance >= LIMITS[type] else False
 
 
-def _get_score(distance: float, elevation: float, pace: time, user: User, activity_type: ActivityType) -> int:
+def get_score(distance: float, elevation: float, pace: time, user: User, activity_type: ActivityType) -> int:
     """
 
     :param distance: distance in KM
