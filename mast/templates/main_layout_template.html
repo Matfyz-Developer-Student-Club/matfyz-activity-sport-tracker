@@ -256,6 +256,10 @@
                     </div>
                 {% endfor %}
 
+		<div class="alert alert-info" role="alert">
+  			You may have encountered an issue caused by an error in the STRAVA authentication. Please check the 'Integration' section to see whether you are logged in. 
+		</div>
+
                 {% for msg in session_data.pop_info_msgs() %}
                     <div class="alert alert-success container-fluid d-flex flex-wrap align-items-center mt-2"
                          role="alert">

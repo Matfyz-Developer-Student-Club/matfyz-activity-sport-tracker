@@ -24,7 +24,7 @@ class Points(object):
         :return: Points for the Ride activity.
         """
 
-        return self._get_points(user, elevation, distance, pace)
+        return (distance * (1 + self._get_elevation_percentage(elevation, distance) * 1.1)) * 1000
 
     def get_run_activity_points(self, user: User, elevation: float, distance: float, pace) -> int:
         """
@@ -38,7 +38,7 @@ class Points(object):
 
         return self._get_points(user, elevation, distance, pace)
 
-    def get_walk_activity_points(self, elevation: float, distance: float) -> int:
+    def get_walk_activity_points(self, user: User, elevation: float, distance: float, pace: time) -> int:
         """
         This method gets for the given user and activity metadata for this points.
         :param elevation: Elevation of the activity in metres.
@@ -46,9 +46,9 @@ class Points(object):
         :return: Points for the Walk activity.
         """
 
-        return ceil(distance * (1 + self._get_elevation(elevation, distance)))
+        return (distance * (1 + self._get_elevation_percentage(elevation, distance))) * 1000
 
-    def get_inline_activity_points(self, elevation: float, distance: float) -> int:
+    def get_inline_activity_points(self, user: User, elevation: float, distance: float, pace: time) -> int:
         """
         This method gets for the given user and activity metadata for this points.
         :param elevation: Elevation of the activity in metres.
@@ -56,7 +56,7 @@ class Points(object):
         :return: Points for the Inline activity.
         """
 
-        return ceil(distance * (1 + self._get_elevation_percentage(elevation, distance)))
+        return (distance * (1 + self._get_elevation_percentage(elevation, distance))) * 1000
 
     @staticmethod
     def _get_elevation_percentage(height: float, distance: float) -> float:
