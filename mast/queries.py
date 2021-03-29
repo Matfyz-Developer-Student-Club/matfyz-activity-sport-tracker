@@ -135,7 +135,6 @@ class Queries(object):
         db.session.add(activity)
         db.session.commit()
 
-
     def get_activity_by_strava_id(self, strava_id: int):
         query = db.session.query(Activity). \
             filter(Activity.strava_id == strava_id)
@@ -815,3 +814,6 @@ class Queries(object):
 
     def get_user_by_id(self, user_id: int) -> User:
         return User.query.filter_by(id=user_id).first()
+
+    def get_all_users_emails(self) -> list:
+        return User.query(User.email).all()
