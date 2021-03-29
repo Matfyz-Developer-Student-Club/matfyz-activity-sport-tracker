@@ -6,9 +6,10 @@ from flask_login import current_user
 from datetime import time, datetime
 from time import time as t
 from mast.queries import Queries
-from mast.models import Activity, ActivityType, Sex, User
+from mast.models import Activity, ActivityType, Sex, User, Season
 from mast.tools.points import Points
 from mast import db
+from calendar import timegm
 from math import floor
 
 strava_logger = logging.getLogger('STRAVA')
@@ -134,24 +135,29 @@ def get_activity(access_token, strava_activity_id):
     return json_data
 
 
-def get_athlete_activities(access_token, after: int = 1614556800, before: int = None, per_page: int = 100,
+def get_athlete_activities_in_competition_season(access_token, per_page: int = 500,
                            page: int = 1):
     '''
-    Returns list of user activities after 3.1.2021
+    Returns list of user activities in currently active competition season
     :param access_token: acces token of currentuser
-    :param after: UNIX epoch timestamp - will list activities after given time - default 3.1.2021 00:00
-    :param before: UNIX epoch timestamp - will list activities before given time
-    :param per_page: activities per page - default 100
+    :param per_page: activities per page - default 500
     :param page: pages - default 1
     :return: JSON of list of activities
     '''
+
+    db_query = Queries()
+    competition_season = db_query.get_competition_season()
+
+    after = timegm(competition_season.start_date.timetuple())
+    before = timegm(competition_season.end_date.timetuple())
+
     url = f'https://www.strava.com/api/v3/athlete/activities'
 
     header = {
         'Authorization': f'Bearer {access_token}'
     }
     data = {
-        'before': before if not None else '',
+        'before': before,
         'after': after,
         'page': page,
         'per_page': per_page
@@ -159,9 +165,19 @@ def get_athlete_activities(access_token, after: int = 1614556800, before: int = 
 
     response = requests.request('GET', url, headers=header, data=data)
     json_data = json.loads(response.text)
-    # strava_logger.info(json.dumps(json_data, indent=4))
+    strava_logger.info(json.dumps(json_data, indent=4))
 
     return json_data
+
+
+def add_activities_in_competition_season(access_token:str, user: User):
+    activities = get_athlete_activities_in_competition_season(access_token)
+
+    for activity in activities:
+        actual_activity = create_activity_from_strava_json(activity, user, activity['id'])
+        if actual_activity is not None:
+            db_query = Queries()
+            db_query.save_new_user_activities(actual_activity.user_id, actual_activity)
 
 
 def create_activity_from_strava_json(activity: dict, user: User, strava_activity_id: int) -> Activity:
