@@ -1,7 +1,7 @@
 from flask import Response, redirect, request, render_template, url_for, Blueprint, flash, jsonify
 from flask_login import current_user, login_required
 from flask import current_app
-from mast.integrations.utils import check_strava_permissions, save_strava_tokens, process_strava_webhook
+from mast.integrations.utils import check_strava_permissions, save_strava_tokens, process_strava_webhook, add_activities_in_competition_season
 from mast.session import Session
 import logging
 from mast import csrf
@@ -42,6 +42,7 @@ def strava_auth():
         return redirect(url_for('main.integrations'))
 
     save_strava_tokens(auth_code)
+    add_activities_in_competition_season(current_user.strava_access_token, current_user)
     return redirect(url_for('main.integrations'))
 
 

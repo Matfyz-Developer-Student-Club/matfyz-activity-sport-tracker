@@ -818,3 +818,6 @@ class Queries(object):
     def get_all_users_emails(self) -> list:
         emails_raw = db.session.query(User.email).all()
         return [mail[0] for mail in emails_raw]
+
+    def get_competition_season(self) -> Season:
+        return self.SEASON_COMPETITION
