@@ -85,13 +85,13 @@ class Points(object):
         :return: Percentage of the elevation.
         """
         pace_values = list(reversed(
-            [time(minute=x // 2, second=30 if isinstance(x / 2, float) else 0) for x in range(5, 16)]))
-
+            [time(minute=x // 10, second=(30 if x % 2 != 0 else 0)) for x in range(25, 80, 5)]))
+    
         if pace < pace_values[0]:
-            return 1
+            return 2
 
         if pace > pace_values[-1]:
-            return 2
+            return 1
 
         for i in range(1, len(pace_values)):
             if pace_values[i - 1] <= pace <= pace_values[i]:

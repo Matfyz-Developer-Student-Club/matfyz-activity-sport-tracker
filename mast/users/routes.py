@@ -179,6 +179,7 @@ def reset_token(token):
         return redirect(url_for('main.home', _external=True))
     return render_template('reset_password.html', title='Reset Password', form=form)
 
+
 @users.route('/send_mass_notification', methods=['GET'])
 def mass_notification():
     if current_user.role.is_admin():
