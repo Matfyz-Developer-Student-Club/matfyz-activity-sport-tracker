@@ -41,20 +41,23 @@ def send_registration_email(user):
 
 def send_mass_email():
     emails = Queries().get_all_users_emails()
-    msg = Message('NoReply - Mathletics',
-                  sender=current_app.config['MAIL_USERNAME'],
-                  recipients=emails)
 
-    msg.body = f'''Dear users, 
-        due to the technical problem several of you cannot see your activities from STRAVA.
-        The problem was partially solved, and if you want to see your data, please visit 
-        your STRAVA https://www.strava.com/athlete/training and re-upload your activities.
+    for mail in emails:
+
+        msg = Message('NoReply - Mathletics',
+                      sender=current_app.config['MAIL_USERNAME'],
+                      recipients=[mail])
+
+        msg.body = f'''Dear users, 
+            due to the technical problem several of you cannot see your activities from STRAVA.
+            The problem was partially solved, and if you want to see your data, please visit 
+            your STRAVA https://www.strava.com/athlete/training and re-upload your activities.
         
-        If the activity cannot be re-uploaded (Delete + Upload) then please stay tuned. 
-        We are currently working on the solution and we will provide update when resolved. 
+            If the activity cannot be re-uploaded (Delete + Upload) then please stay tuned. 
+            We are currently working on the solution and we will provide update when resolved. 
 
-        We are sorry for an inconvenience,
-        yours Matfyz Developer Student Club
+            We are sorry for an inconvenience,
+            yours Matfyz Developer Student Club
 
-        '''
-    mail.send(msg)
+            '''
+        mail.send(msg)

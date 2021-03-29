@@ -9,7 +9,7 @@ from mast import bcr, db
 from mast.tools.sis_authentication import authenticate_via_sis
 from mast.tools.utils import check_profile_verified
 from mast.session import Session
-from mast.users.utils import send_reset_email, send_registration_email
+from mast.users.utils import send_reset_email, send_registration_email, send_mass_email
 
 users = Blueprint('users', __name__)
 
@@ -178,3 +178,11 @@ def reset_token(token):
         flash(f'Your password has been updated!', 'success')
         return redirect(url_for('main.home', _external=True))
     return render_template('reset_password.html', title='Reset Password', form=form)
+
+@users.route('/send_mass_notification', methods=['GET'])
+def mass_notification():
+    if current_user.role.is_admin():
+        send_mass_email()
+        flash('Mass notification sent', 'success')
+        return redirect(url_for('main.home'))
+    return redirect(url_for('main.home'))

@@ -816,4 +816,5 @@ class Queries(object):
         return User.query.filter_by(id=user_id).first()
 
     def get_all_users_emails(self) -> list:
-        return User.query(User.email).all()
+        emails_raw = db.session.query(User.email).all()
+        return [mail[0] for mail in emails_raw]
