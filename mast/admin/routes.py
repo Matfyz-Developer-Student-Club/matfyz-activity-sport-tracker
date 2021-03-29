@@ -2,7 +2,7 @@ from flask import Response, redirect, request, render_template, url_for, Bluepri
 from flask_login import current_user, login_required
 from flask import current_app
 from mast.integrations.utils import check_strava_permissions, save_strava_tokens, process_strava_webhook, \
-    add_activities_in_competition_season
+    add_activities_in_competition_season, refresh_access_token
 from mast.session import Session
 from mast.queries import Queries
 import logging
@@ -65,11 +65,11 @@ def re_evaluate_all_users_score():
 @login_required
 def get_all_activities_in_season():
     db_query = Queries()
-
     users = db_query.get_all_users()
     logger = logging.getLogger('STRAVA')
     for user in users:
         logger.info(f"Processing user: {user.first_name} {user.last_name}")
+        refresh_access_token(user)
         add_activities_in_competition_season(user)
 
     flash("Activities updated.", category="info")
