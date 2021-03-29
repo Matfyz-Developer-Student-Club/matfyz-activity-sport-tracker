@@ -42,11 +42,11 @@ def send_registration_email(user):
 def send_mass_email():
     emails = Queries().get_all_users_emails()
 
-    for mail in emails:
+    for m in emails:
 
         msg = Message('NoReply - Mathletics',
                       sender=current_app.config['MAIL_USERNAME'],
-                      recipients=[mail])
+                      recipients=[m])
 
         msg.body = f'''Dear users, 
             due to the technical problem several of you cannot see your activities from STRAVA.
