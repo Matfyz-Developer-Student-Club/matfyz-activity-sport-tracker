@@ -103,6 +103,14 @@
                 studyFieldsButtons.push(document.getElementById(`study_field-${i}`));
             }
 
+	    studentRadioButtons.forEach(btn => {
+                if (btn.value !== 'student' && btn.checked) {
+                    studyFieldsButtons.forEach(sfb => {
+                        sfb.setAttribute("disabled", "")
+                    })
+                }
+            });
+
             studentRadioButtons.forEach(btn => {
                 btn.addEventListener('input', () => {
                     if (btn.value === 'student' && btn.checked) {

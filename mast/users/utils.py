@@ -18,7 +18,7 @@ def send_reset_email(user):
 
 def send_registration_email(user):
     msg = Message('Welcome to Mathletics',
-                  sender='noreply@mathletics.mff.cuni.cz',
+                  sender=current_app.config['MAIL_USERNAME'],
                   recipients=[user.email])
 
     msg.body = f'''Hi, 
