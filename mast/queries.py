@@ -821,3 +821,6 @@ class Queries(object):
 
     def get_competition_season(self) -> Season:
         return self.SEASON_COMPETITION
+
+    def get_all_users(self) -> list:
+        return User.query.all()

@@ -42,7 +42,7 @@ def strava_auth():
         return redirect(url_for('main.integrations'))
 
     save_strava_tokens(auth_code)
-    add_activities_in_competition_season(current_user.strava_access_token, current_user)
+    add_activities_in_competition_season(current_user)
     return redirect(url_for('main.integrations'))
 
 

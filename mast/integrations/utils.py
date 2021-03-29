@@ -170,14 +170,22 @@ def get_athlete_activities_in_competition_season(access_token, per_page: int = 5
     return json_data
 
 
-def add_activities_in_competition_season(access_token:str, user: User):
-    activities = get_athlete_activities_in_competition_season(access_token)
+def add_activities_in_competition_season(user: User):
+    activities = get_athlete_activities_in_competition_season(user.strava_access_token)
 
+    db_query = Queries()
     for activity in activities:
         actual_activity = create_activity_from_strava_json(activity, user, activity['id'])
         if actual_activity is not None:
-            db_query = Queries()
-            db_query.save_new_user_activities(actual_activity.user_id, actual_activity)
+            # do not allow same activity to be uploaded twice
+            existing_activities = db_query.get_activity_by_strava_id(actual_activity.strava_id)
+            if len(existing_activities) > 0:
+                continue
+            # db_query.save_new_user_activities(actual_activity.user_id, actual_activity)
+            db.session.add(actual_activity) #add activity
+
+    #commit changes
+    db.session.commit()
 
 
 def create_activity_from_strava_json(activity: dict, user: User, strava_activity_id: int) -> Activity:

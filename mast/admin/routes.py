@@ -1,7 +1,8 @@
 from flask import Response, redirect, request, render_template, url_for, Blueprint, flash, jsonify
 from flask_login import current_user, login_required
 from flask import current_app
-from mast.integrations.utils import check_strava_permissions, save_strava_tokens, process_strava_webhook
+from mast.integrations.utils import check_strava_permissions, save_strava_tokens, process_strava_webhook, \
+    add_activities_in_competition_season
 from mast.session import Session
 from mast.queries import Queries
 import logging
@@ -58,3 +59,19 @@ def re_evaluate_all_users_score():
         return jsonify({"ok": True, "redirect": url_for('admin.admin_panel')})
 
     return jsonify({"ok": False, "redirect": url_for('admin.admin_panel')})
+
+
+@admin.route("/admin/fetch_season_activities", methods=['GET', 'POST'])
+@login_required
+def get_all_activities_in_season():
+    db_query = Queries()
+
+    users = db_query.get_all_users()
+    logger = logging.getLogger('STRAVA')
+    for user in users:
+        logger.info(f"Processing user: {user.first_name} {user.last_name}")
+        add_activities_in_competition_season(user)
+
+    flash("Activities updated.", category="info")
+
+    return jsonify({"body": "Activities were updated.", "ok": True, "redirect": url_for('admin.admin_panel')})
