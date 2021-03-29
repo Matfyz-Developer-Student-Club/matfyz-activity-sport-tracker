@@ -135,7 +135,7 @@ def get_activity(access_token, strava_activity_id):
     return json_data
 
 
-def get_athlete_activities_in_competition_season(access_token, per_page: int = 500,
+def get_athlete_activities_in_competition_season(access_token, per_page: int = 30,
                            page: int = 1):
     '''
     Returns list of user activities in currently active competition season
