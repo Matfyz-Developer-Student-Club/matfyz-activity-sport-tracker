@@ -58,7 +58,9 @@
                                     <td>{{ user.type }}</td>
                                     <td>{{ user.field_of_study }}
                                     <td>
+                                        {% if user.strava_id %}
                                         <button class="btn btn-warning btn-sm season-activities">Fetch season activities</button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 </tbody>

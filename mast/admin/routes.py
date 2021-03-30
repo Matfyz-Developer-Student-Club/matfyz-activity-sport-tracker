@@ -101,7 +101,7 @@ def get_user_activities_in_season():
 def delete_non_season_activities():
     if current_user.role.is_admin():
         db_query = Queries()
-        activities = db_query.get_all_activities();
+        activities = db_query.get_all_activities()
         logger = logging.getLogger('STRAVA')
         for activity in activities:
             if not activity.satisfies_constraints():
