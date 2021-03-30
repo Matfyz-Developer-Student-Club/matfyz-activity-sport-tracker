@@ -81,7 +81,7 @@ def get_all_activities_in_season():
     return jsonify({"body": "Activities were updated.", "ok": True, "redirect": url_for('admin.admin_panel')})
 
 
-@admin.rout("/admin/fetch_user_season_activities", methods=['GET'])
+@admin.route("/admin/fetch_user_season_activities", methods=['GET'])
 @login_required
 def get_user_activities_in_season():
     db_query = Queries()
