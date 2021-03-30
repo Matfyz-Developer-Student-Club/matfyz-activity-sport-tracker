@@ -8,7 +8,7 @@
     {{ render_flash() }}
 
     <div class="row justify-content-left mt-5 w-100">
-        {% if current_user.strava_id and current_user.strava_refresh_token %}
+        {% if current_user.strava_id %}
             <div class="col-md-7 order-md-1 my-auto shadow-lg p-3 mb-5 bg-white rounded"
                  style="display: flex; overflow: auto">
                 <div id="user_card" class="col-md-4 align-self-center">

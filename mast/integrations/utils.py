@@ -197,6 +197,8 @@ def create_activity_from_strava_json(activity: dict, user: User, strava_activity
     :return: new Activity ready to save into database
     """
 
+    if activity['distance'] == 0:
+        return None
     distance = activity['distance']  # meters
     time_in_secs = activity['moving_time']  # seconds
     total_time = _get_time(time_in_secs)  # time(H:M:S)
