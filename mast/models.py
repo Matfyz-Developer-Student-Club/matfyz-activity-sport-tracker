@@ -3,7 +3,7 @@ from flask_login import UserMixin
 from flask import current_app
 from enum import Enum
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-
+from mast.queries import Queries
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -208,7 +208,7 @@ class User(db.Model, UserMixin):
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     datetime = db.Column(db.DateTime, nullable=False)
-    distance = db.Column(db.Float, nullable=False)
+    distance = db.Column(db.Float, nullable=False) # in Km
     duration = db.Column(db.Time, nullable=False)
     average_duration_per_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
@@ -220,6 +220,27 @@ class Activity(db.Model):
 
     def __repr__(self):
         return f"Activity({self.datetime}: {self.type.name} {self.distance} km, time: {self.duration})"
+
+    def satisfies_constraints(self):
+        # TODO: UPDATE when new activity is introduced
+        LIMITS = {
+            ActivityType.Run: 3,
+            ActivityType.Walk: 5,
+            ActivityType.InlineSkate: 8,
+            ActivityType.Ride: 1
+        }
+        db_query = Queries()
+        competition_season = db_query.get_competition_season()
+
+        # if does not satisfy minimum distance -> return False
+        if self.distance < LIMITS[self.type]:
+            return False
+        # if is not in Season date -> return False
+        if self.datetime < competition_season.start_date:
+            return False
+
+        # is valid otherwise
+        return True
 
 
 class Season(db.Model):

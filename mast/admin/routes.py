@@ -61,6 +61,7 @@ def re_evaluate_all_users_score():
     return jsonify({"ok": False, "redirect": url_for('admin.admin_panel')})
 
 
+
 @admin.route("/admin/fetch_season_activities", methods=['GET', 'POST'])
 @login_required
 def get_all_activities_in_season():
@@ -78,3 +79,41 @@ def get_all_activities_in_season():
     flash("Activities updated.", category="info")
 
     return jsonify({"body": "Activities were updated.", "ok": True, "redirect": url_for('admin.admin_panel')})
+
+
+@admin.rout("/admin/fetch_user_season_activities", methods=['GET'])
+@login_required
+def get_user_activities_in_season():
+    db_query = Queries()
+    user_id = int(request.args.get("user_id"))
+    user = db_query.get_user_by_id(user_id)
+    logger = logging.getLogger('STRAVA')
+    if user.strava_id is None:
+        logger.info(f"User {user.first_name} {user.last_name}, email {user.email} is not authenticated via STRAVA")
+        return jsonify({"ok": False, "redirect": url_for('admin.admin_panel')})
+
+    refresh_access_token(user)
+    add_activities_in_competition_season(user)
+
+    flash("User activities of current season fetched.", category="info")
+    return jsonify({"body": "Activities fetched.", "ok": True, "redirect": url_for('admin.admin_panel')})
+
+
+@admin.route('/admin/delete_non_season_activities')
+@login_required
+def re_evaluate_all_users_score():
+    if current_user.role.is_admin():
+        db_query = Queries()
+        activities = db_query.get_all_activities();
+        logger = logging.getLogger('STRAVA')
+        for activity in activities:
+            if not activity.satisfies_constraints():
+                logger.info(f"Deleting activity of type: {activity.type} of length {activity.distance}")
+                #db_query.delete_activity_by_strava_id(activity.strava_id)
+
+        db.session.commit()
+        flash("Activities were successfully deleted", 'success')
+
+        return jsonify({"ok": True, "redirect": url_for('admin.admin_panel')})
+
+    return jsonify({"ok": False, "redirect": url_for('admin.admin_panel')})
