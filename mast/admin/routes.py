@@ -69,9 +69,13 @@ def get_all_activities_in_season():
     users = db_query.get_all_users()
     logger = logging.getLogger('STRAVA')
     for user in users:
-        logger.info(f"Processing user: {user.first_name} {user.last_name}")
-        refresh_access_token(user)
-        add_activities_in_competition_season(user)
+        if user.strava_id:
+            logger.info(f"Processing user: {user.first_name} {user.last_name} {user.email}")
+            refresh_access_token(user)
+            add_activities_in_competition_season(user)
+        else:
+            logger.info(f"Skipping user: {user.first_name} {user.last_name} {user.email}")
+            continue
 
     flash("Activities updated.", category="info")
 
