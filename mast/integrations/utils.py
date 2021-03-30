@@ -216,7 +216,7 @@ def create_activity_from_strava_json(activity: dict, user: User, strava_activity
             f'Activity :{activity_type} is not supported.')
         return None
 
-    if _satisfy_distance_constrains(distance / 1000, activity_type):  # Activity is not long enough to be counted
+    if not _satisfy_distance_constrains(distance, activity_type):  # Activity is not long enough to be counted
         strava_logger.info(
             f'Activity :{activity_type} of length {distance} meters does not satisfy distance constrains.')
         return None
