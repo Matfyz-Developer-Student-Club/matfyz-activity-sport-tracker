@@ -7,6 +7,7 @@
     <div style="display: flex; justify-content: flex-end;">
         <button class="btn btn-warning" style="margin-right: 1em;" id="re-evaluate-btn">Re-evaluate score</button>
         <button class="btn btn-success" id="fetch-btn">Fetch all season activities</button>
+        <button class="btn btn-danger" id="delete-non-season-btn">Delete non season activities</button>
     </div>
     <hr>
     {{ render_flash() }}
@@ -45,16 +46,20 @@
                                     <th scope="col">UK Number</th>
                                     <th scope="col">Role</th>
                                     <th scope="col">Field of Study</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr data-user-id="{{ user.id }}">
                                     <td>{{ user.first_name }}</td>
                                     <td>{{ user.last_name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>{{ user.uk_id }}</td>
                                     <td>{{ user.type }}</td>
-                                    <td>{{ user.field_of_study }}</td>
+                                    <td>{{ user.field_of_study }}
+                                    <td>
+                                        <button class="btn btn-warning btn-sm season-activities">Fetch season activities</button>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -162,6 +167,46 @@
             });
         });
 
+        let fetchSeasonActivitiesButtons = Array.from(document.getElementsByClassName('season-activities'));
+
+        fetchSeasonActivitiesButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+
+                let containingRow = btn.parentElement.parentElement;
+
+                fetch(`${window.origin}/admin/fetch_user_season_activities?user_id=${containingRow.dataset.id}`, {
+                    method: 'GET'
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.ok) {
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            }
+                        }
+                    }).catch(ex => {
+                    window.alert("Fetch was unsuccessful");
+                    console.log(`For more detail, please see the following error: ${ex}`);
+                })
+            })
+        });
+
+        let deleteNonSeasonBtn = document.getElementById("delete-non-season-btn");
+
+        deleteNonSeasonBtn.addEventListener('click', () => {
+            fetch(`${window.origin}/admin/delete_non_season_activities`, {
+                method: 'GET'
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    }
+                }).catch(ex => {
+                window.alert("Non season activities deletion was unsuccessful.");
+                console.log(`For more detail, please see the following error: ${ex}`);
+            });
+        });
 
     </script>
 
