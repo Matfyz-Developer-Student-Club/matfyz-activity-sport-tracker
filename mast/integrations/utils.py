@@ -275,7 +275,7 @@ def process_strava_webhook(data: dict):
 
         elif data['aspect_type'] == 'update':
             strava_logger.info('Webhook sent info about activity update')
-            _update_activity(data)
+            _update_activity(data, user)
             return
 
         else:
@@ -308,7 +308,7 @@ def _delete_activity(data):
     db_query.delete_activity_by_strava_id(strava_activity_id)
 
 
-def _update_activity(data):
+def _update_activity(data, user):
     strava_activity_id = data['object_id']
 
     # parse data to update
@@ -322,16 +322,34 @@ def _update_activity(data):
         db_query.delete_activity_by_strava_id(strava_activity_id)
         return
 
-    # create dict for update query
+    # prepare dict for update query
     data_to_update = dict()
     if new_title:
         data_to_update['name'] = new_title
     if new_type:
         data_to_update['type'] = _get_activity_type(new_type)
 
-    # update database
     db_query = Queries()
-    db_query.update_activity_info(strava_activity_id, data_to_update)
+
+    # check if such activity is in database
+    activities = db_query.get_activity_by_strava_id(strava_activity_id)
+    if len(activities) < 1:
+        # such activity is not in DB
+        activity_data = get_activity(user.strava_access_token, strava_activity_id)
+        activity = create_activity_from_strava_json(activity_data, user, strava_activity_id)
+        if activity is not None:
+            db_query.save_new_user_activities(activity.user_id, activity)
+    else:
+        # such activity is in DB
+        activity = activities[0]
+
+        # update activity in DB
+        db_query.update_activity_info(strava_activity_id, data_to_update)
+
+        # delete it if it does not satisfy constraints
+        if not activity.satisfies_constraints():
+            db_query.delete_activity_by_strava_id(strava_activity_id)
+
 
 
 def _get_user(data):
