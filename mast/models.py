@@ -235,7 +235,7 @@ class Activity(db.Model):
         if self.distance < LIMITS[self.type]:
             return False
         # if is not in Season date -> return False
-        if self.datetime < competition_season.start_date:
+        if self.datetime.date() < competition_season.start_date:
             return False
 
         # is valid otherwise
