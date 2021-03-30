@@ -1,8 +1,9 @@
 from mast import db, login_manager
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from flask import current_app
 from enum import Enum
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -128,14 +129,15 @@ class User(db.Model, UserMixin):
 
     def display(self):
         if self.anonymous:
-            return 'Anonymous'
+            return " ".join(
+                [self.first_name, self.display_name, self.last_name]) if current_user.role.is_admin() else 'Anonymous'
         elif self.display_name:
             return self.display_name
         else:
             return self.first_name + ' ' + self.last_name
 
     def complete_profile(self, first_name, last_name, sex, shirt_size, user_type, ukco, anonymous,
-                         competing, study_field = None, display_name=None):
+                         competing, study_field=None, display_name=None):
         assert (first_name is not None and
                 last_name is not None and
                 sex is not None and
@@ -207,7 +209,7 @@ class User(db.Model, UserMixin):
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     datetime = db.Column(db.DateTime, nullable=False)
-    distance = db.Column(db.Float, nullable=False) # in Km
+    distance = db.Column(db.Float, nullable=False)  # in Km
     duration = db.Column(db.Time, nullable=False)
     average_duration_per_km = db.Column(db.Time, nullable=False)
     type = db.Column(db.Enum(ActivityType), nullable=False)
