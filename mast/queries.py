@@ -595,7 +595,7 @@ class Queries(object):
         return result
 
     def _get_cyclist_challenge_part_cycle_max(self, cycle) -> int:
-        return CyclistsChallengePart.query(CyclistsChallengePart.distance).filter_by(cycle=cycle).orderd_by(
+        return db.session.query(CyclistsChallengePart.distance).filter_by(cycle=cycle).order_by(
             CyclistsChallengePart.distance.desc()).first()
 
     def _get_challenge_parts(self):
@@ -647,10 +647,10 @@ class Queries(object):
         checkpoints = self._get_cyclist_challenge_part(cycle=cycle)
 
         achieved_max = 0
-
+##
         for i in range(cycle):
-            achieved_max = self._get_cyclist_challenge_part_cycle_max(cycle=i)
-
+            achieved_max += self._get_cyclist_challenge_part_cycle_max(cycle=i)[0]
+        print(f"Achieved max {achieved_max}")
         current_reached_dist -= achieved_max
 
         result = {}
