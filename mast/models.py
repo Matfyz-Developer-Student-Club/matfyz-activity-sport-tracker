@@ -3,7 +3,6 @@ from flask_login import UserMixin
 from flask import current_app
 from enum import Enum
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from mast.queries import Queries
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -229,8 +228,8 @@ class Activity(db.Model):
             ActivityType.InlineSkate: 8,
             ActivityType.Ride: 1
         }
-        db_query = Queries()
-        competition_season = db_query.get_competition_season()
+
+        competition_season = db.session.query(Season)
 
         # if does not satisfy minimum distance -> return False
         if self.distance < LIMITS[self.type]:
