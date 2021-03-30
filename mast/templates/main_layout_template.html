@@ -255,6 +255,10 @@
                         <div class="ml-3">{{ msg }}</div>
                     </div>
                 {% endfor %}
+		<br>
+		<div class="alert alert-info" role="alert">
+  			If your activity was not uploaded from STRAVA to Mathletics and it should you can follow steps described in <a href="{{url_for('main.faq')}}#activity-not-showing">FAQ</a> to fix that.
+		</div>
 
                 {% for msg in session_data.pop_info_msgs() %}
                     <div class="alert alert-success container-fluid d-flex flex-wrap align-items-center mt-2"
