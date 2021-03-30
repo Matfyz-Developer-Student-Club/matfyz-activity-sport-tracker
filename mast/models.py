@@ -223,13 +223,13 @@ class Activity(db.Model):
     def satisfies_constraints(self):
         # TODO: UPDATE when new activity is introduced
         LIMITS = {
-            ActivityType.Run: 4,
+            ActivityType.Run: 3,
             ActivityType.Walk: 5,
             ActivityType.InlineSkate: 8,
-            ActivityType.Ride: 1
+            ActivityType.Ride: 10
         }
 
-        competition_season = db.session.query(Season)
+        competition_season = db.session.query(Season).first()
 
         # if does not satisfy minimum distance -> return False
         if self.distance < LIMITS[self.type]:
