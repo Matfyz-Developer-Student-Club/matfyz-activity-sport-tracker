@@ -1,16 +1,77 @@
 {% extends "public_layout_template.html" %}
-
 {% block content_page %}
     <br><br><br>
 
     <div class="container mb-4">
         <div class="row-fluid">
 
+            <div id="#public_tutorial" class="col-sm mb-4">
+                <h2>How to I make activity public in STRAVA?</h2>
+                <p>
+                    In STRAVA go to <b>"Training"</b> and there click <b>"My Activities"</b>. This will list all activities on your STRAVA account.
+                </p>
+                <p>
+                    Click on <b>"Edit"</b> at activity you want to make public. This will show you the edit UI for the activity.
+                </p>
+                <p>
+                    Here under Privacy Controls you can select either <b>"Everyone"</b> or <b>"Followers"</b>. Both are fine if you want the activity to be registered at Mathletics.
+                </p>
+                <img src="../static/pics/strava_public_tutorial.png" alt="STRAVA - make activity public"/>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>Common problems:</h2>
+
+                <h4 id="activity-not-showing">I uploaded activity to STRAVA but it's not showing anywhere.</h4>
+                <p>
+                    Make sure your activity is of correct type and satisfies minimum <a href="#competitions">length</a>.
+                </p>
+                <p>
+                    The activity must be public. See <a href="#public_tutorial">tutorial</a> to see how to make sure the activity is public.
+                </p>
+                <p>
+                    If everything is as it should be. You can try to set the Visibility to Private and Save it. Then right away you can set it back to public. Wait a few minutes and the activity should now be on your profile.
+                </p>
+                <p>
+                    If it still is not showing here please email us <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a> and please include link to your STRAVA activity as it helps us solve the problem much faster.
+                </p>
+            </div>
+
             <div class="col-sm mb-4">
                 <h2>Who can participate?</h2>
                 <p>
                     Any student, employee or alumni of MFF UK.
                 </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>How long does it take for the activity to load from STRAVA to Mathletics?</h2>
+                <p>
+                    It usually takes between <b>1 to 2 minutes</b>.
+                </p>
+            </div>
+
+            <div class="col-sm mb-4">
+                <h2>Can I somehow upload activities manually and not rely on STRAVA to upload it to Mathletics?</h2>
+                <p>
+                    Unfortunatelly no. Due to limited number of requests between STRAVA and Mathletics we have to rely on STRAVA to inform us about your new activities.
+                </p>
+                <p>
+                    If you encounter upload problems, please check <a href="#activity-not-showing">Common problems</a> section or email us at <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a> straight away. We will look into it.
+                </p>
+            </div>
+
+            <div id="competitions" class="col-sm mb-4">
+                <h2>What are the competition categories?</h2>
+                <p>
+                    This season there is four disciplines all together.
+                </p>
+                <ul>
+                    <li><b>Running</b> - any run longer 3 km</li>
+                    <li><b>Walking</b> - any walk longer 5 km</li>
+                    <li><b>Inline skating</b> - any trip longer 8 km</li>
+                    <li><b>Cycling</b> - any ride longer 10 km</li>
+                </ul>
             </div>
 
             <div class="col-sm mb-4">
@@ -62,7 +123,7 @@
                     The Formula:
                 </h6>
                     <p>
-                        <img src="../static/pics/points_formula.png" alt="Points Formula"></img>
+                        <img src="../static/pics/points_formula.png" alt="Points Formula"/>
                         <figure>
                             <figcaption>d ... distance</figcaption>
                             <figcaption>a ... scaled elevation [0;1]</figcaption>
@@ -87,19 +148,6 @@
                 <p>
                     The department of physical education (KTV) picks the best participants in each category based on uploaded activities.
                 </p>
-            </div>
-
-            <div id="competitions" class="col-sm mb-4">
-                <h2>What are the competition categories?</h2>
-                <p>
-                    This season there is four disciplines all together.
-                </p>
-                <ul>
-                    <li><b>Running</b> - any run longer 3 km</li>
-                    <li><b>Walking</b> - any walk longer 5 km</li>
-                    <li><b>Inline skating</b> - any trip longer 8 km</li>
-                    <li><b>Cycling</b> - any ride longer 10 km</li>
-                </ul>
             </div>
 
             <div id="rules" class="col-sm mb-4">
@@ -127,11 +175,10 @@
 
 
             <div class="col-sm mb-4">
-                <h2>I have encountered some technical difficulties. How should I report them?</h2>
+                <h2>I have encountered other technical difficulties. How should I report them?</h2>
                 <p>
                     We welcome all bug reports on <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a>.
                 </p>
-
                 <p>
                     Additionally, you can contribute to this project and others by joining our club: <a href="https://matfyz-developer-student-club.github.io/websites/" target="_blank">Matfyz Developer Student Club</a>.
                 </p>
