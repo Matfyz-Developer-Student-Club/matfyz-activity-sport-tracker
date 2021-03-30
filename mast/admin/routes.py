@@ -106,7 +106,7 @@ def re_evaluate_all_users_score():
         for activity in activities:
             if not activity.satisfies_constraints():
                 logger.info(f"Deleting activity of type: {activity.type} of length {activity.distance}")
-                #db_query.delete_activity_by_strava_id(activity.strava_id)
+                db_query.delete_activity_by_strava_id(activity.strava_id)
 
         db.session.commit()
         flash("Activities were successfully deleted", 'success')

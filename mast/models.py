@@ -224,7 +224,7 @@ class Activity(db.Model):
     def satisfies_constraints(self):
         # TODO: UPDATE when new activity is introduced
         LIMITS = {
-            ActivityType.Run: 3,
+            ActivityType.Run: 4,
             ActivityType.Walk: 5,
             ActivityType.InlineSkate: 8,
             ActivityType.Ride: 1
