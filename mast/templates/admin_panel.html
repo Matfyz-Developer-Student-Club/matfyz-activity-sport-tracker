@@ -86,7 +86,7 @@
                                 <tbody>
                                 {% for activity in user.activities %}
                                     <tr data-activity-id="{{ activity.id }}">
-                                        <td>{{ activity.type }}</td>
+                                        <td><a href="https://www.strava.com/activities/{{ activity.strava_id }}">{{ activity.type }}</a></td>
                                         <td>{{ activity.datetime }}</td>
                                         <td>{{ activity.distance }}</td>
                                         <td>{{ activity.duration }}</td>
