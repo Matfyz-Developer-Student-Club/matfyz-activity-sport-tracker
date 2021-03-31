@@ -93,7 +93,7 @@ def _get_values(activities):
 
     avgPace = _get_time_from_seconds(totalSeconds)
 
-    return maxPace, minPace, avgPace, maxElev, minElev, avgElev, avgDistance, avgScore
+    return maxPace, minPace, avgPace, maxElev, minElev, round(avgElev, 1), round(avgDistance, 1), avgScore
 
 
 def _get_total_seconds(pace:time):
