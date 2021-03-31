@@ -59,12 +59,12 @@ def _get_empty_statistics(activityType) ->dict:
 
 
 def _get_values(activities):
-    activity:Activity
-    maxPace, minPace, avgPace = time()
-    maxElev, minElev, avgElev, avgScore = 0
+    maxPace, minPace, avgPace = time(), time(), time()
+    maxElev, minElev, avgElev, avgScore = 0, 0, 0, 0
 
     totalSeconds = 0
 
+    activity: Activity
     for activity in activities:
         # pace
         maxPace = max(maxPace, activity.average_duration_per_km)
