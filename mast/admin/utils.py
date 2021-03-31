@@ -41,6 +41,7 @@ def get_statistics(activityType: ActivityType) ->list:
         statistics['MaxPace'], statistics['MinPace'], statistics['AvgPace'], statistics['MaxElev'],\
             statistics['MinElev'], statistics['AvgElev'], statistics['AvgDistance'],\
             statistics['AvgScore'] = _get_values(activities)
+        statistics['Count'] = len(activities)
 
     return statistics
 
@@ -55,7 +56,8 @@ def _get_empty_statistics(activityType) ->dict:
         'MinElev': 0,
         'AvgElev': 0,
         'AvgDistance': 0,
-        'AvgScore': 0
+        'AvgScore': 0,
+        'Count': 0
     }
     return statistics
 
