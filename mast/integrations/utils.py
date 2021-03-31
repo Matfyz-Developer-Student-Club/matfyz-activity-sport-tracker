@@ -314,7 +314,7 @@ def _update_activity(data, user):
     strava_activity_id = data['object_id']
 
     # parse data to update
-    new_title = data['updates']['title'] if 'title' in data['updates'].keys() else None
+    new_title = data['updates']['title'][:30] if 'title' in data['updates'].keys() else None
     new_type = data['updates']['type'] if 'type' in data['updates'].keys() else None
     is_private = data['updates']['private'] if 'private' in data['updates'].keys() else False
 
