@@ -70,7 +70,10 @@ def _get_values(activities):
     for activity in activities:
         # pace
         maxPace = max(maxPace, activity.average_duration_per_km)
-        minPace = min(minPace, activity.average_duration_per_km)
+        if minPace == time():
+            minPace = activity.average_duration_per_km
+        else:
+            minPace = min(minPace, activity.average_duration_per_km)
         totalSeconds += _get_total_seconds(activity.average_duration_per_km)
         # elevation
         maxElev = max(maxElev, activity.elevation)
