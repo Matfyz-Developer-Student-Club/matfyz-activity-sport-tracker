@@ -1,7 +1,9 @@
 from flask import url_for, current_app
 from mast import mail
-from mast.models import Activity, User
+from mast.models import Activity, User, ActivityType
 from flask_mail import Message
+from mast.queries import Queries
+from datetime import time
 
 
 def send_suspicious_activity_email(activity: Activity, user: User):
@@ -28,3 +30,70 @@ def send_suspicious_activity_email(activity: Activity, user: User):
     Your Mathletics team.
     '''
     mail.send(msg)
+
+
+def get_statistics(activityType: ActivityType) ->list:
+    db_query = Queries()
+    activities = db_query.get_all_activities_by_type(activityType)
+
+    statistics = _get_empty_statistics(activityType)
+    if len(activities) > 0:
+        statistics['MaxPace'], statistics['MinPace'], statistics['AvgPace'], statistics['MaxElev'],\
+            statistics['MinElev'], statistics['AvgElev'], statistics['AvgScore'] = _get_values(activities)
+
+    return statistics
+
+
+def _get_empty_statistics(activityType) ->dict:
+    statistics = {
+        'Category': activityType,
+        'MaxPace': 0,
+        'MinPace': 0,
+        'AvgPace': 0,
+        'MaxElev': 0,
+        'MinElev': 0,
+        'AvgElev': 0,
+        'AvgScore': 0
+    }
+    return statistics
+
+
+def _get_values(activities):
+    activity:Activity
+    maxPace, minPace, avgPace = time()
+    maxElev, minElev, avgElev, avgScore = 0
+
+    totalSeconds = 0
+
+    for activity in activities:
+        # pace
+        maxPace = max(maxPace, activity.average_duration_per_km)
+        minPace = min(maxPace, activity.average_duration_per_km)
+        totalSeconds += _get_total_seconds(activity.average_duration_per_km)
+        # elevation
+        maxElev = max(maxElev, activity.elevation)
+        minElev = min(maxElev, activity.elevation)
+        avgElev += activity.elevation
+        # score
+        avgScore += activity.score
+
+    avgScore //= len(activities)
+    avgElev /= len(activities)
+    totalSeconds //= len(activities)
+
+    avgPace = _get_time_from_seconds(totalSeconds)
+
+    return maxPace, minPace, avgPace, maxElev, minElev, avgElev, avgScore
+
+
+def _get_total_seconds(pace:time):
+    return pace.hour * 3600 + pace.minute * 60 + pace.second
+
+
+def _get_time_from_seconds(seconds:int):
+    hours = seconds // 3600
+    seconds %= seconds % 3600
+    minutes = seconds // 60
+    seconds %= 60
+
+    return time(hours, minutes, seconds)

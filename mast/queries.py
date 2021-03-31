@@ -837,3 +837,6 @@ class Queries(object):
 
     def get_all_activities(self) -> list:
         return Activity.query.all()
+
+    def get_all_activities_by_type(self, activityType: ActivityType) ->list:
+        return Activity.query.filter_by(type=activityType).all()

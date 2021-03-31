@@ -3,10 +3,11 @@ from flask_login import current_user, login_required
 from flask import current_app
 from mast.integrations.utils import check_strava_permissions, save_strava_tokens, process_strava_webhook, \
     add_activities_in_competition_season, refresh_access_token
+from mast.models import ActivityType
 from mast.session import Session
 from mast.queries import Queries
 import logging
-from mast.admin.utils import send_suspicious_activity_email
+from mast.admin.utils import send_suspicious_activity_email, get_statistics
 from mast.tools.points import Points
 from mast.integrations.utils import get_score
 from mast import db
@@ -118,3 +119,20 @@ def delete_non_season_activities():
         return jsonify({"ok": True, "redirect": url_for('admin.admin_panel')})
 
     return jsonify({"ok": False, "redirect": url_for('admin.admin_panel')})
+
+
+@admin.route("/admin/statistics", methods=['GET', 'POST'])
+@login_required
+def admin_statistics():
+    if current_user.role.is_admin():
+        data = list()
+        data.append(get_statistics(ActivityType.Run))
+        data.append(get_statistics(ActivityType.Walk))
+        data.append(get_statistics(ActivityType.Ride))
+        data.append(get_statistics(ActivityType.InlineSkate))
+
+        return render_template("admin_statistics.html", data=data)
+    else:
+        flash(f"User {current_user.first_name} {current_user.last_name} does not have permission to see this page",
+              "danger")
+        return redirect(url_for('main.home'))

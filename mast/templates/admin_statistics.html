@@ -1,0 +1,43 @@
+{% extends "main_layout_template.html" %}
+{% from "macros/_flash.html" import render_flash %}
+
+
+{% block content_page %}
+    <h1 class="h2 mt-2">Statistics</h1>
+    <hr>
+    {{ render_flash() }}
+
+    <div class="row justify-content-left mt-5 w-100">
+        <div id="accordion" class="w-100">
+             <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Category</th>
+                        <th scope="col">Max Pace</th>
+                        <th scope="col">Avg Pace</th>
+                        <th scope="col">Min Pace</th>
+                        <th scope="col">Max Elevation</th>
+                        <th scope="col">Avg Elevation</th>
+                        <th scope="col">Min Elevation</th>
+                        <th scope="col">Avg Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for activityType in data %}
+                    <tr>
+                        <td>{{ data['Category'] }}</td>
+                        <td>{{ data['MaxPace'] }}</td>
+                        <td>{{ data['AvgPace'] }}</td>
+                        <td>{{ data['MinPace'] }}</td>
+                        <td>{{ data['MaxElev'] }}</td>
+                        <td>{{ data['AvgElev'] }}</td>
+                        <td>{{ data['MinElev'] }}</td>
+                        <td>{{ data['AvgScore'] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content_page %}
+
