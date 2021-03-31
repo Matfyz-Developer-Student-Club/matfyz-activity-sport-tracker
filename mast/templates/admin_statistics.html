@@ -25,14 +25,14 @@
                 <tbody>
                 {% for activityType in data %}
                     <tr>
-                        <td>{{ data['Category'] }}</td>
-                        <td>{{ data['MaxPace'] }}</td>
-                        <td>{{ data['AvgPace'] }}</td>
-                        <td>{{ data['MinPace'] }}</td>
-                        <td>{{ data['MaxElev'] }}</td>
-                        <td>{{ data['AvgElev'] }}</td>
-                        <td>{{ data['MinElev'] }}</td>
-                        <td>{{ data['AvgScore'] }}</td>
+                        <td>{{ activityType['Category'] }}</td>
+                        <td>{{ activityType['MaxPace'] }}</td>
+                        <td>{{ activityType['AvgPace'] }}</td>
+                        <td>{{ activityType['MinPace'] }}</td>
+                        <td>{{ activityType['MaxElev'] }}</td>
+                        <td>{{ activityType['AvgElev'] }}</td>
+                        <td>{{ activityType['MinElev'] }}</td>
+                        <td>{{ activityType['AvgScore'] }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
