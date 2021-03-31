@@ -178,7 +178,7 @@ def get_global_contest_combined():
 def get_global_contest_cyclists():
     db_query = Queries()
     label = ["Giro D'Italia."]
-    places, data = db_query.get_cyclists_challenge_parts_to_display()
+    places, data, _ = db_query.get_cyclists_challenge_parts_to_display()
     data = [round(data, 1)]
     altitudes = [x['alt'] for x in places.values()]
     checkpoints = {k: x['target'] for k, x in places.items()}

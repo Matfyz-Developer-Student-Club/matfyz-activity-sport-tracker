@@ -650,7 +650,6 @@ class Queries(object):
 ##
         for i in range(cycle):
             achieved_max += self._get_cyclist_challenge_part_cycle_max(cycle=i)[0]
-        print(f"Achieved max {achieved_max}")
         current_reached_dist -= achieved_max
 
         result = {}
@@ -664,7 +663,7 @@ class Queries(object):
             else:
                 result[d] = target
                 break
-        return result, current_reached_dist
+        return result, current_reached_dist, cycle
 
     def get_current_challenge_part(self):
         """

@@ -34,7 +34,7 @@ def matfyz_challenges_combined():
 @activities.route('/matfyz_challenges_cyclist')
 def matfyz_challenges_cyclist():
     db_query = Queries()
-    checkpoints, current_dist = db_query.get_cyclists_challenge_parts_to_display()
+    checkpoints, current_dist, cycle = db_query.get_cyclists_challenge_parts_to_display()
     checkpoints_enriched = []
     order = 1
     for (dist, place) in checkpoints.items():
@@ -45,14 +45,14 @@ def matfyz_challenges_cyclist():
     if current_user.is_authenticated:
         session_data = Session()
         check_profile_verified(session_data)
-        # TODO: Rename template
         return render_template("matfyz_challenges_cyclist.html", title='Matfyz Challenges - Cyclists',
                                checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
-                               session_data=session_data, current_dist=current_dist)
+                               session_data=session_data, current_dist=current_dist, cycle=cycle)
     else:
         return render_template("matfyz_challenges_combined_public.html", title='Matfyz Challenges - Cyclists',
                                checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
-                               current_dist=current_dist, route='activities.matfyz_challenges_combined', default=False)
+                               current_dist=current_dist, route='activities.matfyz_challenges_combined', default=False,
+                               cycle=cycle)
 
 
 @activities.route('/competitions')

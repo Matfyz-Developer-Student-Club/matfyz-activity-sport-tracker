@@ -24,7 +24,8 @@
 
                     <script src="{{ url_for('static', filename='global_contest.js') }}"></script>
                 {% else %}
-                    <h2>Cycling Disciplines</h2>
+                    <h3>Current Competition: Giro D'Italia - Route # {{ cycle + 1 }}</h3>
+
 
                     <canvas class="my-4 w-100" id="myChart" width="900" height="220"
                             style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none"></canvas>
