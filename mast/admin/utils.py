@@ -39,7 +39,8 @@ def get_statistics(activityType: ActivityType) ->list:
     statistics = _get_empty_statistics(activityType)
     if len(activities) > 0:
         statistics['MaxPace'], statistics['MinPace'], statistics['AvgPace'], statistics['MaxElev'],\
-            statistics['MinElev'], statistics['AvgElev'], statistics['AvgScore'] = _get_values(activities)
+            statistics['MinElev'], statistics['AvgElev'], statistics['AvgDistance'],\
+            statistics['AvgScore'] = _get_values(activities)
 
     return statistics
 
@@ -47,12 +48,13 @@ def get_statistics(activityType: ActivityType) ->list:
 def _get_empty_statistics(activityType) ->dict:
     statistics = {
         'Category': activityType,
-        'MaxPace': 0,
-        'MinPace': 0,
-        'AvgPace': 0,
+        'MaxPace': time(),
+        'MinPace': time(),
+        'AvgPace': time(),
         'MaxElev': 0,
         'MinElev': 0,
         'AvgElev': 0,
+        'AvgDistance': 0,
         'AvgScore': 0
     }
     return statistics
@@ -60,7 +62,7 @@ def _get_empty_statistics(activityType) ->dict:
 
 def _get_values(activities):
     maxPace, minPace, avgPace = time(), time(), time()
-    maxElev, minElev, avgElev, avgScore = 0, 0, 0, 0
+    maxElev, minElev, avgElev, avgDistance, avgScore = 0, 0, 0, 0, 0
 
     totalSeconds = 0
 
@@ -68,22 +70,28 @@ def _get_values(activities):
     for activity in activities:
         # pace
         maxPace = max(maxPace, activity.average_duration_per_km)
-        minPace = min(maxPace, activity.average_duration_per_km)
+        if minPace == time():
+            minPace = activity.average_duration_per_km
+        else:
+            minPace = min(minPace, activity.average_duration_per_km)
         totalSeconds += _get_total_seconds(activity.average_duration_per_km)
         # elevation
         maxElev = max(maxElev, activity.elevation)
         minElev = min(maxElev, activity.elevation)
         avgElev += activity.elevation
+        # distance
+        avgDistance += activity.distance
         # score
         avgScore += activity.score
 
     avgScore //= len(activities)
     avgElev /= len(activities)
+    avgDistance /= len(activities)
     totalSeconds //= len(activities)
 
     avgPace = _get_time_from_seconds(totalSeconds)
 
-    return maxPace, minPace, avgPace, maxElev, minElev, avgElev, avgScore
+    return maxPace, minPace, avgPace, maxElev, minElev, avgElev, avgDistance, avgScore
 
 
 def _get_total_seconds(pace:time):
@@ -92,7 +100,7 @@ def _get_total_seconds(pace:time):
 
 def _get_time_from_seconds(seconds:int):
     hours = seconds // 3600
-    seconds %= seconds % 3600
+    seconds %= 3600
     minutes = seconds // 60
     seconds %= 60
 
