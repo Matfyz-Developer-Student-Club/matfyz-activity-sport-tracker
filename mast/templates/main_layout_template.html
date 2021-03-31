@@ -196,6 +196,17 @@
                             <span class="sr-only"></span>
                         </a>
                     </li>
+
+                     <li class="nav-item">
+                        <a {% if title == 'Statistics' %} class="nav-link activity-wrap active" {% else %}
+                                                       class="nav-link activity-wrap" {% endif %}
+                                                       href="{{ url_for('admin.statistics') }}">
+                            <img class="activity" src="{{ url_for('static', filename='pics/admin.svg') }}"
+                                 alt="Statistics" width="16" height="16">
+                            Statistics
+                            <span class="sr-only"></span>
+                        </a>
+                    </li>
                 </ul>
             {% endif %}
 
