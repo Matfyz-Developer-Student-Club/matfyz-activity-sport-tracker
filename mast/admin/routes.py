@@ -62,7 +62,6 @@ def re_evaluate_all_users_score():
     return jsonify({"ok": False, "redirect": url_for('admin.admin_panel')})
 
 
-
 @admin.route("/admin/fetch_season_activities", methods=['GET', 'POST'])
 @login_required
 def get_all_activities_in_season():
