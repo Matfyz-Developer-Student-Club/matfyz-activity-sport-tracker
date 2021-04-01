@@ -79,7 +79,7 @@ def _get_values(activities):
         totalSeconds += _get_total_seconds(activity.average_duration_per_km)
         # elevation
         maxElev = max(maxElev, activity.elevation)
-        minElev = min(maxElev, activity.elevation)
+        minElev = min(minElev, activity.elevation)
         avgElev += activity.elevation
         # distance
         avgDistance += activity.distance
