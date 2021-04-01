@@ -267,13 +267,12 @@ class Queries(object):
             order_by(asc('day')). \
             all()
 
+        query_result = list(map(lambda x: {"day": str(x[0]), "distance": x[1]}, query_result))
         result = {}
         for i in range(7):
             result[(first_day + dt.timedelta(days=i)).isoformat()] = 0
-
         for item in query_result:
-            result[item.day] = item.distance
-
+            result[item['day']] = item['distance']
         return result
 
     # LEGACY
@@ -647,7 +646,7 @@ class Queries(object):
         checkpoints = self._get_cyclist_challenge_part(cycle=cycle)
 
         achieved_max = 0
-##
+        ##
         for i in range(cycle):
             achieved_max += self._get_cyclist_challenge_part_cycle_max(cycle=i)[0]
         current_reached_dist -= achieved_max
@@ -838,5 +837,5 @@ class Queries(object):
     def get_all_activities(self) -> list:
         return Activity.query.all()
 
-    def get_all_activities_by_type(self, activityType: ActivityType) ->list:
+    def get_all_activities_by_type(self, activityType: ActivityType) -> list:
         return Activity.query.filter_by(type=activityType).all()

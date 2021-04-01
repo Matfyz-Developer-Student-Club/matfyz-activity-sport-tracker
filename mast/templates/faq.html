@@ -3,20 +3,41 @@
     <div class="container mb-4">
         <div class="row-fluid">
 
-            <div id="public_tutorial" class="col-sm mb-4" >
+            <div class="col-sm mb-4">
+                <h2>How do I participate?</h2>
+                <p>
+                    Well, all you need to do is to complete your profile on the User Settings page, authenticate via
+                    Strava in the
+                    <a href="{{ url_for('main.integrations') }}">Integrations</a>
+                    and start running. Activities uploaded to STRAVA are automatically sent to Mathletics starting March
+                    29.
+                </p>
+                <p>
+                    Note that your STRAVA activity is counted only if it is made <b>public in STRAVA</b>.
+                </p>
+                <p>
+                    See <a href="#rules">rules</a> to see more about the rules.
+                </p>
+            </div>
+
+            <div id="public_tutorial" class="col-sm mb-4">
                 <h2>How to I make activity public in STRAVA?</h2>
                 <ul>
                     <li>
-                        In STRAVA go to <b>"Training"</b> and there click <b>"My Activities"</b>. This will list all activities on your STRAVA account.
+                        In STRAVA go to <b>"Training"</b> and there click <b>"My Activities"</b>. This will list all
+                        activities on your STRAVA account.
                     </li>
                     <li>
-                        Click on <b>"Edit"</b> at activity you want to make public. This will show you the edit UI for the activity.
+                        Click on <b>"Edit"</b> at activity you want to make public. This will show you the edit UI for
+                        the activity.
                     </li>
                     <li>
-                        Here under Privacy Controls you can select either <b>"Everyone"</b> or <b>"Followers"</b>. Both are fine if you want the activity to be registered at Mathletics.
+                        Here under Privacy Controls you can select either <b>"Everyone"</b> or <b>"Followers"</b>. Both
+                        are fine if you want the activity to be registered at Mathletics.
                     </li>
                 </ul>
-                <img class="mx-auto" src="../static/pics/strava_public_tutorial.png" alt="STRAVA - make activity public"/>
+                <img class="mx-auto" src="../static/pics/strava_public_tutorial.png"
+                     alt="STRAVA - make activity public"/>
             </div>
 
             <div class="col-sm mb-4">
@@ -25,16 +46,21 @@
                 <h4 id="activity-not-showing">I uploaded activity to STRAVA but it's not showing anywhere.</h4>
                 <ul>
                     <li>
-                        Make sure your activity is of correct <a href="#competitions">type</a> and satisfies minimum <a href="#competitions">length</a>.
+                        Make sure your activity is of correct <a href="#competitions">type</a> and satisfies minimum <a
+                            href="#competitions">length</a>.
                     </li>
                     <li>
-                        The activity must be public. See <a href="#public_tutorial">tutorial</a> to see how to make sure the activity is public.
+                        The activity must be public. See <a href="#public_tutorial">tutorial</a> to see how to make sure
+                        the activity is public.
                     </li>
                     <li>
-                        If everything is as it should be. You can try to set the Visibility to Private and Save it. Then right away you can set it back to public. Wait a few minutes and the activity should now be on your profile.
+                        If everything is as it should be. You can try to set the Visibility to Private and Save it. Then
+                        right away you can set it back to public. Wait a few minutes and the activity should now be on
+                        your profile.
                     </li>
                     <li>
-                        If it still is not showing here please email us <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a> and please include link to your STRAVA activity as it helps us solve the problem much faster.
+                        If it still is not showing here please email us <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a>
+                        and please include link to your STRAVA activity as it helps us solve the problem much faster.
                     </li>
                 </ul>
             </div>
@@ -56,10 +82,13 @@
             <div class="col-sm mb-4">
                 <h2>Can I somehow upload activities manually and not rely on STRAVA to upload it to Mathletics?</h2>
                 <p>
-                    Unfortunatelly no. Due to limited number of requests between STRAVA and Mathletics we have to rely on STRAVA to inform us about your new activities.
+                    Unfortunatelly no. Due to limited number of requests between STRAVA and Mathletics we have to rely
+                    on STRAVA to inform us about your new activities.
                 </p>
                 <p>
-                    If you encounter upload problems, please check <a href="#activity-not-showing">Common problems</a> section or email us at <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a> straight away. We will look into it.
+                    If you encounter upload problems, please check <a href="#activity-not-showing">Common problems</a>
+                    section or email us at <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a> straight away. We will
+                    look into it.
                 </p>
             </div>
 
@@ -71,11 +100,11 @@
 
                 <table class="table table-striped">
                     <thead class="thead-dark">
-                        <tr>
-                            <th>Category</th>
-                            <th>Minimum length</th>
-                            <th>Correct STRAVA type</th>
-                        </tr>
+                    <tr>
+                        <th>Category</th>
+                        <th>Minimum length</th>
+                        <th>Correct STRAVA type</th>
+                    </tr>
                     </thead>
                     <tr>
                         <td>Running</td>
@@ -101,21 +130,6 @@
             </div>
 
             <div class="col-sm mb-4">
-                <h2>How do I participate?</h2>
-                <p>
-                    Well, all you need to do is to complete your profile on the User Settings page, authenticate via Strava in the
-                    <a href="{{url_for('main.integrations')}}">Integrations</a>
-                    and start running. Activities uploaded to STRAVA are automatically sent to Mathletics starting March 29.
-                </p>
-                <p>
-                    Note that your STRAVA activity is counted only if it is made <b>public in STRAVA</b>.
-                </p>
-                <p>
-                    See <a href="#rules">rules</a> to see more about the rules.
-                </p>
-            </div>
-
-            <div class="col-sm mb-4">
                 <h2>When does the event takes place?</h2>
                 <p>
                     For this semester, Mathletics takes place from <b>29. 3.</b> till <b>30. 6. 2021</b>.
@@ -128,38 +142,45 @@
                     There sure is!
                 </p>
                 <p>
-                    Together we will go across places around Europe associated with famous mathematicians, physicists and scientists from long ago and today.
+                    Together we will go across places around Europe associated with famous mathematicians, physicists
+                    and scientists from long ago and today.
                 </p>
 
                 <p>
-                    Cyclists will on the other hand tackle famous European races. Such as Giro d'Italia, Tour de France or Vuelta a España.
-                    We will tackle this together. However we will count only ten percent of every cycling activity. Lets see how far can we go.
+                    Cyclists will on the other hand tackle famous European races. Such as Giro d'Italia, Tour de France
+                    or Vuelta a España.
+                    We will tackle this together. However we will count only ten percent of every cycling activity. Lets
+                    see how far can we go.
                 </p>
             </div>
 
             <div class="col-sm mb-4">
                 <h2>How can I win?</h2>
                 <p>
-                    For each recorded activity you will score some points. Then you need to place in top 10 in any category to win a prize. See <a href="#prizes"> What can I win?</a> section for more information about prizes.
+                    For each recorded activity you will score some points. Then you need to place in top 10 in any
+                    category to win a prize. See <a href="#prizes"> What can I win?</a> section for more information
+                    about prizes.
                 </p>
                 <p>
-                    The score is computed by a sophisticated formula that takes in account your activity distance, pace and elevation gain and also your sex.
+                    The score is computed by a sophisticated formula that takes in account your activity distance, pace
+                    and elevation gain and also your sex.
                 </p>
                 <h6>
                     The Formula:
                 </h6>
-                    <p>
-                        <img class="mx-auto" src="../static/pics/points_formula.png" alt="Points Formula"/>
-                        <ul>
-                            <li>d ... distance</li>
-                            <li>a ... scaled elevation [0;1]</li>
-                            <li>p ... sex (1 for male; 1,1 for female)</li>
-                            <li>t ... scaled pace [0;1]</li>
-                        </ul>
+                <p>
+                    <img class="mx-auto" src="../static/pics/points_formula.png" alt="Points Formula"/>
+                <ul>
+                    <li>d ... distance</li>
+                    <li>a ... scaled elevation [0;1]</li>
+                    <li>p ... sex (1 for male; 1,1 for female)</li>
+                    <li>t ... scaled pace [0;1]</li>
+                </ul>
 
                 </p>
                 <p>
-                    Note that not every category uses all parameters used in the formula. For more information see <a href="{{url_for('main.about_competitions')}}">About Competitions</a>.
+                    Note that not every category uses all parameters used in the formula. For more information see <a
+                        href="{{ url_for('main.about_competitions') }}">About Competitions</a>.
                 </p>
             </div>
 
@@ -172,7 +193,8 @@
                     Also, the first ten competitors win a MFF T-shirt.
                 </p>
                 <p>
-                    The department of physical education (KTV) picks the best participants in each category based on uploaded activities.
+                    The department of physical education (KTV) picks the best participants in each category based on
+                    uploaded activities.
                 </p>
             </div>
 
@@ -180,22 +202,32 @@
                 <h2>Rules</h2>
                 <ol>
                     <li>You must be registered on this website.</li>
-                    <li>You have to authenticate via Strava. Activities <b>uploaded before</b> authentication will <b>not</b> be counted.</li>
+                    <li>You have to authenticate via Strava. Activities <b>uploaded before</b> authentication will <b>not</b>
+                        be counted.
+                    </li>
                     <li>Activity must be accessible to <b>public in STRAVA</b>.</li>
-                    <li>The activity is accounted for only if it satisfies the <b>minimum distance criterion</b> (see <a href="#competitions">above</a>).</li>
+                    <li>The activity is accounted for only if it satisfies the <b>minimum distance criterion</b> (see <a
+                            href="#competitions">above</a>).
+                    </li>
                     <li>The activity can not be interleaved with other activities and must be recorded outside.</li>
-                    <li>Activities obviously related to work duties such as being messenger, courier, food delivery boy will not be accounted.</li>
-                    <li>The organizer (KTV) reserves the right not to recognize activities that drift off reality caused by for instance GPS issues (such cases will be resolved individually).</li>
+                    <li>Activities obviously related to work duties such as being messenger, courier, food delivery boy
+                        will not be accounted.
+                    </li>
+                    <li>The organizer (KTV) reserves the right not to recognize activities that drift off reality caused
+                        by for instance GPS issues (such cases will be resolved individually).
+                    </li>
                 </ol>
             </div>
 
             <div class="col-sm mb-4">
                 <h2>How do I enter the competitions?</h2>
                 <p>
-                    You enter the competitions automatically. All you need to do is authenticate via strava in Integrations and use STRAVA to record your activity.
+                    You enter the competitions automatically. All you need to do is authenticate via strava in
+                    Integrations and use STRAVA to record your activity.
                 </p>
                 <p>
-                    Any activity on STRAVA that is public will be automatically uploaded to Mathletics in about 5 minutes after upload.
+                    Any activity on STRAVA that is public will be automatically uploaded to Mathletics in about 5
+                    minutes after upload.
                 </p>
             </div>
 
@@ -206,7 +238,9 @@
                     We welcome all bug reports on <a href="mailto:mdsc@matfyzak.cz">mdsc@matfyzak.cz</a>.
                 </p>
                 <p>
-                    Additionally, you can contribute to this project and others by joining our club: <a href="https://matfyz-developer-student-club.github.io/websites/" target="_blank">Matfyz Developer Student Club</a>.
+                    Additionally, you can contribute to this project and others by joining our club: <a
+                        href="https://matfyz-developer-student-club.github.io/websites/" target="_blank">Matfyz
+                    Developer Student Club</a>.
                 </p>
             </div>
         </div>

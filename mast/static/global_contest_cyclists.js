@@ -46,11 +46,11 @@ Chart.helpers.extend(Chart.controllers.horizontalBar.prototype, {
 
             ctx.font = "18px Montserrat";
             ctx.fillStyle = "black";
-            ctx.textAlign = "left";
+            ctx.textAlign = "center";
             ctx.textBaseline = "alphabetic";
 
             // ctx.fillText(_checkpoints[index], x1 + 5, 15);
-            wrapText(ctx, _checkpoints[index], x1 + 5, 15, ctx.lineWidth, 20 )
+            wrapText(ctx, _checkpoints[index], x1 + 14, 15, ctx.lineWidth, 18 )
             last_index_pos = x1;
 
             ctx.restore();
@@ -59,7 +59,7 @@ Chart.helpers.extend(Chart.controllers.horizontalBar.prototype, {
 });
 
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
-    var words = text.split(' ');
+    var words = text.split('');
     var line = '';
 
     for (var n = 0; n < words.length; n++) {

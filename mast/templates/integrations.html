@@ -89,7 +89,8 @@
                             <tr>
                                 <th scope="row">Club links</th>
                                 <td>
-                                    <a href="https://www.strava.com/clubs/MFFvpohybu" target="_blank">Walk,Run,Inline Skating</a><br>
+                                    <a href="https://www.strava.com/clubs/MFFvpohybu" target="_blank">Walk,Run,Inline
+                                        Skating</a><br>
                                     <a href="https://www.strava.com/clubs/matfyznakole" target="_blank">Cycling</a>
                                 </td>
                             </tr>
@@ -101,10 +102,31 @@
 
             </div>
         {% else %}
-            <form action="{{ url_for( 'integrations.strava_init' ) }}">
-                <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                <input class="btn btn-outline-dark" type="submit" value="STRAVA"/>
-            </form>
+            <div class="col-md-3">
+
+            </div>
+            <div class="col col-md-6 text-center">
+                <h2>How to register into the competition?</h2>
+                <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col col-md-10">
+                        <p style="font-size: 16px;">
+                            In order to apply to our competition you need to synchronize your <strong>STRAVA</strong>
+                            account with the <strong><i>Mathletics</i></strong> platform. To do that just press the
+                            button bellow. This button invokes authentication protocol by <strong>STRAVA</strong>.
+                            After you proceed this authentication protocol, you will be redirected back to our page
+                            competing. It is also expected that your profile was verified. If not please update your
+                            profile information in <a href="{{ url_for('users.user_settings') }}">User Settings</a>.
+                        </p>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+                <form action="{{ url_for( 'integrations.strava_init' ) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+                    <input class="btn btn-outline-dark" type="submit" value="STRAVA"/>
+                </form>
+            </div>
+            <div class="col-md-3"></div>
 
         {% endif %}
 {% endblock content_page %}
