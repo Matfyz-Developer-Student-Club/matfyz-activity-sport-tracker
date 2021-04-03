@@ -642,6 +642,7 @@ class Queries(object):
 
     def get_cyclists_challenge_parts_to_display(self):
         current_reached_dist = self.get_global_total_distance_on_bike()
+        print(f"CURRENT CYCLIST DISTANCE - {current_reached_dist}")
         cycle = self._get_current_cycle(current_reached_dist)
         checkpoints = self._get_cyclist_challenge_part(cycle=cycle)
 
