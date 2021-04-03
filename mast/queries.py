@@ -1,6 +1,6 @@
 from mast import db
 from mast.models import User, UserType, Activity, ActivityType, Season, ChallengePart, CyclistsChallengePart, Sex
-from sqlalchemy.sql import asc, func
+from sqlalchemy.sql import asc, func, and_
 import datetime as dt
 from typing import Optional
 
@@ -637,16 +637,36 @@ class Queries(object):
                 break
         return result
 
-    def _get_current_cycle(self, current_distance: int) -> int:
-        return CyclistsChallengePart.query.filter(CyclistsChallengePart.distance >= current_distance).first().cycle
+    def _get_cycles_max_distance(self, current_reached_distance: int) -> int:
+        subq = db.session.query(
+            CyclistsChallengePart.cycle,
+            func.max(CyclistsChallengePart.distance).label('last_point')).group_by(
+            CyclistsChallengePart.cycle).subquery('t2')
+
+        last_points_per_cycle = db.session.query(CyclistsChallengePart).join(
+            subq,
+            and_(
+                CyclistsChallengePart.cycle == subq.c.cycle,
+                CyclistsChallengePart.distance == subq.c.last_point
+            )
+        ).all()
+
+        for point in last_points_per_cycle:
+            current_reached_distance -= point.distance
+
+            if current_reached_distance <= 0:
+                return point.cycle
+
+        return 0
 
     def get_cyclists_challenge_parts_to_display(self):
         current_reached_dist = self.get_global_total_distance_on_bike()
-        cycle = self._get_current_cycle(current_reached_dist)
+
+        cycle = self._get_cycles_max_distance(current_reached_distance=2170)
         checkpoints = self._get_cyclist_challenge_part(cycle=cycle)
 
         achieved_max = 0
-        ##
+
         for i in range(cycle):
             achieved_max += self._get_cyclist_challenge_part_cycle_max(cycle=i)[0]
         current_reached_dist -= achieved_max
