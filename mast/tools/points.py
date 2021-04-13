@@ -24,7 +24,9 @@ class Points(object):
         :return: Points for the Ride activity.
         """
 
-        return (distance * (1 + self._get_elevation_percentage(elevation, distance) * 1.1)) * 1000
+        if user.sex == Sex.Female:
+            return (distance * ((1 + self._get_elevation_percentage(elevation, distance)) * 1.1)) * 1000
+        return (distance * (1 + self._get_elevation_percentage(elevation, distance))) * 1000
 
     def get_run_activity_points(self, user: User, elevation: float, distance: float, pace) -> int:
         """
@@ -75,7 +77,7 @@ class Points(object):
         :param user: Current user.
         :return: User's sex
         """
-        return User.query.filter_by(id=user.id).first().sex
+        return user.sex
 
     @staticmethod
     def _get_pace_percentage(pace: time) -> float:
@@ -105,7 +107,7 @@ class Points(object):
         :param pace: Pace in the minute per kilometres for the given activity.
         :return: Points for the given activity.
         """
-        if Points._get_user_sex(user) == Sex.Female:
+        if user.sex == Sex.Female:
             return int((distance * (1 + Points._get_elevation_percentage(elevation,
                                                                          distance)) * self._FEMALE_COEFFICIENT) * Points._get_pace_percentage(
                 pace) * 1000)
