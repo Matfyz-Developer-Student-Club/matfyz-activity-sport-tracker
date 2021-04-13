@@ -4,6 +4,7 @@
 
 {% block content_page %}
     <h1 class="h2 mt-2">Admin Panel</h1>
+
     <div style="display: flex; justify-content: flex-end;">
         <button class="btn btn-warning" style="margin-right: 1em;" id="re-evaluate-btn">Re-evaluate score</button>
         <button class="btn btn-success" style="margin-right: 1em;" id="fetch-btn">Fetch all season activities</button>
@@ -11,6 +12,13 @@
     </div>
     <hr>
     {{ render_flash() }}
+    <h6>
+            Current number of participants: {{ users|length }}
+    </h6>
+    <h6>
+            Current number of active participants: {{ competing_users }}
+    </h6>
+    <hr>
 
     <div class="row justify-content-left mt-5 w-100">
         <div id="accordion" class="w-100">
@@ -59,7 +67,9 @@
                                     <td>{{ user.field_of_study }}
                                     <td>
                                         {% if user.strava_id %}
-                                        <button class="btn btn-warning btn-sm season-activities">Fetch season activities</button>
+                                            <button class="btn btn-warning btn-sm season-activities">Fetch season
+                                                activities
+                                            </button>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -86,7 +96,8 @@
                                 <tbody>
                                 {% for activity in user.activities %}
                                     <tr data-activity-id="{{ activity.id }}">
-                                        <td><a href="https://www.strava.com/activities/{{ activity.strava_id }}" target="_blank">{{ activity.type }}</a></td>
+                                        <td><a href="https://www.strava.com/activities/{{ activity.strava_id }}"
+                                               target="_blank">{{ activity.type }}</a></td>
                                         <td>{{ activity.datetime }}</td>
                                         <td>{{ activity.distance }}</td>
                                         <td>{{ activity.duration }}</td>

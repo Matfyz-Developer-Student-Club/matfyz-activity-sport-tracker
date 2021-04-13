@@ -17,7 +17,7 @@ def init():
     db.create_all()
 
     season = Season(title='LS 2020/2021',
-                    start_date=date(year=2021, month=3, day=29),
+                    start_date=date(year=2019, month=3, day=29),
                     end_date=date(year=2021, month=6, day=30))
     db.session.add(season)
     db.session.flush()
@@ -487,6 +487,8 @@ def init():
                                   altitude=68,
                                   cycle=4)
 
+    db.session.add(cyclo)
+
     cyclo = CyclistsChallengePart(target="Forli",
                                   distance=997,
                                   altitude=30,
@@ -554,6 +556,7 @@ def init():
                                   distance=1118,
                                   altitude=407,
                                   cycle=5)
+    db.session.add(cyclo)
 
     cyclo = CyclistsChallengePart(target="Ascoli Piceno",
                                   distance=1331,

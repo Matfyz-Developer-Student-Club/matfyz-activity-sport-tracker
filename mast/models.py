@@ -1,5 +1,5 @@
 from mast import db, login_manager
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin, current_user, AnonymousUserMixin
 from flask import current_app
 from enum import Enum
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -130,7 +130,7 @@ class User(db.Model, UserMixin):
     def display(self):
         if self.anonymous:
             return " ".join(
-                [self.first_name, self.display_name, self.last_name]) if current_user.role.is_admin() else 'Anonymous'
+                [self.first_name, self.display_name, self.last_name]) if self is not AnonymousUserMixin and current_user.role.is_admin() else 'Anonymous'
         elif self.display_name:
             return self.display_name
         else:

@@ -379,13 +379,14 @@ class Queries(object):
         :returns: Query returning User and total score.
         """
         total_scores = db.session.query(Activity.user_id.label('user_id'),
-                                        func.sum(Activity.score).label('total_score')). \
+                                        func.sum(Activity.score).label('total_score'),
+                                        func.sum(Activity.distance).label('total_distance')). \
             filter(func.date(Activity.datetime) >= self.SEASON.start_date,
                    func.date(Activity.datetime) <= self.SEASON.end_date,
                    Activity.type == activity_type). \
             group_by(Activity.user_id). \
             subquery(with_labels=True)
-        return db.session.query(User, total_scores.c.total_score). \
+        return db.session.query(User, total_scores.c.total_score, total_scores.c.total_distance). \
             select_from(User). \
             join(total_scores, User.id == total_scores.c.user_id). \
             filter(User.verified). \
@@ -665,22 +666,13 @@ class Queries(object):
         checkpoints = self._get_cyclist_challenge_part(cycle=cycle)
 
         achieved_max = 0
-        print(f"CURRENT REACHED DIST: {current_reached_dist}")
         for i in range(cycle):
             achieved_max += self._get_cyclist_challenge_part_cycle_max(cycle=i)[0]
         current_reached_dist -= achieved_max
-        print(f"CURRENT REACHED DIST AFTER: {current_reached_dist}")
         result = {}
-        one_more = True
         for d, target in checkpoints.items():
-            if d <= current_reached_dist:
-                result[d] = target
-            elif one_more:
-                result[d] = target
-                one_more = False
-            else:
-                result[d] = target
-                break
+            result[d] = target
+
         return result, current_reached_dist, cycle
 
     def get_current_challenge_part(self):

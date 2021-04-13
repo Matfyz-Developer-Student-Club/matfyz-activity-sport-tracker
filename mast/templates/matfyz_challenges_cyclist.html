@@ -4,18 +4,15 @@
     <div style="display: flex; justify-content: space-between">
         <div>
             <h2>Current Competition:</h2>
-            <h3>Giro D'Italia - Route # {{ cycle + 1 }}</h3>
+            <h3>Giro D'Italia - Route # {{ cycle + 1 }} - Length: {{ cycle_distance }} Km</h3>
         </div>
     </div>
-    <div class="alert alert-primary" role="alert">
-       Page is under construction. Please stay tuned. We are sorry for inconvenience.
-   </div>
 
     <canvas class="my-4 w-100" id="myChart" width="900" height="220"
             style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select: none"></canvas>
 
     <script src="{{ url_for('static', filename='global_contest_cyclists.js') }}"></script>
 
-    {{ render_matfyz_challenges_cyclists_page() }}
+    {{ render_matfyz_challenges_cyclists_page(current_dist) }}
 
 {% endblock content_page %}

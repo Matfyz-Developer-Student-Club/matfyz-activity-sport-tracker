@@ -20,7 +20,9 @@ admin = Blueprint('admin', __name__)
 def admin_panel():
     if current_user.role.is_admin():
         db_queries = Queries()
-        return render_template("admin_panel.html", users=db_queries.enumerate_admin_stats())
+        users = db_queries.enumerate_admin_stats()
+        competing_users = len([user for user in users if user.strava_id])
+        return render_template("admin_panel.html", users=users, competing_users=competing_users)
     else:
         flash(f"User {current_user.first_name} {current_user.last_name} does not have permission to see this page",
               "danger")

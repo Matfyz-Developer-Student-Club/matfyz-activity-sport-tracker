@@ -42,17 +42,20 @@ def matfyz_challenges_cyclist():
         order = order + 1
     current_checkpoint = db_query.get_current_challenge_part()
 
+    print(f"CHECKPOINTS: {checkpoints_enriched}")
+
     if current_user.is_authenticated:
         session_data = Session()
         check_profile_verified(session_data)
         return render_template("matfyz_challenges_cyclist.html", title='Matfyz Challenges - Cyclists',
                                checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
-                               session_data=session_data, current_dist=current_dist, cycle=cycle)
+                               session_data=session_data, current_dist=current_dist, cycle=cycle,
+                               cycle_distance=checkpoints_enriched[-1]["dist"])
     else:
         return render_template("matfyz_challenges_combined_public.html", title='Matfyz Challenges - Cyclists',
                                checkpoints=checkpoints_enriched, current_checkpoint=current_checkpoint,
                                current_dist=current_dist, route='activities.matfyz_challenges_combined', default=False,
-                               cycle=cycle)
+                               cycle=cycle, cycle_distance=checkpoints_enriched[-1]["dist"])
 
 
 @activities.route('/competitions')

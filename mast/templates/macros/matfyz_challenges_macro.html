@@ -62,7 +62,7 @@
     </div>
 {% endmacro %}
 
-{% macro render_matfyz_challenges_cyclists_page() %}
+{% macro render_matfyz_challenges_cyclists_page(current_reached_distance) %}
     <div class="container">
         <div class="row">
 
@@ -72,6 +72,9 @@
                     All routes within the current competition are scaled 1:10 to original competition due to the longer
                     duration of our contest. The original competition can be found at: <a
                         href="http://www.steephill.tv/giro-d-italia/" target="_blank">Giro D'Italia</a>
+                </p>
+                <p style="font-size: 18px">
+                    All participants have driven in total: {{ current_reached_distance }} Km
                 </p>
                 <div class="table-responsive">
                     <table class="table">
